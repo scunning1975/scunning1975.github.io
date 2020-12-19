@@ -1,0 +1,144 @@
+/* Root variables https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
+:root {
+    --color-black: #111111;
+    --color-light-grey: #f0f0f0;
+    --color-dark-grey: #999999;
+    --color-highlight: #b6a9bd;
+    --color-dark-highlight: #705380;
+    --color-slides: #ececec;
+    --measurement: 2px;
+}
+
+
+/* Basic Font Setup */
+body {
+    padding: 0;
+    margin: 0;
+    font-family: Helvetica, Arial, sans-serif;
+    color: var(--color-black);
+    font-size: 14px;
+}
+
+a {
+    color: var(--color-black);
+}
+a:hover {
+    color: var(--color-dark-grey)
+}
+
+p {
+    line-height: 22px;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: Merriweather, Times, serif;
+}
+
+
+
+/* Utility Classes */
+
+.no-padding {
+    padding: 0;
+}
+
+
+/* Header */
+
+.title {
+    margin-top: 20px;
+    padding-top: 36px;
+    border-top: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+}
+
+.title h1 {
+    text-align: center;
+    font-size: 24px;
+    margin: 8px 0;
+}
+
+.title p {
+    text-align: center;
+    font-size: 12px;
+    line-height: 20px;
+    text-transform: uppercase;
+    color: var(--color-dark-grey);
+
+    margin: 0 0 12px 0;
+}
+
+/* Navigation Bar */
+
+.navbar{
+    display: block;
+    border-bottom: 3px #000 solid;
+}
+
+.nav-links {
+    list-style: none;
+    display: block;
+    text-align: center;
+    padding: 0;
+}
+
+
+.nav-links li {
+    padding: 12px 0;
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+@media (min-width: 768px) {
+    .nav-links li {
+        display: inline-block;
+        padding: 0 12px; 
+    }
+}
+
+.nav-links li a{
+    color: var(--color-black);
+    text-decoration: none;
+}
+.nav-links li a:hover {
+    color: var(--color-dark-grey);
+}
+.nav-links li.in {
+    color: var(--color-dark-grey);
+}
+
+/* Footer */
+
+footer {
+    background-color: var(--color-dark-grey);
+    border-top: 3px #000 solid;
+    margin-top: 40px; 
+    min-height: 16px;
+}
+
+
+
+.col-xs-12 {
+    width: 100%;
+}
+
+/* Change Boostrap Container Width */
+@media (min-width: 544px) {
+    .container {
+        width: 500px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        width: 700px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        width: 770px;
+    }
+}
