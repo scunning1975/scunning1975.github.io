@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>1 Introduction | Causal Inference</title>
+<meta name="author" content="Scott Cunningham">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.2"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.6/header-attrs.js"></script><script src="libs/jquery-3.5.1/jquery-3.5.1.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.5.3/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.5.3/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.3.9000/tabs.js"></script><script src="libs/bs3compat-0.2.3.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><style>
+    @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,700;1,300&display=swap');
+    </style>
+<script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/mark.js@8.11.1/dist/mark.min.js"></script><!-- CSS --><link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/toc.css">
+<link rel="stylesheet" href="css/causal_inference_style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="&lt;i&gt;The Mixtape&lt;/i&gt;"><span style="font-weight:bold">Causal Inference</span></a>:
+        <small class="text-muted"><i>The Mixtape</i></small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">Welcome</a></li>
+<li><a class="active" href="introduction.html"><span class="header-section-number">1</span> Introduction</a></li>
+<li><a class="" href="ch1.html"><span class="header-section-number">2</span> Probability and Regression Review</a></li>
+<li><a class="" href="ch2.html"><span class="header-section-number">3</span> Directed Acyclic Graphs</a></li>
+<li><a class="" href="ch3.html"><span class="header-section-number">4</span> Potential Outcomes Causal Model</a></li>
+<li><a class="" href="ch4.html"><span class="header-section-number">5</span> Matching and Subclassification</a></li>
+<li><a class="" href="ch5.html"><span class="header-section-number">6</span> Regression Discontinuity</a></li>
+<li><a class="" href="ch6.html"><span class="header-section-number">7</span> Instrumental Variables</a></li>
+<li><a class="" href="ch7.html"><span class="header-section-number">8</span> Panel Data</a></li>
+<li><a class="" href="ch8.html"><span class="header-section-number">9</span> Difference-in-Differences</a></li>
+<li><a class="" href="ch9.html"><span class="header-section-number">10</span> Synthetic Control</a></li>
+<li><a class="" href="ch10.html"><span class="header-section-number">11</span> Conclusion</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/scunning1975/mixtape">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="introduction" class="section level1" number="1">
+<h1>
+<span class="header-section-number">1</span> Introduction<a class="anchor" aria-label="anchor" href="#introduction"><i class="fas fa-link"></i></a>
+</h1>
+<div class="cover-box">
+<div class="row">
+    <div class="col-xs-8 col-md-4 cover-img">
+        <a href="https://www.amazon.com/dp/0300251688"><img src="../images/cover.jpg" alt="Buy Today!"></a>
+    </div>
+    
+    <div class="col-xs-12 col-md-8 cover-text-box">
+            <h2> 
+                Causal Inference: 
+                <br><span style="font-style: italic; font-weight:bold; font-size: 20px;">The Mixtape.</span>
+            </h2> 
+            
+        <div class="cover-text">
+            <p>Buy the print version today:</p>
+            
+            <div class="chips">
+                <a href="https://www.amazon.com/dp/0300251688" class="app-chip"> 
+                    <i class="fab fa-amazon" aria-hidden="true"></i> Buy from Amazon 
+                </a>
+    
+                <a href="https://yalebooks.yale.edu/book/9780300251685/causal-inference" class="app-chip"> 
+                    <i class="fas fa-book" aria-hidden="true"></i> Buy from Yale Press 
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<p>My path to economics was not linear. I didn’t major in economics, for instance. I didn’t even take an economics course in college. I majored in English, for Pete’s sake. My ambition was to become a poet. But then I became intrigued with the idea that humans can form plausible beliefs about causal effects even without a randomized experiment. Twenty-five years ago, I wouldn’t have had a clue what that sentence even meant, let alone how to do such an experiment. So how did I get here? Maybe you would like to know how I got to the point where I felt I needed to write this book. The TL;DR version is that I followed a windy path from English to causal inference.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;“Too long; didn’t read.”&lt;/p&gt;"><sup>1</sup></a> First, I fell in love with economics. Then I fell in love with empirical research. Then I noticed that a growing interest in causal inference had been happening in me the entire time. But let me tell the longer version.</p>
+<p>I majored in English at the University of Tennessee at Knoxville and graduated with a serious ambition to become a professional poet. But, while I had been successful writing poetry in college, I quickly realized that finding the road to success beyond that point was probably not realistic. I was newly married, with a baby on the way, and working as a qualitative research analyst doing market research. Slowly, I had stopped writing poetry altogether.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;Rilke said you should quit writing poetry when you can imagine yourself living without it &lt;span class="citation"&gt;(Rilke &lt;a href="references.html#ref-Rilke2012" role="doc-biblioref"&gt;2012&lt;/a&gt;)&lt;/span&gt;. I could imagine living without poetry, so I took his advice and quit. Interestingly, when I later found economics, I went back to Rilke and asked myself if I could live without it. This time, I decided I couldn’t, or wouldn’t—I wasn’t sure which. So I stuck with it and got a PhD.&lt;/p&gt;'><sup>2</sup></a></p>
+<p>My job as a qualitative research analyst was eye opening, in part because it was my first exposure to empiricism. My job was to do “grounded theory”—a kind of inductive approach to generating explanations of human behavior based on observations. I did this by running focus groups and conducting in-depth interviews, as well as through other ethnographic methods. I approached each project as an opportunity to understand why people did the things they did (even if what they did was buy detergent or pick a cable provider). While the job inspired me to develop my own theories about human behavior, it didn’t provide me a way of falsifying those theories.</p>
+<p>I lacked a background in the social sciences, so I would spend my evenings downloading and reading articles from the Internet. I don’t remember how I ended up there, but one night I was on the University of Chicago Law and Economics working paper series website when a speech by Gary Becker caught my eye. It was his Nobel Prize acceptance speech on how economics applies to all of human behavior <span class="citation">(Becker <a href="references.html#ref-Becker1993" role="doc-biblioref">1993</a>)</span>, and reading it changed my life. I thought economics was about stock markets and banks until I read that speech. I didn’t know economics was an engine that one could use to analyze all of human behavior. This was overwhelmingly exciting, and a seed had been planted.</p>
+<p>But it wasn’t until I read an article on crime by <span class="citation">Lott and Mustard (<a href="references.html#ref-Lott1997" role="doc-biblioref">1997</a>)</span> that I became truly enamored of economics. I had no idea that there was an empirical component where economists sought to estimate causal effects with quantitative data. A coauthor of that paper was David Mustard, then an associate professor of economics at the University of Georgia, and one of Gary Becker’s former students. I decided that I wanted to study with Mustard, and so I applied to the University of Georgia’s doctoral program in economics. I moved to Athens, Georgia, with my wife, Paige, and our infant son, Miles, and started classes in the fall of 2002.</p>
+<p>After passing my first-year comprehensive exams, I took Mustard’s labor economics field class and learned about a variety of topics that would shape my interests for years. These topics included the returns to education, inequality, racial discrimination, crime, and many other fascinating topics in labor. We read many, many empirical papers in that class, and afterwards I knew that I would need a strong background in econometrics to do the kind of research I cared about. In fact, I decided to make econometrics my main field of study. This led me to work with Christopher Cornwell, an econometrician and labor economist at Georgia. I learned a lot from Chris, both about econometrics and about research itself. He became a mentor, coauthor, and close friend.</p>
+<p>Econometrics was difficult. I won’t even pretend I was good at it. I took all the econometrics courses offered at the University of Georgia, some more than once. They included classes covering topics like probability and statistics, cross-sections, panel data, time series, and qualitative dependent variables. But while I passed my field exam in econometrics, I struggled to understand econometrics at a deep level. As the saying goes, I could not see the forest for the trees. Something just wasn’t clicking.</p>
+<p>I noticed something, though, while I was writing the third chapter of my dissertation that I hadn’t noticed before. My third chapter was an investigation of the effect of abortion legalization on the cohort’s future sexual behavior <span class="citation">(Cunningham and Cornwell <a href="references.html#ref-Cunningham2013" role="doc-biblioref">2013</a>)</span>. It was a revisiting of <span class="citation">Donohue and Levitt (<a href="references.html#ref-Donohue2001" role="doc-biblioref">2001</a>)</span>. One of the books I read in preparation for my study was <span class="citation">Levine (<a href="references.html#ref-Levine2004" role="doc-biblioref">2004</a>)</span>, which in addition to reviewing the theory of and empirical studies on abortion had a little table explaining the difference-in-differences identification strategy. The University of Georgia had a traditional econometrics pedagogy, and most of my field courses were theoretical (e.g., public economics, industrial organization), so I never really had heard the phrase “identification strategy,” let alone “causal inference.” Levine’s simple difference-in-differences table for some reason opened my eyes. I saw how econometric modeling could be used to isolate the causal effects of some treatment, and that led to a change in how I approach empirical problems.</p>
+<div id="what-is-causal-inference" class="section level2" number="1.1">
+<h2>
+<span class="header-section-number">1.1</span> What Is Causal Inference?<a class="anchor" aria-label="anchor" href="#what-is-causal-inference"><i class="fas fa-link"></i></a>
+</h2>
+<p>My first job out of graduate school was as an assistant professor at Baylor University in Waco, Texas, where I still work and live today. I was restless the second I got there. I could feel that econometrics was indispensable, and yet I was missing something. But what? It was a theory of causality. I had been orbiting that theory ever since seeing that difference-in-differences table in <span class="citation">Levine (<a href="references.html#ref-Levine2004" role="doc-biblioref">2004</a>)</span>. But I needed more. So, desperate, I did what I always do when I want to learn something new—I developed a course on causality to force myself to learn all the things I didn’t know.</p>
+<p>I named the course Causal Inference and Research Design and taught it for the first time to Baylor master’s students in 2010. At the time, I couldn’t really find an example of the sort of class I was looking for, so I cobbled together a patchwork of ideas from several disciplines and authors, like labor economics, public economics, sociology, political science, epidemiology, and statistics. You name it. My class wasn’t a pure econometrics course; rather, it was an applied empirical class that taught a variety of contemporary research designs, such as difference-in-differences, and it was filled with empirical replications and readings, all of which were built on the robust theory of causality found in Donald Rubin’s work as well as the work of Judea Pearl. This book and that class are in fact very similar to one another.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;I decided to write this book for one simple reason: I didn’t feel that the market had provided the book that I needed for my students. So I wrote this book for my students and me so that we’d all be on the same page. This book is my best effort to explain causal inference to myself. I felt that if I could explain causal inference to myself, then I would be able to explain it to others too. Not thinking the book would have much value outside of my class, I posted it to my website and told people about it on Twitter. I was surprised to learn that so many people found the book helpful.&lt;/p&gt;"><sup>3</sup></a></p>
+<p>So how would I define causal inference? Causal inference is the leveraging of theory and deep knowledge of institutional details to estimate the impact of events and choices on a given outcome of interest. It is not a new field; humans have been obsessing over causality since antiquity. But what is new is the progress we believe we’ve made in estimating causal effects both inside and outside the laboratory. Some date the beginning of this new, modern causal inference to <span class="citation">Fisher (<a href="references.html#ref-Fisher1935" role="doc-biblioref">1935</a>)</span>, <span class="citation">Haavelmo (<a href="references.html#ref-Haavelmo1943" role="doc-biblioref">1943</a>)</span>, or <span class="citation">Rubin (<a href="references.html#ref-Rubin1974" role="doc-biblioref">1974</a>)</span>. Some connect it to the work of early pioneers like John Snow. We should give a lot of credit to numerous highly creative labor economists from the late 1970s to late 1990s whose ambitious research agendas created a revolution in economics that continues to this day. You could even make an argument that we owe it to the Cowles Commission, Philip and Sewall Wright, and the computer scientist Judea Pearl.</p>
+<p>But however you date its emergence, causal inference has now matured into a distinct field, and not surprisingly, you’re starting to see more and more treatments of it as such. It’s sometimes reviewed in a lengthy chapter on “program evaluation” in econometrics textbooks <span class="citation">(Wooldridge <a href="references.html#ref-Wooldridge2010" role="doc-biblioref">2010</a>)</span>, or even given entire book-length treatments. To name just a few textbooks in the growing area, there’s <span class="citation">Angrist and Pischke (<a href="references.html#ref-Angrist2009" role="doc-biblioref">2009</a>)</span>, <span class="citation">Morgan and Winship (<a href="references.html#ref-Morgan2014" role="doc-biblioref">2014</a>)</span>, <span class="citation">Imbens and Rubin (<a href="references.html#ref-Imbens2015" role="doc-biblioref">2015</a>)</span>, and probably a half dozen others, not to mention numerous, lengthy treatments of specific strategies, such as those found in <span class="citation">Angrist and Krueger (<a href="references.html#ref-Angrist2001" role="doc-biblioref">2001</a>)</span> and <span class="citation">Imbens and Lemieux (<a href="references.html#ref-Imbens2008" role="doc-biblioref">2008</a>)</span>. The market is quietly adding books and articles about identifying causal effects with data all the time.</p>
+<p>So why does <em>Causal Inference: The Mixtape</em> exist? Well, to put it bluntly, a readable introductory book with programming examples, data, and detailed exposition didn’t exist until this one. My book is an effort to fill that hole, because I believe what researchers really need is a guide that takes them from knowing almost nothing about causal inference to a place of competency. Competency in the sense that they are conversant and literate about what designs can and cannot do. Competency in the sense that they can take data, write code and, using theoretical and contextual knowledge, implement a reasonable design in one of their own projects. If this book helps someone do that, then this book will have had value, and that is all I can and should hope for.</p>
+<p>But what books out there do I like? Which ones have inspired this book? And why don’t I just keep using them? For my classes, I mainly relied on <span class="citation">Morgan and Winship (<a href="references.html#ref-Morgan2014" role="doc-biblioref">2014</a>)</span>, <span class="citation">Angrist and Pischke (<a href="references.html#ref-Angrist2009" role="doc-biblioref">2009</a>)</span>, as well as a library of theoretical and empirical articles. These books are in my opinion definitive classics. But they didn’t satisfy my needs, and as a result, I was constantly jumping between material. Other books were awesome but not quite right for me either. <span class="citation">Imbens and Rubin (<a href="references.html#ref-Imbens2015" role="doc-biblioref">2015</a>)</span> cover the potential outcomes model, experimental design, and matching and instrumental variables, but not directed acyclic graphical models (DAGs), regression discontinuity, panel data, or synthetic control. <span class="citation">Morgan and Winship (<a href="references.html#ref-Morgan2014" role="doc-biblioref">2014</a>)</span> cover DAGs, the potential outcomes model, and instrumental variables, but have too light a touch on regression discontinuity and panel data for my tastes. They also don’t cover synthetic control, which has been called the most important innovation in causal inference of the last 15 years by <span class="citation">Athey and Imbens (<a href="references.html#ref-Athey2017c" role="doc-biblioref">2017</a><a href="references.html#ref-Athey2017c" role="doc-biblioref">a</a>)</span>. <span class="citation">Angrist and Pischke (<a href="references.html#ref-Angrist2009" role="doc-biblioref">2009</a>)</span> is very close to what I need but does not include anything on synthetic control or on the graphical models that I find so critically useful. But maybe most importantly, <span class="citation">Imbens and Rubin (<a href="references.html#ref-Imbens2015" role="doc-biblioref">2015</a>)</span>, <span class="citation">Angrist and Pischke (<a href="references.html#ref-Angrist2009" role="doc-biblioref">2009</a>)</span>, and <span class="citation">Morgan and Winship (<a href="references.html#ref-Morgan2014" role="doc-biblioref">2014</a>)</span> do not provide <em>any</em> practical programming guidance, and I believe it is in replication and coding that we gain knowledge in these areas.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;Although &lt;span class="citation"&gt;Angrist and Pischke (&lt;a href="references.html#ref-Angrist2009" role="doc-biblioref"&gt;2009&lt;/a&gt;)&lt;/span&gt; provides an online data warehouse from dozens of papers, I find that students need more pedagogical walk-throughs and replications for these ideas to become concrete and familiar.&lt;/p&gt;'><sup>4</sup></a></p>
+<p>This book was written with a few different people in mind. It was written first and foremost for <em>practitioners</em>, which is why it includes easy-to-download data sets and programs. It’s why I have made several efforts to review papers as well as replicate the models as much as possible. I want readers to understand this field, but as important, I want them to feel empowered so that they can use these tools to answer their own research questions.</p>
+<p>Another person I have in mind is the experienced social scientist who wants to retool. Maybe these are people with more of a theoretical bent or background, or maybe they’re people who simply have some holes in their human capital. This book, I hope, can help guide them through the modern theories of causality so common in the social sciences, as well as provide a calculus in directed acyclic graphical models that can help connect their knowledge of theory with estimation. The DAGs in particular are valuable for this group, I think.</p>
+<p>A third group that I’m focusing on is the nonacademic person in industry, media, think tanks, and the like. Increasingly, knowledge about causal inference is expected throughout the professional world. It is no longer simply something that academics sit around and debate. It is crucial knowledge for making business decisions as well as for interpreting policy.</p>
+<p>Finally, this book is written for people very early in their careers, be they undergraduates, graduate students, or newly minted PhDs. My hope is that this book can give them a jump start so that they don’t have to meander, like many of us did, through a somewhat labyrinthine path to these methods.</p>
+</div>
+<div id="do-not-confuse-correlation-with-causality" class="section level2" number="1.2">
+<h2>
+<span class="header-section-number">1.2</span> Do Not Confuse Correlation with Causality<a class="anchor" aria-label="anchor" href="#do-not-confuse-correlation-with-causality"><i class="fas fa-link"></i></a>
+</h2>
+<p>It is very common these days to hear someone say “correlation does not mean causality.” Part of the purpose of this book is to help readers be able to understand exactly why correlations, particularly in observational data, are unlikely to be reflective of a causal relationship. When the rooster crows, the sun soon after rises, but we know the rooster didn’t cause the sun to rise. Had the rooster been eaten by the farmer’s cat, the sun still would have risen. Yet so often people make this kind of mistake when naively interpreting simple correlations.</p>
+<div class="figure">
+<span id="fig:scottboat"></span>
+<img src="graphics/scottboat.jpg" alt="No correlation doesn't mean no causality. Artwork by Seth." width="100%"><p class="caption">
+Figure 1.1: No correlation doesn’t mean no causality. Artwork by Seth.
+</p>
+</div>
+<p>But weirdly enough, sometimes there are causal relationships between two things and yet <em>no observable correlation</em>. Now that is definitely strange. How can one thing cause another thing without any discernible correlation between the two things? Consider this example, which is illustrated in Figure <a href="introduction.html#fig:scottboat">1.1</a>. A sailor is sailing her boat across the lake on a windy day. As the wind blows, she counters by turning the rudder in such a way so as to exactly offset the force of the wind. Back and forth she moves the rudder, yet the boat follows a straight line across the lake. A kindhearted yet naive person with no knowledge of wind or boats might look at this woman and say, “Someone get this sailor a new rudder! Hers is broken!” He thinks this because he cannot see any relationship between the movement of the rudder and the direction of the boat.</p>
+<p>But does the fact that he cannot see the relationship mean there isn’t one? Just because there is no observable relationship does not mean there is no causal one. Imagine that instead of perfectly countering the wind by turning the rudder, she had instead flipped a coin—heads she turns the rudder left, tails she turns the rudder right. What do you think this man would have seen if she was sailing her boat according to coin flips? If she <em>randomly</em> moved the rudder on a windy day, then he would see a sailor zigzagging across the lake. Why would he see the relationship if the movement were randomized but not be able to see it otherwise? Because the sailor is <em>endogenously</em> moving the rudder in response to the unobserved wind. And as such, the relationship between the rudder and the boat’s direction is canceled—even though there is a causal relationship between the two.</p>
+<p>This sounds like a silly example, but in fact there are more serious versions of it. Consider a central bank reading tea leaves to discern when a recessionary wave is forming. Seeing evidence that a recession is emerging, the bank enters into open-market operations, buying bonds and pumping liquidity into the economy. Insofar as these actions are done optimally, these open-market operations will show no relationship whatsoever with actual output. In fact, in the ideal, banks may engage in aggressive trading in order to stop a recession, and we would be unable to see any evidence that it was working <em>even though it was</em>!</p>
+<p>Human beings engaging in optimal behavior are the main reason correlations almost never reveal causal relationships, because rarely are human beings acting randomly. And as we will see, it is the presence of randomness that is crucial for identifying causal effect.</p>
+<div class="cover-box">
+<div class="row">
+    <div class="col-xs-8 col-md-4 cover-img">
+        <a href="https://www.amazon.com/dp/0300251688"><img src="../images/cover.jpg" alt="Buy Today!"></a>
+    </div>
+    
+    <div class="col-xs-12 col-md-8 cover-text-box">
+            <h2> 
+                Causal Inference: 
+                <br><span style="font-style: italic; font-weight:bold; font-size: 20px;">The Mixtape.</span>
+            </h2> 
+            
+        <div class="cover-text">
+            <p>Buy the print version today:</p>
+            
+            <div class="chips">
+                <a href="https://www.amazon.com/dp/0300251688" class="app-chip"> 
+                    <i class="fab fa-amazon" aria-hidden="true"></i> Buy from Amazon 
+                </a>
+    
+                <a href="https://yalebooks.yale.edu/book/9780300251685/causal-inference" class="app-chip"> 
+                    <i class="fas fa-book" aria-hidden="true"></i> Buy from Yale Press 
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<div id="optimization-makes-everything-endogenous" class="section level2" number="1.3">
+<h2>
+<span class="header-section-number">1.3</span> Optimization Makes Everything Endogenous<a class="anchor" aria-label="anchor" href="#optimization-makes-everything-endogenous"><i class="fas fa-link"></i></a>
+</h2>
+<p>Certain presentations of causal inference methodologies have sometimes been described as atheoretical, but in my opinion, while some practitioners seem comfortable flying blind, the actual methods employed in causal designs are always deeply dependent on theory and local institutional knowledge. It is my firm belief, which I will emphasize over and over in this book, that without prior knowledge, estimated causal effects are rarely, if ever, believable. Prior knowledge is <em>required</em> in order to justify any claim of a causal finding. And economic theory also highlights why causal inference is necessarily a thorny task. Let me explain.</p>
+<p>There’s broadly thought to be two types of data. There’s experimental data and non-experimental data. The latter is also sometimes called <em>observational</em> data. Experimental data is collected in something akin to a laboratory environment. In a traditional experiment, the researcher participates actively in the process being recorded. It’s more difficult to obtain data like this in the social sciences due to feasibility, financial cost, or moral objections, although it is more common now than was once the case. Examples include the Oregon Medicaid Experiment, the RAND health insurance experiment, the field experiment movement inspired by Esther Duflo, Michael Kremer, Abhijit Banerjee, and John List, and many others.</p>
+<p>Observational data is usually collected through surveys in a retrospective manner, or as the by-product of some other business activity (“big data”). In many observational studies, you collect data about what happened previously, as opposed to collecting data as it happens, though with the increased use of web scraping, it may be possible to get observational data closer to the exact moment in which some action occurred. But regardless of the timing, the researcher is a passive actor in the processes creating the data itself. She observes actions and results but is not in a position to interfere with the environment in which the units under consideration exist. This is the most common form of data that many of us will ever work with.</p>
+<p>Economic theory tells us we should be suspicious of correlations found in observational data. In observational data, correlations are almost certainly not reflecting a causal relationship because the variables were endogenously chosen by people who were making decisions they thought were best. In pursuing some goal while facing constraints, they chose certain things that created a spurious correlation with other things. And we see this problem reflected in the potential outcomes model itself: a correlation, in order to be a measure of a causal effect, must be based on a choice that was made independent of the potential outcomes under consideration. Yet if the person is making some choice <em>based</em> on what she thinks is best, then it necessarily is based on potential outcomes, and the correlation does not remotely satisfy the conditions we need in order to say it is causal. To put it as bluntly as I can, economic theory says choices are endogenous, and therefore since they are, the correlations between those choices and outcomes in the aggregate will rarely, if ever, represent a causal effect.</p>
+<p>Now we are veering into the realm of epistemology. Identifying causal effects involves assumptions, but it also requires a particular kind of belief about the work of scientists. Credible and valuable research requires that we believe that it is more important to do our work <em>correctly</em> than to try and achieve a certain outcome (e.g., confirmation bias, statistical significance, asterisks). The foundations of scientific knowledge are scientific methodologies. True scientists do not collect evidence in order to prove what they want to be true or what others want to believe. That is a form of deception and manipulation called <em>propaganda</em>, and propaganda is not science. Rather, scientific methodologies are devices for forming a particular kind of belief. Scientific methodologies allow us to accept unexpected, and sometimes undesirable, answers. They are process oriented, not outcome oriented. And without these values, causal methodologies are also not believable.</p>
+</div>
+<div id="example-identifying-price-elasticity-of-demand" class="section level2" number="1.4">
+<h2>
+<span class="header-section-number">1.4</span> Example: Identifying Price Elasticity of Demand<a class="anchor" aria-label="anchor" href="#example-identifying-price-elasticity-of-demand"><i class="fas fa-link"></i></a>
+</h2>
+<p>One of the cornerstones of scientific methodologies is empirical analysis.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;It is not the only cornerstone, or even necessarily the most important cornerstone, but empirical analysis has always played an important role in scientific work.&lt;/p&gt;"><sup>5</sup></a> By empirical analysis, I mean the use of data to test a theory or to estimate a relationship between variables. The first step in conducting an empirical economic analysis is the careful formulation of the question we would like to answer. In some cases, we would like to develop and test a formal economic model that describes mathematically a certain relationship, behavior, or process of interest. Those models are valuable insofar as they both describe the phenomena of interest and make falsifiable (testable) predictions. A prediction is falsifiable insofar as we can evaluate, and potentially reject, the prediction with data.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;You can also obtain a starting point for empirical analysis through an intuitive and less formal reasoning process. But economics favors formalism and deductive methods.&lt;/p&gt;"><sup>6</sup></a> A model is the framework with which we describe the relationships we are interested in, the intuition for our results, and the hypotheses we would like to test.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;Scientific models, be they economic ones or otherwise, are abstract, not realistic, representations of the world. That is a strength, not a weakness. George Box, the statistician, once quipped that “all models are wrong, but some are useful.” A model’s usefulness is its ability to unveil hidden secrets about the world. No more and no less.&lt;/p&gt;"><sup>7</sup></a></p>
+<p>After we have specified a model, we turn it into what is called an econometric model, which can be estimated directly with data. One clear issue we immediately face is regarding the functional form of the model, or how to describe the relationships of the variables we are interested in through an equation. Another important issue is how we will deal with variables that cannot be directly or reasonably observed by the researcher, or that cannot be measured very well, but which play an important role in our model.</p>
+<p>A generically important contribution to our understanding of causal inference is the notion of comparative statics. Comparative statics are theoretical descriptions of causal effects contained within the model. These kinds of comparative statics are always based on the idea of <em>ceteris paribus</em>—or “all else constant.” When we are trying to describe the causal effect of some intervention, for instance, we are always assuming that the other relevant variables in the model are not changing. If they were changing, then they would be correlated with the variable of interest and it would confound our estimation.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;One of the things implied by &lt;em&gt;ceteris paribus&lt;/em&gt; that comes up repeatedly in this book is the idea of covariate balance. If we say that everything is the same except for the movement of one variable, then everything is the same on both sides of that variable’s changing value. Thus, when we invoke &lt;em&gt;ceteris paribus&lt;/em&gt;, we are implicitly invoking covariate balance—both the observable and the unobservable covariates.&lt;/p&gt;"><sup>8</sup></a></p>
+<p>To illustrate this idea, let’s begin with a basic economic model: supply and demand equilibrium and the problems it creates for estimating the price elasticity of demand. Policy-makers and business managers have a natural interest in learning the price elasticity of demand because knowing it enables firms to maximize profits and governments to choose optimal taxes, and whether to restrict quantity altogether <span class="citation">(Becker, Grossman, and Murphy <a href="references.html#ref-Becker2006" role="doc-biblioref">2006</a>)</span>. But the problem is that we do not observe demand curves, because demand curves are theoretical objects. More specifically, a demand curve is a collection of paired potential outcomes of price and quantity. We observe <em>price and quantity equilibrium values</em>, not the potential price and potential quantities along the entire demand curve. Only by tracing out the potential outcomes along a demand curve can we calculate the elasticity.</p>
+<div class="figure">
+<span id="fig:sd"></span>
+<img src="graphics/supply_demand.jpg" alt="Wright's graphical demonstration of the identification problem. Figure from Wright, P. G. (1928). *The Tariff on Animal and Vegetable Oils*." width="100%"><p class="caption">
+Figure 1.2: Wright’s graphical demonstration of the identification problem. Figure from Wright, P. G. (1928). <em>The Tariff on Animal and Vegetable Oils</em>.
+</p>
+</div>
+<p>To see this, consider this graphic from Philip Wright’s Appendix B <span class="citation">(Wright <a href="references.html#ref-Wright1928" role="doc-biblioref">1928</a>)</span>, which we’ll discuss in greater detail later (Figure <a href="introduction.html#fig:sd">1.2</a>). The price elasticity of demand is the ratio of percentage changes in quantity to price <em>for a single demand curve</em>. Yet, when there are shifts in supply and demand, a sequence of quantity and price pairs emerges in history that reflect neither the demand curve nor the supply curve. In fact, connecting the points does not reflect any meaningful or useful object.</p>
+<p>The price elasticity of demand is the solution to the following equation:</p>
+<p><span class="math display">\[
+\epsilon = \frac{\partial \log Q}{\partial \log P}
+\]</span></p>
+<p>But in this example, the change in <span class="math inline">\(P\)</span> is <em>exogenous</em>. For instance, it holds supply fixed, the prices of other goods fixed, income fixed, preferences fixed, input costs fixed, and so on. In order to estimate the price elasticity of demand, we need changes in <span class="math inline">\(P\)</span> that are completely and utterly independent of the otherwise normal determinants of supply and the other determinants of demand. Otherwise we get shifts in either supply or demand, which creates new pairs of data for which any correlation between <span class="math inline">\(P\)</span> and <span class="math inline">\(Q\)</span> will not be a measure of the elasticity of demand.</p>
+<p>The problem is that the elasticity is an important object, and we need to know it, and therefore we need to solve this problem. So given this theoretical object, we must write out an econometric model as a starting point. One possible example of an econometric model would be a linear demand function:</p>
+<p><span class="math display">\[
+\log Q_d = \alpha+\delta \log P+\gamma X + u
+\]</span></p>
+<p>where <span class="math inline">\(\alpha\)</span> is the intercept, <span class="math inline">\(\delta\)</span> is the elasticity of demand, <span class="math inline">\(X\)</span> is a matrix of factors that determine demand like the prices of other goods or income, <span class="math inline">\(\gamma\)</span> is the coefficient on the relationship between <span class="math inline">\(X\)</span> and <span class="math inline">\(Q_d\)</span>, and <span class="math inline">\(u\)</span> is the error term.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;More on the error term later.&lt;/p&gt;"><sup>9</sup></a></p>
+<p>Foreshadowing the content of this mixtape, we need two things to estimate price elasticity of demand. First, we need numerous rows of data on price and quantity. Second, we need for the variation in price in our imaginary data set to be independent of <span class="math inline">\(u\)</span>. We call this kind of independence <em>exogeneity</em>. Without both, we cannot recover the price elasticity of demand, and therefore any decision that requires that information will be based on stabs in the dark.</p>
+</div>
+<div id="conclusion" class="section level2" number="1.5">
+<h2>
+<span class="header-section-number">1.5</span> Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"><i class="fas fa-link"></i></a>
+</h2>
+<p>This book is an introduction to research designs that can recover causal effects. But just as importantly, it provides you with hands-on practice to implement these designs. Implementing these designs means writing code in some type of software. I have chosen to illustrate these designs using two popular software languages: Stata (most commonly used by economists) and R (most commonly used by everyone else).</p>
+<p>The book contains numerous empirical exercises illustrated in the Stata and R programs. These exercises are either simulations (which don’t need external data) or exercises requiring external data. The data needed for the latter have been made available to you at Github. The Stata examples will download files usually at the start of the program using the following command: use <a href="https://github.com/scunning1975/mixtape/raw/master/DATAFILENAME.DTA" class="uri">https://github.com/scunning1975/mixtape/raw/master/DATAFILENAME.DTA</a>, where DATAFILENAME.DTA is the name of a particular data set.</p>
+<p>For R users, it is a somewhat different process to load data into memory. In an effort to organize and clean the code, my students Hugo Sant’Anna and Terry Tsai created a function to simplify the data download process. This is partly based on a library called haven, which is a package for reading data files. It is secondly based on a set of commands that create a function that will then download the data directly from Github.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;This was done solely for aesthetic reasons. Often the URL was simply too long for the margins of the book otherwise.&lt;/p&gt;"><sup>10</sup></a></p>
+<p>Some readers may not be familiar with either Stata or R but nonetheless wish to follow along. I encourage you to use this opportunity to invest in learning one or both of these languages. It is beyond the scope of this book to provide an introduction to these languages, but fortunately, there are numerous resources online. For instance, Christopher Baum has written an excellent introduction to Stata at <a href="https://fmwww.bc.edu/GStat/docs/StataIntro.pdf" class="uri">https://fmwww.bc.edu/GStat/docs/StataIntro.pdf</a>. Stata is popular among microeconomists, and given the amount of coauthoring involved in modern economic research, an argument could be made for investing in it solely for its ability to solve basic coordination problems between you and potential coauthors. But a downside to Stata is that it is proprietary and must be purchased. And for some people, that may simply be too big of a barrier—especially for anyone simply wanting to follow along with the book. R on the other hand is open-source and free. Tutorials on Basic R can be found at <a href="https://cran.r-project.org/doc/contrib/Paradis-rdebuts_en.pdf" class="uri">https://cran.r-project.org/doc/contrib/Paradis-rdebuts_en.pdf</a>, and an introduction to Tidyverse (which is used throughout the R programming) can be found at <a href="https://r4ds.had.co.nz" class="uri">https://r4ds.had.co.nz</a>. Using this time to learn R would likely be well worth your time.</p>
+<p>Perhaps you already know R and want to learn Stata. Or perhaps you know Stata and want to learn R. Then this book may be helpful because of the way in which both sets of code are put in sequence to accomplish the same basic tasks. But, with that said, in many situations, although I have tried my best to reconcile results from Stata and R, I was not always able to do so. Ultimately, Stata and R are different programming languages that sometimes yield different results because of different optimization procedures or simply because the programs are built slightly differently. This has been discussed occasionally in articles in which authors attempt to better understand what accounts for the differing results. I was not always able to fully reconcile different results, and so I offer the two programs as simply alternative approaches. You are ultimately responsible for anything you do on your own using either language for your research. I leave it to you ultimately to understand the method and estimating procedure contained within a given software and package.</p>
+<p>In conclusion, simply finding an association between two variables might be suggestive of a causal effect, but it also might not. Correlation doesn’t mean causation unless key assumptions hold. Before we start digging into the causal methodologies themselves, though, I need to lay down a foundation in statistics and regression modeling. Buckle up! This is going to be fun.</p>
+<div class="cover-box">
+<div class="row">
+    <div class="col-xs-8 col-md-4 cover-img">
+        <a href="https://www.amazon.com/dp/0300251688"><img src="../images/cover.jpg" alt="Buy Today!"></a>
+    </div>
+    
+    <div class="col-xs-12 col-md-8 cover-text-box">
+            <h2> 
+                Causal Inference: 
+                <br><span style="font-style: italic; font-weight:bold; font-size: 20px;">The Mixtape.</span>
+            </h2> 
+            
+        <div class="cover-text">
+            <p>Buy the print version today:</p>
+            
+            <div class="chips">
+                <a href="https://www.amazon.com/dp/0300251688" class="app-chip"> 
+                    <i class="fab fa-amazon" aria-hidden="true"></i> Buy from Amazon 
+                </a>
+    
+                <a href="https://yalebooks.yale.edu/book/9780300251685/causal-inference" class="app-chip"> 
+                    <i class="fas fa-book" aria-hidden="true"></i> Buy from Yale Press 
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+  <div class="chapter-nav">
+<div class="prev"><a href="index.html">Welcome</a></div>
+<div class="next"><a href="ch1.html"><span class="header-section-number">2</span> Probability and Regression Review</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
+<li><a class="nav-link" href="#what-is-causal-inference"><span class="header-section-number">1.1</span> What Is Causal Inference?</a></li>
+<li><a class="nav-link" href="#do-not-confuse-correlation-with-causality"><span class="header-section-number">1.2</span> Do Not Confuse Correlation with Causality</a></li>
+<li><a class="nav-link" href="#optimization-makes-everything-endogenous"><span class="header-section-number">1.3</span> Optimization Makes Everything Endogenous</a></li>
+<li><a class="nav-link" href="#example-identifying-price-elasticity-of-demand"><span class="header-section-number">1.4</span> Example: Identifying Price Elasticity of Demand</a></li>
+<li><a class="nav-link" href="#conclusion"><span class="header-section-number">1.5</span> Conclusion</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/scunning1975/mixtape/blob/master/Introduction.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/scunning1975/mixtape/edit/master/Introduction.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong><span style="font-weight:bold">Causal Inference</span></strong>: <i>The Mixtape</i>" was written by Scott Cunningham. It was last built on 2020-12-19.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+</html>

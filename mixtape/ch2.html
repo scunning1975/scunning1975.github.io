@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>3 Directed Acyclic Graphs | Causal Inference</title>
+<meta name="author" content="Scott Cunningham">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.2"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.6/header-attrs.js"></script><script src="libs/jquery-3.5.1/jquery-3.5.1.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.5.3/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.5.3/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.3.9000/tabs.js"></script><script src="libs/bs3compat-0.2.3.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><style>
+    @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,700;1,300&display=swap');
+    </style>
+<script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/mark.js@8.11.1/dist/mark.min.js"></script><!-- CSS --><link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/toc.css">
+<link rel="stylesheet" href="css/causal_inference_style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="&lt;i&gt;The Mixtape&lt;/i&gt;"><span style="font-weight:bold">Causal Inference</span></a>:
+        <small class="text-muted"><i>The Mixtape</i></small>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">Welcome</a></li>
+<li><a class="" href="introduction.html"><span class="header-section-number">1</span> Introduction</a></li>
+<li><a class="" href="ch1.html"><span class="header-section-number">2</span> Probability and Regression Review</a></li>
+<li><a class="active" href="ch2.html"><span class="header-section-number">3</span> Directed Acyclic Graphs</a></li>
+<li><a class="" href="ch3.html"><span class="header-section-number">4</span> Potential Outcomes Causal Model</a></li>
+<li><a class="" href="ch4.html"><span class="header-section-number">5</span> Matching and Subclassification</a></li>
+<li><a class="" href="ch5.html"><span class="header-section-number">6</span> Regression Discontinuity</a></li>
+<li><a class="" href="ch6.html"><span class="header-section-number">7</span> Instrumental Variables</a></li>
+<li><a class="" href="ch7.html"><span class="header-section-number">8</span> Panel Data</a></li>
+<li><a class="" href="ch8.html"><span class="header-section-number">9</span> Difference-in-Differences</a></li>
+<li><a class="" href="ch9.html"><span class="header-section-number">10</span> Synthetic Control</a></li>
+<li><a class="" href="ch10.html"><span class="header-section-number">11</span> Conclusion</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/scunning1975/mixtape">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="ch2" class="section level1" number="3">
+<h1>
+<span class="header-section-number">3</span> Directed Acyclic Graphs<a class="anchor" aria-label="anchor" href="#ch2"><i class="fas fa-link"></i></a>
+</h1>
+<div class="cover-box">
+<div class="row">
+    <div class="col-xs-8 col-md-4 cover-img">
+        <a href="https://www.amazon.com/dp/0300251688"><img src="../images/cover.jpg" alt="Buy Today!"></a>
+    </div>
+    
+    <div class="col-xs-12 col-md-8 cover-text-box">
+            <h2> 
+                Causal Inference: 
+                <br><span style="font-style: italic; font-weight:bold; font-size: 20px;">The Mixtape.</span>
+            </h2> 
+            
+        <div class="cover-text">
+            <p>Buy the print version today:</p>
+            
+            <div class="chips">
+                <a href="https://www.amazon.com/dp/0300251688" class="app-chip"> 
+                    <i class="fab fa-amazon" aria-hidden="true"></i> Buy from Amazon 
+                </a>
+    
+                <a href="https://yalebooks.yale.edu/book/9780300251685/causal-inference" class="app-chip"> 
+                    <i class="fas fa-book" aria-hidden="true"></i> Buy from Yale Press 
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<p>The history of graphical causal modeling goes back to the early twentieth century and Sewall Wright, one of the fathers of modern genetics and son of the economist Philip Wright. Sewall developed path diagrams for genetics, and Philip, it is believed, adapted them for econometric identification <span class="citation">(Matsueda <a href="references.html#ref-Matsueda2012" role="doc-biblioref">2012</a>)</span>.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;I will discuss the Wrights again in the chapter on instrumental variables. They were an interesting pair.&lt;/p&gt;"><sup>40</sup></a></p>
+<p>But despite that promising start, the use of graphical modeling for causal inference has been largely ignored by the economics profession, with a few exceptions <span class="citation">(Heckman and Pinto <a href="references.html#ref-Heckman2015" role="doc-biblioref">2015</a>; Imbens <a href="references.html#ref-Imbens2019b" role="doc-biblioref">2019</a>)</span>. It was revitalized for the purpose of causal inference when computer scientist and Turing Award winner Judea Pearl adapted them for his work on artificial intelligence. He explained this in his mangum opus, which is a general theory of causal inference that expounds on the usefulness of his directed graph notation <span class="citation">(Pearl <a href="references.html#ref-Pearl2009" role="doc-biblioref">2009</a>)</span>. Since graphical models are immensely helpful for designing a credible identification strategy, I have chosen to include them for your consideration. Let’s review graphical models, one of Pearl’s contributions to the theory of causal inference.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;If you find this material interesting, I highly recommend &lt;span class="citation"&gt;Morgan and Winship (&lt;a href="references.html#ref-Morgan2014" role="doc-biblioref"&gt;2014&lt;/a&gt;)&lt;/span&gt;, an all-around excellent book on causal inference, and especially on graphical models.&lt;/p&gt;'><sup>41</sup></a></p>
+<div id="introduction-to-dag-notation" class="section level2" number="3.1">
+<h2>
+<span class="header-section-number">3.1</span> Introduction to DAG Notation<a class="anchor" aria-label="anchor" href="#introduction-to-dag-notation"><i class="fas fa-link"></i></a>
+</h2>
+<p>Using directed acyclic graphical (DAG) notation requires some up-front statements. The first thing to notice is that in DAG notation, causality runs in one direction. Specifically, it runs forward in time. There are no cycles in a DAG. To show reverse causality, one would need to create multiple nodes, most likely with two versions of the same node separated by a time index. Similarly, simultaneity, such as in supply and demand models, is not straightforward with DAGs <span class="citation">(Heckman and Pinto <a href="references.html#ref-Heckman2015" role="doc-biblioref">2015</a>)</span>. To handle either simultaneity or reverse causality, it is recommended that you take a completely different approach to the problem than the one presented in this chapter. Third, DAGs explain causality in terms of counterfactuals. That is, a causal effect is defined as a comparison between two states of the world—one state that actually happened when some intervention took on some value and another state that didn’t happen (the “counterfactual”) under some other intervention.</p>
+<p>Think of a DAG as like a graphical representation of a chain of causal effects. The causal effects are themselves based on some underlying, unobserved structured process, one an economist might call the equilibrium values of a system of behavioral equations, which are themselves nothing more than a <em>model</em> of the world. All of this is captured efficiently using graph notation, such as nodes and arrows. Nodes represent random variables, and those random variables are assumed to be created by some data-generating process.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;I leave out some of those details, though, because their presence (usually just error terms pointing to the variables) clutters the graph unnecessarily.&lt;/p&gt;"><sup>42</sup></a> Arrows represent a causal effect between two random variables moving in the intuitive direction of the arrow. The direction of the arrow captures the direction of causality.</p>
+<p>Causal effects can happen in two ways. They can either be direct (e.g., <span class="math inline">\(D \rightarrow Y\)</span>), or they can be mediated by a third variable (e.g., <span class="math inline">\(D \rightarrow X \rightarrow Y\)</span>). When they are mediated by a third variable, we are capturing a sequence of events originating with <span class="math inline">\(D\)</span>, which may or may not be important to you depending on the question you’re asking.</p>
+<p>A DAG is meant to describe all causal relationships relevant to the effect of <span class="math inline">\(D\)</span> on <span class="math inline">\(Y\)</span>. What makes the DAG distinctive is both the explicit commitment to a causal effect pathway and the complete commitment to the <em>lack of</em> a causal pathway represented by missing arrows. In other words, a DAG will contain both arrows connecting variables and choices to exclude arrows. And the lack of an arrow necessarily means that you think there is no such relationship in the data—this is one of the strongest beliefs you can hold. A complete DAG will have all direct causal effects among the variables in the graph as well as all common causes of any pair of variables in the graph.</p>
+<p>At this point, you may be wondering where the DAG comes from. It’s an excellent question. It may be <em>the</em> question. A DAG is supposed to be a theoretical representation of the state-of-the-art knowledge about the phenomena you’re studying. It’s what an expert would say is the thing itself, and that expertise comes from a variety of sources. Examples include economic theory, other scientific models, conversations with experts, your own observations and experiences, literature reviews, as well as your own intuition and hypotheses.</p>
+<p>I have included this material in the book because I have found DAGs to be useful for understanding the critical role that prior knowledge plays in identifying causal effects. But there are other reasons too. One, I have found that DAGs are very helpful for communicating research designs and estimators if for no other reason than pictures speak a thousand words. This is, in my experience, especially true for instrumental variables, which have a very intuitive DAG representation. Two, through concepts such as the backdoor criterion and collider bias, a well-designed DAG can help you develop a credible research design for identifying the causal effects of some intervention. As a bonus, I also think a DAG provides a bridge between various empirical schools, such as the structural and reduced form groups. And finally, DAGs drive home the point that assumptions are necessary for any and all identification of causal effects, which economists have been hammering at for years <span class="citation">(Wolpin <a href="references.html#ref-Wolpin2013" role="doc-biblioref">2013</a>)</span>.</p>
+<div id="a-simple-dag" class="section level3" number="3.1.1">
+<h3>
+<span class="header-section-number">3.1.1</span> A simple DAG<a class="anchor" aria-label="anchor" href="#a-simple-dag"><i class="fas fa-link"></i></a>
+</h3>
+<p>Let’s begin with a simple DAG to illustrate a few basic ideas. I will expand on it to build slightly more complex ones later.</p>
+<div class="inline-figure"><img src="causal_inference_mixtape_files/figure-html/simple_dag-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>In this DAG, we have three random variables: <span class="math inline">\(X\)</span>, <span class="math inline">\(D\)</span>, and <span class="math inline">\(Y\)</span>. There is a direct <em>path</em> from <span class="math inline">\(D\)</span> to <span class="math inline">\(Y\)</span>, which represents a causal effect. That path is represented by <span class="math inline">\(D \rightarrow Y\)</span>. But there is also a second path from <span class="math inline">\(D\)</span> to <span class="math inline">\(Y\)</span> called the <em>backdoor path</em>. The backdoor path is <span class="math inline">\(D \leftarrow X \rightarrow Y\)</span>. While the direct path is a causal effect, the backdoor path is not causal. Rather, it is a process that creates spurious correlations between <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span> that are driven solely by fluctuations in the <span class="math inline">\(X\)</span> random variable.</p>
+<p>The idea of the backdoor path is one of the most important things we can learn from the DAG. It is similar to the notion of omitted variable bias in that it represents a variable that determines the outcome and the treatment variable. Just as not controlling for a variable like that in a regression creates omitted variable bias, leaving a backdoor open creates bias. The backdoor path is <span class="math inline">\(D \leftarrow X \rightarrow Y\)</span>. We therefore call <span class="math inline">\(X\)</span> a <em>confounder</em> because it jointly determines <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span>, and so confounds our ability to discern the effect of <span class="math inline">\(D\)</span> on <span class="math inline">\(Y\)</span> in naı̈ve comparisons.</p>
+<p>Think of the backdoor path like this: Sometimes when <span class="math inline">\(D\)</span> takes on different values, <span class="math inline">\(Y\)</span> takes on different values because <span class="math inline">\(D\)</span> causes <span class="math inline">\(Y\)</span>. But sometimes <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span> take on different values because <span class="math inline">\(X\)</span> takes on different values, and that bit of the correlation between <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span> is purely spurious. The existence of two causal pathways is contained within the correlation between <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<p>Let’s look at a second DAG, which is subtly different from the first. In the previous example, <span class="math inline">\(X\)</span> was observed. We know it was observed because the direct edges from <span class="math inline">\(X\)</span> to <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span> were solid lines. But sometimes there exists a confounder that is unobserved, and when there is, we represent its direct edges with dashed lines. Consider the following DAG:</p>
+<div class="inline-figure"><img src="causal_inference_mixtape_files/figure-html/earnings_dag-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>Same as before, <span class="math inline">\(U\)</span> is a noncollider along the backdoor path from <span class="math inline">\(D\)</span> to <span class="math inline">\(Y\)</span>, but unlike before, <span class="math inline">\(U\)</span> is unobserved to the researcher. It exists, but it may simply be missing from the data set. In this situation, there are two pathways from <span class="math inline">\(D\)</span> to <span class="math inline">\(Y\)</span>. There’s the direct pathway, <span class="math inline">\(D \rightarrow Y\)</span>, which is the causal effect, and there’s the backdoor pathway, <span class="math inline">\(D \leftarrow U \rightarrow Y\)</span>. And since <span class="math inline">\(U\)</span> is unobserved, that backdoor pathway is <em>open</em>.</p>
+<p>Let’s now move to another example, one that is slightly more realistic. A classical question in labor economics is whether college education increases earnings. According to the Becker human capital model <span class="citation">(Becker <a href="references.html#ref-Becker1994" role="doc-biblioref">1994</a>)</span>, education increases one’s marginal product, and since workers are paid their marginal product in competitive markets, education also increases their earnings. But college education is not random; it is optimally chosen given an individual’s subjective preferences and resource constraints. We represent that with the following DAG. As always, let <span class="math inline">\(D\)</span> be the treatment (e.g., college education) and <span class="math inline">\(Y\)</span> be the outcome of interest (e.g., earnings). Furthermore, let <span class="math inline">\(PE\)</span> be parental education, <span class="math inline">\(I\)</span> be family income, and <span class="math inline">\(B\)</span> be unobserved background factors, such as genetics, family environment, and mental ability.</p>
+<div class="inline-figure"><img src="causal_inference_mixtape_files/figure-html/earnings_dag_backdoor-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>This DAG is telling a story. And one of the things I like about DAGs is that they invite everyone to listen to the story together. Here is my interpretation of the story being told. Each person has some background. It’s not contained in most data sets, as it measures things like intelligence, contentiousness, mood stability, motivation, family dynamics, and other environmental factors—hence, it is unobserved in the picture. Those environmental factors are likely correlated between parent and child and therefore subsumed in the variable <span class="math inline">\(B\)</span>.</p>
+<p>Background causes a child’s parent to choose her own optimal level of education, and that choice also causes the child to choose their level of education through a variety of channels. First, there is the shared background factors, <span class="math inline">\(B\)</span>. Those background factors cause the child to choose a level of education, just as her parent had. Second, there’s a direct effect, perhaps through simple modeling of achievement or setting expectations, a kind of peer effect. And third, there’s the effect that parental education has on family earnings, <span class="math inline">\(I\)</span>, which in turn affects how much schooling the child receives. Family earnings may itself affect the child’s future earnings through bequests and other transfers, as well as external investments in the child’s productivity.</p>
+<p>This is a simple story to tell, and the DAG tells it well, but I want to alert your attention to some subtle points contained in this DAG. The DAG is actually telling two stories. It is telling what is happening, and it is telling what is <em>not</em> happening. For instance, notice that <span class="math inline">\(B\)</span> has no direct effect on the child’s earnings except through its effect on schooling. Is this realistic, though? Economists have long maintained that unobserved ability both determines how much schooling a child gets and directly affects the child’s future earnings, insofar as intelligence and motivation can influence careers. But in this DAG, there is no relationship between background and earnings, which is itself an <em>assumption</em>. And you are free to call foul on this assumption if you think that background factors affect both schooling and the child’s own productivity, which itself should affect wages. So what if you think that there should be an arrow from <span class="math inline">\(B\)</span> to <span class="math inline">\(Y\)</span>? Then you would draw one and rewrite all the backdoor paths between <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span>.</p>
+<p>Now that we have a DAG, what do we do? I like to list out all direct and indirect paths (i.e., backdoor paths) between <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span>. Once I have all those, I have a better sense of where my problems are. So:</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(D \rightarrow Y\)</span> (the causal effect of education on earnings)</p></li>
+<li><p><span class="math inline">\(D \leftarrow I \rightarrow Y\)</span> (backdoor path 1)</p></li>
+<li><p><span class="math inline">\(D \leftarrow PE \rightarrow I \rightarrow Y\)</span> (backdoor path 2)</p></li>
+<li><p><span class="math inline">\(D \leftarrow B \rightarrow PE \rightarrow I \rightarrow Y\)</span> (backdoor path 3)</p></li>
+</ol>
+<p>So there are four paths between <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span>: one direct causal effect (which arguably is the important one if we want to know the return on schooling) and three backdoor paths. And since none of the variables along the backdoor paths is a collider, each of the backdoors paths is <em>open</em>. The problem, though, with open backdoor paths is that they create systematic and independent correlations between <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span>. Put a different way, the presence of open backdoor paths introduces bias when comparing educated and less-educated workers.</p>
+</div>
+<div id="colliding" class="section level3" number="3.1.2">
+<h3>
+<span class="header-section-number">3.1.2</span> Colliding<a class="anchor" aria-label="anchor" href="#colliding"><i class="fas fa-link"></i></a>
+</h3>
+<p>But what is this collider? It’s an unusual term, one you may have never seen before, so let’s introduce it with another example. I’m going to show you what a collider is graphically using a simple DAG, because it’s an easy thing to see and a slightly more complicated phenomenon to explain. So let’s work with a new DAG. Pay careful attention to the directions of the arrows, which have changed.</p>
+<div class="inline-figure"><img src="causal_inference_mixtape_files/figure-html/collider-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>As before, let’s list all paths from <span class="math inline">\(D\)</span> to <span class="math inline">\(Y\)</span>:</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(D \rightarrow Y\)</span> (causal effect of <span class="math inline">\(D\)</span> on <span class="math inline">\(Y\)</span>)</p></li>
+<li><p><span class="math inline">\(D \rightarrow X \leftarrow Y\)</span> (backdoor path 1)</p></li>
+</ol>
+<p>Just like last time, there are two ways to get from <span class="math inline">\(D\)</span> to <span class="math inline">\(Y\)</span>. You can get from <span class="math inline">\(D\)</span> to <span class="math inline">\(Y\)</span> using the direct (causal) path, <span class="math inline">\(D \rightarrow Y\)</span>. Or you can use the backdoor path, <span class="math inline">\(D \rightarrow X \leftarrow Y\)</span>. But something is different about this backdoor path; do you see it? This time the <span class="math inline">\(X\)</span> has two arrows pointing to it, not away from it. When two variables cause a third variable along some path, we call that third variable a “collider.” Put differently, <span class="math inline">\(X\)</span> is a collider along this backdoor path because <span class="math inline">\(D\)</span> and the causal effects of <span class="math inline">\(Y\)</span> collide at <span class="math inline">\(X\)</span>. But so what? What makes a collider so special? Colliders are special in part because when they appear along a backdoor path, that backdoor path is <em>closed</em> simply because of their presence. Colliders, when they are left alone, always close a specific backdoor path.</p>
+</div>
+<div id="backdoor-criterion" class="section level3" number="3.1.3">
+<h3>
+<span class="header-section-number">3.1.3</span> Backdoor criterion<a class="anchor" aria-label="anchor" href="#backdoor-criterion"><i class="fas fa-link"></i></a>
+</h3>
+<p>We care about open backdoor paths because they they create systematic, noncausal correlations between the causal variable of interest and the outcome you are trying to study. In regression terms, open backdoor paths introduce omitted variable bias, and for all you know, the bias is so bad that it flips the sign entirely. Our goal, then, is to close these backdoor paths. And if we can close all of the otherwise open backdoor paths, then we can isolate the causal effect of <span class="math inline">\(D\)</span> on <span class="math inline">\(Y\)</span> using one of the research designs and identification strategies discussed in this book. So how do we close a backdoor path?</p>
+<p>There are two ways to close a backdoor path. First, if you have a confounder that has created an open backdoor path, then you can close that path by <em>conditioning</em> on the confounder. Conditioning requires holding the variable fixed using something like subclassification, matching, regression, or another method. It is equivalent to “controlling for” the variable in a regression. The second way to close a backdoor path is the appearance of a collider along that backdoor path. Since colliders always close backdoor paths, and conditioning on a collider always opens a backdoor path, choosing to ignore the colliders is part of your overall strategy to estimate the causal effect itself. By not conditioning on a collider, you will have closed that backdoor path and that takes you closer to your larger ambition to isolate some causal effect.</p>
+<p>When all backdoor paths have been closed, we say that you have come up with a research design that satisfies the <em>backdoor criterion</em>. And if you have satisfied the backdoor criterion, then you have in effect isolated some causal effect. But let’s formalize this: a set of variables <span class="math inline">\(X\)</span> satisfies the backdoor criterion in a DAG if and only if <span class="math inline">\(X\)</span> blocks every path between confounders that contain an arrow from <span class="math inline">\(D\)</span> to <span class="math inline">\(Y\)</span>. Let’s review our original DAG involving parental education, background and earnings.</p>
+<div class="inline-figure"><img src="causal_inference_mixtape_files/figure-html/backdoor_criterion-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>The minimally sufficient conditioning strategy necessary to achieve the backdoor criterion is the control for <span class="math inline">\(I\)</span>, because <span class="math inline">\(I\)</span> appeared as a noncollider along every backdoor path (see earlier). It might literally be no simpler than to run the following regression:
+<span class="math display">\[
+Y_i = \alpha + \delta D_i + \beta I_i + \varepsilon_i
+\]</span>
+By simply conditioning on <span class="math inline">\(I\)</span>, your estimated <span class="math inline">\(\widehat{\delta}\)</span> takes on a causal interpretation.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;Subsequent chapters discuss other estimators, such as matching.&lt;/p&gt;"><sup>43</sup></a></p>
+<p>But maybe in hearing this story, and studying it for yourself by reviewing the literature and the economic theory surrounding it, you are skeptical of this DAG. Maybe this DAG has really bothered you from the moment you saw me produce it because you are skeptical that <span class="math inline">\(B\)</span> has no relationship to <span class="math inline">\(Y\)</span> except through <span class="math inline">\(D\)</span> or <span class="math inline">\(PE\)</span>. That skepticism leads you to believe that there should be a <em>direct</em> connection from <span class="math inline">\(B\)</span> to <span class="math inline">\(Y\)</span>, not merely one mediated through own education.</p>
+<div class="inline-figure"><img src="causal_inference_mixtape_files/figure-html/direct_connection-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>Note that including this new backdoor path has created a problem because our conditioning strategy no longer satisfies the backdoor criterion. Even controlling for <span class="math inline">\(I\)</span>, there still exist spurious correlations between <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span> due to the <span class="math inline">\(D \leftarrow B \rightarrow Y\)</span> backdoor path. Without more information about the nature of <span class="math inline">\(B \rightarrow Y\)</span> and <span class="math inline">\(B \rightarrow D\)</span>, we cannot say much more about the partial correlation between <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span>. We just are not legally allowed to interpret <span class="math inline">\(\widehat{\delta}\)</span> from our regression as the causal effect of <span class="math inline">\(D\)</span> on <span class="math inline">\(Y\)</span>.</p>
+</div>
+<div id="more-examples-of-collider-bias" class="section level3" number="3.1.4">
+<h3>
+<span class="header-section-number">3.1.4</span> More examples of collider bias<a class="anchor" aria-label="anchor" href="#more-examples-of-collider-bias"><i class="fas fa-link"></i></a>
+</h3>
+<p>The issue of conditioning on a collider is important, so how do we know if we have that problem or not? No data set comes with a flag saying “collider” and “confounder.” Rather, the only way to know whether you have satisfied the backdoor criterion is with a DAG, and a DAG requires a model. It requires in-depth knowledge of the data-generating process for the variables in your DAG, but it also requires ruling out pathways. And the only way to rule out pathways is through logic and models. There is no way to avoid it—all empirical work requires theory to guide it. Otherwise, how do you know if you’ve conditioned on a collider or a noncollider? Put differently, you cannot identify treatment effects without making assumptions.</p>
+<p>In our earlier DAG with collider bias, we conditioned on some variable <span class="math inline">\(X\)</span> that was a collider—specifically, it was a descendent of <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span>. But that is just one example of a collider. Oftentimes, colliders enter into the system in very subtle ways. Let’s consider the following scenario: Again, let <span class="math inline">\(D\)</span> and <span class="math inline">\(Y\)</span> be child schooling and child future earnings. But this time we introduce three new variables—<span class="math inline">\(U1\)</span>, which is father’s unobserved genetic ability; <span class="math inline">\(U2\)</span>, which is mother’s unobserved genetic ability; and <span class="math inline">\(I\)</span>, which is joint family income. Assume that <span class="math inline">\(I\)</span> is observed but that <span class="math inline">\(U_i\)</span> is unobserved for both parents.</p>
+<div class="inline-figure"><img src="causal_inference_mixtape_files/figure-html/more_example_dag_1-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>Notice in this DAG that there are several backdoor paths from <span class="math inline">\(D\)</span> to <span class="math inline">\(Y\)</span>. They are as follows:</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(D \leftarrow U2 \rightarrow Y\)</span></p></li>
+<li><p><span class="math inline">\(D \leftarrow U1 \rightarrow Y\)</span></p></li>
+<li><p><span class="math inline">\(D \leftarrow U1 \rightarrow I \leftarrow U2 \rightarrow Y\)</span></p></li>
+<li><p><span class="math inline">\(D \leftarrow U2 \rightarrow I \leftarrow U1 \rightarrow Y\)</span></p></li>
+</ol>
+<p>Notice, the first two are open-backdoor paths, and as such, they cannot be closed, because <span class="math inline">\(U1\)</span> and <span class="math inline">\(U2\)</span> are not observed. But what if we controlled for <span class="math inline">\(I\)</span> anyway? Controlling for <span class="math inline">\(I\)</span> only makes matters worse, because it opens the third and fourth backdoor paths, as <span class="math inline">\(I\)</span> was a collider along both of them. It does not appear that <em>any</em> conditioning strategy could meet the backdoor criterion in this DAG. And any strategy controlling for <span class="math inline">\(I\)</span> would actually make matters worse. Collider bias is a difficult concept to understand at first, so I’ve included a couple of examples to help you sort through it.</p>
+<div class="cover-box">
+<div class="row">
+    <div class="col-xs-8 col-md-4 cover-img">
+        <a href="https://www.amazon.com/dp/0300251688"><img src="../images/cover.jpg" alt="Buy Today!"></a>
+    </div>
+    
+    <div class="col-xs-12 col-md-8 cover-text-box">
+            <h2> 
+                Causal Inference: 
+                <br><span style="font-style: italic; font-weight:bold; font-size: 20px;">The Mixtape.</span>
+            </h2> 
+            
+        <div class="cover-text">
+            <p>Buy the print version today:</p>
+            
+            <div class="chips">
+                <a href="https://www.amazon.com/dp/0300251688" class="app-chip"> 
+                    <i class="fab fa-amazon" aria-hidden="true"></i> Buy from Amazon 
+                </a>
+    
+                <a href="https://yalebooks.yale.edu/book/9780300251685/causal-inference" class="app-chip"> 
+                    <i class="fas fa-book" aria-hidden="true"></i> Buy from Yale Press 
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<div id="discrimination-and-collider-bias" class="section level3" number="3.1.5">
+<h3>
+<span class="header-section-number">3.1.5</span> Discrimination and collider bias<a class="anchor" aria-label="anchor" href="#discrimination-and-collider-bias"><i class="fas fa-link"></i></a>
+</h3>
+<p>Let’s examine a real-world example around the problem of gender discrimination in labor-markets. It is common to hear that once occupation or other characteristics of a job are conditioned on, the wage disparity between genders disappears or gets smaller. For instance, critics once claimed that Google systematically underpaid its female employees. But Google responded that its data showed that when you take “location, tenure, job role, level and performance” into consideration, women’s pay is basically identical to that of men. In other words, controlling for characteristics of the job, women received the same pay.</p>
+<p>But what if one of the ways gender discrimination creates gender disparities in earnings is through occupational sorting? If discrimination happens via the occupational match, then naïve contrasts of wages by gender controlling for occupation characteristics will likely understate the presence of discrimination in the marketplace. Let me illustrate this with a DAG based on a simple occupational sorting model with unobserved heterogeneity.</p>
+<div class="inline-figure"><img src="causal_inference_mixtape_files/figure-html/more_example_dag_2-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>Notice that there is in fact no effect of female gender on earnings; women are assumed to have productivity identical to that of men. Thus, if we could control for discrimination, we’d get a coefficient of zero as in this example because women are, initially, just as productive as men.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;Productivity could diverge, though, if women systematically sort into lower-quality occupations in which human capital accumulates over time at a lower rate.&lt;/p&gt;"><sup>44</sup></a></p>
+<p>But in this example, we aren’t interested in estimating the effect of being female on earnings; we are interested in estimating the effect of discrimination itself. Now you can see several noticeable paths between discrimination and earnings. They are as follows:</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(D \rightarrow O \rightarrow Y\)</span></p></li>
+<li><p><span class="math inline">\(D \rightarrow O \leftarrow A \rightarrow Y\)</span></p></li>
+</ol>
+<p>The first path is not a backdoor path; rather, it is a path whereby discrimination is mediated by occupation before discrimination has an effect on earnings. This would imply that women are discriminated against, which in turn affects which jobs they hold, and as a result of holding marginally worse jobs, women are paid less. The second path relates to that channel but is slightly more complicated. In this path, unobserved ability affects both which jobs people get and their earnings.</p>
+<p>So let’s say we regress <span class="math inline">\(Y\)</span> onto <span class="math inline">\(D\)</span>, our discrimination variable. This yields the total effect of discrimination as the weighted sum of both the direct effect of discrimination on earnings and the mediated effect of discrimination on earnings through occupational sorting. But say that we want to control for occupation because we want to compare men and women in similar jobs. Well, controlling for occupation in the regression closes down the mediation channel, but it then opens up the second channel. Why? Because <span class="math inline">\(D \rightarrow O \leftarrow A \rightarrow Y\)</span> has a collider <span class="math inline">\(O\)</span>. So when we control for occupation, we open up this second path. It had been closed because colliders close backdoor paths, but since we conditioned on it, we actually opened it instead. This is the reason we cannot merely control for occupation. Such a control ironically introduces new patterns of bias.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;&lt;span class="citation"&gt;Angrist and Pischke (&lt;a href="references.html#ref-Angrist2009" role="doc-biblioref"&gt;2009&lt;/a&gt;)&lt;/span&gt; talk about this problem in a different way using language called “bad controls.” Bad controls are not merely conditioning on outcomes. Rather, they are any situation in which the outcome had been a collider linking the treatment to the outcome of interest, like &lt;span class="math inline"&gt;\(D\)&lt;/span&gt; &lt;span class="math inline"&gt;\(\rightarrow O \leftarrow A \rightarrow Y\)&lt;/span&gt;.&lt;/p&gt;'><sup>45</sup></a></p>
+<p>What is needed is to control for occupation and ability, but since ability is unobserved, we cannot do that, and therefore we do not possess an identification strategy that satisfies the backdoor criterion. Let’s now look at code to illustrate this DAG.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;Erin Hengel is a professor of economics at the University of Liverpool. She and I were talking about this on Twitter one day, and she and I wrote down the code describing this problem. Her code was better, so I asked if I could reproduce it here, and she said yes. Erin’s work partly focuses on gender discrimination. You can see some of that work on her website at &lt;a href="http://www.erinhengel.com" class="uri"&gt;http://www.erinhengel.com&lt;/a&gt;.&lt;/p&gt;'><sup>46</sup></a></p>
+<p><em><a href="https://github.com/scunning1975/mixtape/blob/master/Do/collider_discrimination.do"><code>collider_discrimination.do</code></a></em></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb17-1"><a href="ch2.html#cb17-1" aria-hidden="true"></a><span class="kw">clear</span> <span class="ot">all</span> </span>
+<span id="cb17-2"><a href="ch2.html#cb17-2" aria-hidden="true"></a><span class="kw">set</span> <span class="kw">obs</span> 10000 </span>
+<span id="cb17-3"><a href="ch2.html#cb17-3" aria-hidden="true"></a></span>
+<span id="cb17-4"><a href="ch2.html#cb17-4" aria-hidden="true"></a>* Half <span class="kw">of</span> the population is female. </span>
+<span id="cb17-5"><a href="ch2.html#cb17-5" aria-hidden="true"></a><span class="kw">generate</span> female = runiform()&gt;=0.5 </span>
+<span id="cb17-6"><a href="ch2.html#cb17-6" aria-hidden="true"></a></span>
+<span id="cb17-7"><a href="ch2.html#cb17-7" aria-hidden="true"></a>* Innate ability is <span class="kw">independent</span> <span class="kw">of</span> gender. </span>
+<span id="cb17-8"><a href="ch2.html#cb17-8" aria-hidden="true"></a><span class="kw">generate</span> ability = rnormal() </span>
+<span id="cb17-9"><a href="ch2.html#cb17-9" aria-hidden="true"></a></span>
+<span id="cb17-10"><a href="ch2.html#cb17-10" aria-hidden="true"></a>* All women experience discrimination. </span>
+<span id="cb17-11"><a href="ch2.html#cb17-11" aria-hidden="true"></a><span class="kw">generate</span> discrimination = female </span>
+<span id="cb17-12"><a href="ch2.html#cb17-12" aria-hidden="true"></a></span>
+<span id="cb17-13"><a href="ch2.html#cb17-13" aria-hidden="true"></a>* Data generating processes</span>
+<span id="cb17-14"><a href="ch2.html#cb17-14" aria-hidden="true"></a><span class="kw">generate</span> occupation = (1) + (2)*ability + (0)*female + (-2)*discrimination + rnormal() </span>
+<span id="cb17-15"><a href="ch2.html#cb17-15" aria-hidden="true"></a><span class="kw">generate</span> wage = (1) + (-1)*discrimination + (1)*occupation + 2*ability + rnormal() </span>
+<span id="cb17-16"><a href="ch2.html#cb17-16" aria-hidden="true"></a></span>
+<span id="cb17-17"><a href="ch2.html#cb17-17" aria-hidden="true"></a>* Regressions</span>
+<span id="cb17-18"><a href="ch2.html#cb17-18" aria-hidden="true"></a><span class="kw">regress</span> wage female </span>
+<span id="cb17-19"><a href="ch2.html#cb17-19" aria-hidden="true"></a><span class="kw">regress</span> wage female occupation </span>
+<span id="cb17-20"><a href="ch2.html#cb17-20" aria-hidden="true"></a><span class="kw">regress</span> wage female occupation ability</span></code></pre></div>
+<p><em><a href="https://github.com/scunning1975/mixtape/blob/master/R/collider_discrimination.R"><code>collider_discrimination.R</code></a></em></p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">stargazer</span><span class="op">)</span>
+
+<span class="va">tb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>
+  female <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="fl">10000</span><span class="op">)</span><span class="op">&gt;=</span><span class="fl">0.5</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>,
+  ability <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">10000</span><span class="op">)</span>,
+  discrimination <span class="op">=</span> <span class="va">female</span>,
+  occupation <span class="op">=</span> <span class="fl">1</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">ability</span> <span class="op">+</span> <span class="fl">0</span><span class="op">*</span><span class="va">female</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">discrimination</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">10000</span><span class="op">)</span>,
+  wage <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="fl">1</span><span class="op">*</span><span class="va">discrimination</span> <span class="op">+</span> <span class="fl">1</span><span class="op">*</span><span class="va">occupation</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">ability</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">10000</span><span class="op">)</span> 
+<span class="op">)</span>
+
+<span class="va">lm_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">wage</span> <span class="op">~</span> <span class="va">female</span>, <span class="va">tb</span><span class="op">)</span>
+<span class="va">lm_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">wage</span> <span class="op">~</span> <span class="va">female</span> <span class="op">+</span> <span class="va">occupation</span>, <span class="va">tb</span><span class="op">)</span>
+<span class="va">lm_3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">wage</span> <span class="op">~</span> <span class="va">female</span> <span class="op">+</span> <span class="va">occupation</span> <span class="op">+</span> <span class="va">ability</span>, <span class="va">tb</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/pkg/stargazer/man/stargazer.html">stargazer</a></span><span class="op">(</span><span class="va">lm_1</span>,<span class="va">lm_2</span>,<span class="va">lm_3</span>, type <span class="op">=</span> <span class="st">"text"</span>, 
+          column.labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Biased Unconditional"</span>, 
+                            <span class="st">"Biased"</span>,
+                            <span class="st">"Unbiased Conditional"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>This simulation hard-codes the data-generating process represented by the previous DAG. Notice that ability is a random draw from the standard normal distribution. Therefore it is independent of female preferences. And then we have our last two generated variables: the heterogeneous occupations and their corresponding wages. Occupations are increasing in unobserved ability but decreasing in discrimination. Wages are decreasing in discrimination but increasing in higher-quality jobs and higher ability. Thus, we know that discrimination exists in this simulation because we are hard-coding it that way with the negative coefficients both the occupation and wage processes.</p>
+<p>The regression coefficients from the three regressions at the end of the code are presented in Table <a href="ch2.html#tab:screening">3.1</a>. First note that when we simply regress wages onto gender, we get a large negative effect, which is the combination of the direct effect of discrimination on earnings and the indirect effect via occupation. But if we run the regression that Google and others recommend wherein we control for occupation, the sign on gender changes. It becomes positive! We know this is wrong because we hard-coded the effect of gender to be <span class="math inline">\(-1\)</span>! The problem is that occupation is a collider. It is caused by ability and discrimination. If we control for occupation, we open up a backdoor path between discrimination and earnings that is spurious and so strong that it perverts the entire relationship. So only when we control for occupation and ability can we isolate the direct causal effect of gender on wages.</p>
+<div class="inline-table"><table class="table table-sm">
+<caption>
+<span id="tab:screening">Table 3.1: </span> Regressions illustrating confounding bias with simulated gender disparity</caption>
+<thead><tr class="header">
+<th align="left"><strong>Covariates:</strong></th>
+<th align="center">Biased Unconditional</th>
+<th align="center">Biased</th>
+<th align="center">Unbiased conditional</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Female</td>
+<td align="center">
+<span class="math inline">\(-3.074\)</span><span class="math inline">\(^{***}\)</span>
+</td>
+<td align="center">0.601$^{***}</td>
+<td align="center">$ <span class="math inline">\(-0.994\)</span><span class="math inline">\(^{**}\)</span><span class="math inline">\(^{*}\)</span>
+</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="center">(0.000)</td>
+<td align="center">(0.000)</td>
+<td align="center">(0.000)</td>
+</tr>
+<tr class="odd">
+<td align="left">Occupation</td>
+<td align="center"></td>
+<td align="center">1.793<span class="math inline">\(^{***}\)</span>
+</td>
+<td align="center">0.991<span class="math inline">\(^{**}\)</span><span class="math inline">\(^{*}\)</span>
+</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="center"></td>
+<td align="center">(0.000)</td>
+<td align="center">(0.000)</td>
+</tr>
+<tr class="odd">
+<td align="left">Ability</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">2.017<span class="math inline">\(^{**}\)</span><span class="math inline">\(^{*}\)</span>
+</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">(0.000)</td>
+</tr>
+<tr class="odd">
+<td align="left">N</td>
+<td align="center">10,000</td>
+<td align="center">10,000</td>
+<td align="center">10,000</td>
+</tr>
+<tr class="even">
+<td align="left">Mean of dependent variable</td>
+<td align="center">0.45</td>
+<td align="center">0.45</td>
+<td align="center">0.45</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div id="sample-selection-and-collider-bias" class="section level3" number="3.1.6">
+<h3>
+<span class="header-section-number">3.1.6</span> Sample selection and collider bias<a class="anchor" aria-label="anchor" href="#sample-selection-and-collider-bias"><i class="fas fa-link"></i></a>
+</h3>
+<p>Bad controls are not the only kind of collider bias to be afraid of, though. Collider bias can also be baked directly into the sample if the sample itself was a collider. That’s no doubt a strange concept to imagine, so I have a funny illustration to clarify what I mean.</p>
+<p>A 2009 CNN blog post reported that Megan Fox, who starred in the movie <em>Transformers</em>, was voted the worst and most attractive actress of 2009 in some survey about movie stars <span class="citation">(Piazza <a href="references.html#ref-MeganFox2009" role="doc-biblioref">2009</a>)</span>. The implication could be taken to be that talent and beauty are negatively correlated. But are they? And why might they be? What if they are independent of each other in reality but negatively correlated in a sample of movie stars because of collider bias? Is that even possible?<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;I &lt;em&gt;wish&lt;/em&gt; I had thought of this example, but alas the sociologist Gabriel Rossman gets full credit.&lt;/p&gt;"><sup>47</sup></a></p>
+<p>To illustrate, we will generate some data based on the follow- ing DAG:</p>
+<div class="inline-figure"><img src="causal_inference_mixtape_files/figure-html/moviestar-dag-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>Let’s illustrate this with a simple program.</p>
+<p><em><a href="https://github.com/scunning1975/mixtape/blob/master/Do/moviestar.do"><code>moviestar.do</code></a></em></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode stata"><code class="sourceCode stata"><span id="cb19-1"><a href="ch2.html#cb19-1" aria-hidden="true"></a><span class="kw">clear</span> <span class="ot">all</span> </span>
+<span id="cb19-2"><a href="ch2.html#cb19-2" aria-hidden="true"></a><span class="kw">set</span> <span class="dv">seed</span> 3444 </span>
+<span id="cb19-3"><a href="ch2.html#cb19-3" aria-hidden="true"></a></span>
+<span id="cb19-4"><a href="ch2.html#cb19-4" aria-hidden="true"></a>* 2500 <span class="kw">independent</span> draws from standard <span class="fu">normal</span> distribution </span>
+<span id="cb19-5"><a href="ch2.html#cb19-5" aria-hidden="true"></a><span class="kw">set</span> <span class="kw">obs</span> 2500 </span>
+<span id="cb19-6"><a href="ch2.html#cb19-6" aria-hidden="true"></a><span class="kw">generate</span> beauty=rnormal() </span>
+<span id="cb19-7"><a href="ch2.html#cb19-7" aria-hidden="true"></a><span class="kw">generate</span> talent=rnormal() </span>
+<span id="cb19-8"><a href="ch2.html#cb19-8" aria-hidden="true"></a></span>
+<span id="cb19-9"><a href="ch2.html#cb19-9" aria-hidden="true"></a>* Creating the collider <span class="kw">variable</span> (<span class="kw">star</span>) </span>
+<span id="cb19-10"><a href="ch2.html#cb19-10" aria-hidden="true"></a><span class="kw">gen</span> <span class="kw">score</span>=(beauty+talent) </span>
+<span id="cb19-11"><a href="ch2.html#cb19-11" aria-hidden="true"></a><span class="kw">egen</span> c85=<span class="kw">pctile</span>(<span class="kw">score</span>), <span class="kw">p</span>(85)   </span>
+<span id="cb19-12"><a href="ch2.html#cb19-12" aria-hidden="true"></a><span class="kw">gen</span> <span class="kw">star</span>=(<span class="kw">score</span>&gt;=c85) </span>
+<span id="cb19-13"><a href="ch2.html#cb19-13" aria-hidden="true"></a><span class="kw">label</span> <span class="kw">variable</span> <span class="kw">star</span> <span class="st">"Movie star"</span> </span>
+<span id="cb19-14"><a href="ch2.html#cb19-14" aria-hidden="true"></a></span>
+<span id="cb19-15"><a href="ch2.html#cb19-15" aria-hidden="true"></a>* Conditioning <span class="kw">on</span> the top 15\% </span>
+<span id="cb19-16"><a href="ch2.html#cb19-16" aria-hidden="true"></a><span class="kw">twoway</span> (<span class="kw">scatter</span> beauty talent, mcolor(<span class="bn">black</span>) msize(small) <span class="bn">msymbol</span>(smx)), <span class="bn">ytitle</span>(Beauty) <span class="bn">xtitle</span>(Talent) <span class="bn">subtitle</span>(Aspiring actors and actresses) <span class="kw">by</span>(<span class="kw">star</span>, <span class="kw">total</span>)</span></code></pre></div>
+<p><em><a href="https://github.com/scunning1975/mixtape/blob/master/R/moviestar.R"><code>moviestar.R</code></a></em></p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">3444</span><span class="op">)</span>
+
+<span class="va">star_is_born</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span>
+  beauty <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">2500</span><span class="op">)</span>,
+  talent <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">2500</span><span class="op">)</span>,
+  score <span class="op">=</span> <span class="va">beauty</span> <span class="op">+</span> <span class="va">talent</span>,
+  c85 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html">quantile</a></span><span class="op">(</span><span class="va">score</span>, <span class="fl">.85</span><span class="op">)</span>,
+  star <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">score</span><span class="op">&gt;=</span><span class="va">c85</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>
+<span class="op">)</span>
+
+<span class="va">star_is_born</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">beauty</span> <span class="op">~</span> <span class="va">talent</span>, <span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">talent</span>, y <span class="op">=</span> <span class="va">beauty</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.5</span>, shape<span class="op">=</span><span class="fl">23</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span>
+
+<span class="va">star_is_born</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">star</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">beauty</span> <span class="op">~</span> <span class="va">talent</span>, <span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">talent</span>, y <span class="op">=</span> <span class="va">beauty</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.5</span>, shape<span class="op">=</span><span class="fl">23</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span>
+
+<span class="va">star_is_born</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">star</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">beauty</span> <span class="op">~</span> <span class="va">talent</span>, <span class="va">.</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">talent</span>, y <span class="op">=</span> <span class="va">beauty</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.5</span>, shape<span class="op">=</span><span class="fl">23</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span></code></pre></div>
+<p>Figure <a href="ch2.html#fig:moviestar">3.1</a> shows the output from this simulation. The bottom left panel shows the scatter plot between talent and beauty. Notice that the two variables are independent, random draws from the standard normal distribution, creating an oblong data cloud. But because “movie star” is in the top 85th percentile of the distribution of a linear combination of talent and beauty, the sample consists of people whose combined score is in the top right portion of the joint distribution. This frontier has a negative slope and is in the upper right portion of the data cloud, creating a negative correlation between the observations in the movie-star sample. Likewise, the collider bias has created a negative correlation between talent and beauty in the non-movie-star sample as well. Yet we know that there is in fact <em>no</em> relationship between the two variables. This kind of sample selection creates spurious correlations. A random sample of the full population would be sufficient to show that there is no relationship between the two variables, but splitting the sample into movie stars only, we introduce spurious correlations between the two variables of interest.</p>
+<div class="figure">
+<span id="fig:moviestar"></span>
+<img src="graphics/beauty_collider.jpg" alt="Top left figure: Non-star sample scatter plot of beauty (vertical axis) and talent (horizontal axis). Top right right figure: Star sample scatter plot of beauty and talent. Bottom left figure: Entire (stars and non-stars combined) sample scatter plot of beauty and talent." width="100%"><p class="caption">
+Figure 3.1: Top left figure: Non-star sample scatter plot of beauty (vertical axis) and talent (horizontal axis). Top right right figure: Star sample scatter plot of beauty and talent. Bottom left figure: Entire (stars and non-stars combined) sample scatter plot of beauty and talent.
+</p>
+</div>
+</div>
+<div id="collider-bias-and-police-use-of-force" class="section level3" number="3.1.7">
+<h3>
+<span class="header-section-number">3.1.7</span> Collider bias and police use of force<a class="anchor" aria-label="anchor" href="#collider-bias-and-police-use-of-force"><i class="fas fa-link"></i></a>
+</h3>
+<p>We’ve known about the problems of nonrandom sample selection for decades <span class="citation">(Heckman <a href="references.html#ref-Heckman1979" role="doc-biblioref">1979</a>)</span>. But DAGs may still be useful for helping spot what might be otherwise subtle cases of conditioning on colliders <span class="citation">(Elwert and Winship <a href="references.html#ref-Elwert2014" role="doc-biblioref">2014</a>)</span>. And given the ubiquitous rise in researcher access to large administrative databases, it’s also likely that some sort of theoretically guided reasoning will be needed to help us determine whether the databases we have are themselves rife with collider bias. A contemporary debate could help illustrate what I mean.</p>
+<p>Public concern about police officers systematically discriminating against minorities has reached a breaking point and led to the emergence of the Black Lives Matter movement. “Vigilante justice” episodes such as George Zimmerman’s killing of teenage Trayvon Martin, as well as police killings of Michael Brown, Eric Garner, and countless others, served as catalysts to bring awareness to the perception that African Americans face enhanced risks for shootings. <span class="citation">Fryer (<a href="references.html#ref-Fryer2019" role="doc-biblioref">2019</a>)</span> attempted to ascertain the degree to which there was racial bias in the use of force by police. This is perhaps one of the most important questions in policing as of this book’s publication.</p>
+<p>There are several critical empirical challenges in studying racial biases in police use of force, though. The main problem is that all data on police-citizen interactions are conditional on an interaction having already occurred. The data themselves were generated as a function of earlier police-citizen interactions. In this sense, we can say that the data itself are endogenous. <span class="citation">Fryer (<a href="references.html#ref-Fryer2019" role="doc-biblioref">2019</a>)</span> collected several databases that he hoped would help us better understand these patterns. Two were public-use data sets—the New York City Stop and Frisk database and the Police-Public Contact Survey. The former was from the New York Police Department and contained data on police stops and questioning of pedestrians; if the police wanted to, they could frisk them for weapons or contraband. The latter was a survey of civilians describing interactions with the police, including the use of force.</p>
+<p>But two of the data sets were administrative. The first was a compilation of event summaries from more than a dozen large cities and large counties across the United States from all incidents in which an officer discharged a weapon at a civilian. The second was a random sample of police-civilian interactions from the Houston Police Department. The accumulation of these databases was by all evidence a gigantic empirical task. For instance, <span class="citation">Fryer (<a href="references.html#ref-Fryer2019" role="doc-biblioref">2019</a>)</span> notes that the Houston data was based on arrest narratives that ranged from two to one hundred pages in length. From these arrest narratives, a team of researchers collected almost three hundred variables relevant to the police use of force on the incident. This is the world in which we now live, though. Administrative databases can be accessed more easily than ever, and they are helping break open the black box of many opaque social processes.</p>
+<p>A few facts are important to note. First, using the stop-and-frisk data, Fryer finds that blacks and Hispanics were more than 50 percent more likely to have an interaction with the police in the raw data. The racial difference survives conditioning on 125 baseline characteristics, encounter characteristics, civilian behavior, precinct, and year fixed effects. In his full model, blacks are 21 percent more likely than whites to be involved in an interaction with police in which a weapon is drawn (which is statistically significant). These racial differences show up in the Police-Public Contact Survey as well, only here the racial differences are considerably larger. So the first thing to note is that the actual stop itself appears to be larger for minorities, which I will come back to momentarily.</p>
+<p>Things become surprising when Fryer moves to his rich administrative data sources. He finds that conditional on a police interaction, there are no racial differences in officer-involved shootings. In fact, controlling for suspect demographics, officer demographics, encounter characteristics, suspect weapon, and year fixed effects, blacks are 27 percent less likely to be shot at by police than are nonblack non-Hispanics. The coefficient is not significant, and it shows up across alternative specifications and cuts of the data. Fryer is simply unable with these data to find evidence for racial discrimination in officer-involved shootings.</p>
+<p>One of the main strengths of Fryer’s study are the shoe leather he used to accumulate the needed data sources. Without data, one cannot study the question of whether police shoot minorities more than they shoot whites. And the extensive coding of information from the narratives is also a strength, for it afforded Fryer the ability to control for observable confounders. But the study is not without issues that could cause a skeptic to take issue. Perhaps the police departments most willing to cooperate with a study of this kind are the ones with the least racial bias, for instance. In other words, maybe these are not the departments with the racial bias to begin with.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content="&lt;p&gt;I am not sympathetic to this claim. The administrative data comes from large Texas cities, a large county in California, the state of Florida, and several other cities and counties racial bias has been reported.&lt;/p&gt;"><sup>48</sup></a> Or perhaps a more sinister explanation exists, such as records being unreliable because administrators scrub out the data on racially motivated shootings before handing them over to Fryer altogether.</p>
+<p>But I would like to discuss a more innocent possibility, one that requires no conspiracy theories and yet is so basic a problem that it is in fact more worrisome. Perhaps the administrative datasource is endogenous because of conditioning on a collider. If so, then the administrative data itself may have the racial bias baked into it from the start. Let me explain with a DAG.</p>
+<div class="inline-figure"><img src="causal_inference_mixtape_files/figure-html/racial_bias_dag-1.png" width="50%" style="display: block; margin: auto;"></div>
+<p>Fryer showed that minorities were more likely to be stopped using both the stop-and-frisk data and the Police-Public Contact Survey. So we know already that the <span class="math inline">\(D \rightarrow M\)</span> pathway exists. In fact, it was a very robust correlation across multiple studies. Minorities are more likely to have an encounter with the police. Fryer’s study introduces extensive controls about the nature of the interaction, time of day, and hundreds of factors that I’ve captured with <span class="math inline">\(X\)</span>. Controlling for <span class="math inline">\(X\)</span> allows Fryer to shut this backdoor path.</p>
+<p>But notice <span class="math inline">\(M\)</span>—the stop itself. All the administrative data is conditional on a stop. <span class="citation">Fryer (<a href="references.html#ref-Fryer2019" role="doc-biblioref">2019</a>)</span> acknowledges this from the outset: “Unless otherwise noted, all results are conditional on an interaction. Understanding potential selection into police data sets due to bias in who police interacts with is a difficult endeavor” (3). Yet what this DAG shows is that if police stop people who they believe are suspicious <em>and</em> use force against people they find suspicious, then conditioning on the stop is <em>equivalent</em> to conditioning on a collider. It opens up the <span class="math inline">\(D \rightarrow M \leftarrow U \rightarrow Y\)</span> mediated path, which introduces spurious patterns into the data that, depending on the signs of these causal associations, may distort any true relationship between police and racial differences in shootings.</p>
+<p>Dean Knox, Will Lowe, and Jonathan Mummolo are a talented team of political scientists who study policing, among other things. They produced a study that revisited Fryer’s question and in my opinion both yielded new clues as to the role of racial bias in police use of force and the challenges of using administrative data sources to do so. I consider <span class="citation">Knox, Lowe, and Mummolo (<a href="references.html#ref-Knox2020" role="doc-biblioref">2020</a>)</span> one of the more methodologically helpful studies for understanding this problem and attempting to solve it. The study should be widely read by <em>every</em> applied researcher whose day job involves working with proprietary administrative data sets, because this DAG may in fact be a more general problem. After all, administrative data sources are already select samples, and depending on the study question, they may constitute a collider problem of the sort described in this DAG. The authors develop a bias correction procedure that places bounds on the severity of the selection problems. When using this bounding approach, they find that even lower-bound estimates of the incidence of police violence against civilians is as much as five times higher than a traditional approach that ignores the sample selection problem altogether.</p>
+<p>It is incorrect to say that sample selection problems were unknown without DAGs. We’ve known about them and have had some limited solutions to them since at least <span class="citation">Heckman (<a href="references.html#ref-Heckman1979" role="doc-biblioref">1979</a>)</span>. What I have tried to show here is more general. An atheoretical approach to empiricism will simply fail. Not even “big data” will solve it. Causal inference is not solved with more data, as I argue in the next chapter. Causal inference requires knowledge about the behavioral processes that structure equilibria in the world. Without them, one cannot hope to devise a credible identification strategy. Not even data is a substitute for deep institutional knowledge about the phenomenon you’re studying. That, strangely enough, even includes the behavioral processes that generated the <em>samples</em> you’re using in the first place. You simply must take seriously the behavioral theory that is behind the phenomenon you’re studying if you hope to obtain believable estimates of causal effects. And DAGs are a helpful tool for wrapping your head around and expressing those problems.</p>
+</div>
+<div id="conclusion-1" class="section level3" number="3.1.8">
+<h3>
+<span class="header-section-number">3.1.8</span> Conclusion<a class="anchor" aria-label="anchor" href="#conclusion-1"><i class="fas fa-link"></i></a>
+</h3>
+<p>In conclusion, DAGs are powerful tools.<a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;There is far more to DAGs than I have covered here. If you are interested in learning more about them, then I encourage you to carefully read &lt;span class="citation"&gt;Pearl (&lt;a href="references.html#ref-Pearl2009" role="doc-biblioref"&gt;2009&lt;/a&gt;)&lt;/span&gt;, which is his magnum opus and a major contribution to the theory of causation.&lt;/p&gt;'><sup>49</sup></a> They are helpful at both clarifying the relationships between variables and guiding you in a research design that has a shot at identifying a causal effect. The two concepts we discussed in this chapter—the backdoor criterion and collider bias—are but two things I wanted to bring to your attention. And since DAGs are themselves based on counterfactual forms of reasoning, they fit well with the potential outcomes model that I discuss in the next chapter.</p>
+<div class="cover-box">
+<div class="row">
+    <div class="col-xs-8 col-md-4 cover-img">
+        <a href="https://www.amazon.com/dp/0300251688"><img src="../images/cover.jpg" alt="Buy Today!"></a>
+    </div>
+    
+    <div class="col-xs-12 col-md-8 cover-text-box">
+            <h2> 
+                Causal Inference: 
+                <br><span style="font-style: italic; font-weight:bold; font-size: 20px;">The Mixtape.</span>
+            </h2> 
+            
+        <div class="cover-text">
+            <p>Buy the print version today:</p>
+            
+            <div class="chips">
+                <a href="https://www.amazon.com/dp/0300251688" class="app-chip"> 
+                    <i class="fab fa-amazon" aria-hidden="true"></i> Buy from Amazon 
+                </a>
+    
+                <a href="https://yalebooks.yale.edu/book/9780300251685/causal-inference" class="app-chip"> 
+                    <i class="fas fa-book" aria-hidden="true"></i> Buy from Yale Press 
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+  <div class="chapter-nav">
+<div class="prev"><a href="ch1.html"><span class="header-section-number">2</span> Probability and Regression Review</a></div>
+<div class="next"><a href="ch3.html"><span class="header-section-number">4</span> Potential Outcomes Causal Model</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#ch2"><span class="header-section-number">3</span> Directed Acyclic Graphs</a></li>
+<li>
+<a class="nav-link" href="#introduction-to-dag-notation"><span class="header-section-number">3.1</span> Introduction to DAG Notation</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#a-simple-dag"><span class="header-section-number">3.1.1</span> A simple DAG</a></li>
+<li><a class="nav-link" href="#colliding"><span class="header-section-number">3.1.2</span> Colliding</a></li>
+<li><a class="nav-link" href="#backdoor-criterion"><span class="header-section-number">3.1.3</span> Backdoor criterion</a></li>
+<li><a class="nav-link" href="#more-examples-of-collider-bias"><span class="header-section-number">3.1.4</span> More examples of collider bias</a></li>
+<li><a class="nav-link" href="#discrimination-and-collider-bias"><span class="header-section-number">3.1.5</span> Discrimination and collider bias</a></li>
+<li><a class="nav-link" href="#sample-selection-and-collider-bias"><span class="header-section-number">3.1.6</span> Sample selection and collider bias</a></li>
+<li><a class="nav-link" href="#collider-bias-and-police-use-of-force"><span class="header-section-number">3.1.7</span> Collider bias and police use of force</a></li>
+<li><a class="nav-link" href="#conclusion-1"><span class="header-section-number">3.1.8</span> Conclusion</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/scunning1975/mixtape/blob/master/02-Directed_Acyclical_Graphs.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/scunning1975/mixtape/edit/master/02-Directed_Acyclical_Graphs.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong><span style="font-weight:bold">Causal Inference</span></strong>: <i>The Mixtape</i>" was written by Scott Cunningham. It was last built on 2020-12-19.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+</html>

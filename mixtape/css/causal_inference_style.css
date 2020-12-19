@@ -1,0 +1,139 @@
+
+
+:root{
+ --color-black: #000000;
+ --color-light-grey: #f0f0f0;
+ --color-dark-grey:  #9e9e9e;
+ --color-highlight: #ea6721;
+ --color-dark-highlight:#705380;
+ --color-slides: #ececec;
+ --measurement: 2px;
+}
+
+
+/* Hides Edit on Github */
+.book-extra {
+	display: none;
+}
+
+
+
+
+
+/* Font */ 
+body {
+   font-family: 'Lato';
+}
+
+h1, h2, h3 {
+	font-family: 'Roboto';
+}
+.sidebar h1 {
+	font-size: 1.5rem;
+}
+
+/* Table of Contents */
+.book-toc, .nav-link {
+	font-family: 'Roboto';
+}
+
+
+/* Code Blocks */
+.sourceCode {
+   max-height: 300px;
+   scroll-behavior: auto;
+}
+
+/* Table Footnotes */
+.footnote {
+   text-align: left;
+   margin-top: -1rem;
+   margin-bottom: 1rem;
+   font-size: 0.9rem;
+   color: #777;
+}
+
+
+
+/* Table of Contents */
+h1 small {
+	display: block;
+}
+
+
+/* Cover Box (Buy Book) */
+
+.cover-box {
+	padding: 8px 16px;
+	margin: 16px 0 32px 0;
+	border: 2px solid var(--color-dark-grey);
+	box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+}
+
+.cover-img img {
+    width: 50%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+}
+
+.cover-text h2 {
+	margin-top: 16px;
+}
+
+.cover-text .chips {
+	padding-bottom: 16px;
+} 
+
+@media (min-width: 768px) {
+	.cover-img img {
+		width: 100%;
+	}
+	.cover-text-box {
+		position: relative;
+		padding-left: 16px;
+	}
+	.cover-text {
+		position: absolute;
+		bottom: 0;
+	}
+}
+
+
+
+/* App Chip for pdf and other links */
+.chips {
+	display: block;
+}
+.chips p{
+	display: block;
+	float: left;
+	margin-right: 8px;
+}
+
+.app-chip {
+ display: inline-block;
+ font-size: 14px;
+ line-height: 20px;
+ letter-spacing: 0;
+ text-decoration: none;
+ padding: 0.5rem;
+ border: 1px solid #eee;
+ border-radius: 0.2rem;
+
+ transition: all 0.15s linear;
+ transition-property: all;
+}
+
+
+/* Font Awesome icons */
+.app-chip>.fa,
+.app-chip>.fab,
+.app-chip>.far,
+.app-chip>.fas {
+ padding-right: 4px;
+}
+.app-chip>.fa-caret-down, .app-chip>.fa-caret-up {
+ padding-left: 8px;
+}
