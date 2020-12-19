@@ -18,6 +18,9 @@ body {
     color: var(--color-black);
     font-size: 14px;
 }
+.container {
+    min-height:100%;
+}
 
 a {
     color: var(--color-black);
@@ -31,7 +34,7 @@ p {
 }
 
 h1, h2, h3, h4, h5 {
-    font-family: Merriweather, Times, serif;
+    /* font-family: Merriweather, Times, serif; */
 }
 
 
@@ -108,6 +111,9 @@ h1, h2, h3, h4, h5 {
 .nav-links li.in {
     color: var(--color-dark-grey);
 }
+.nav-links li.in a {
+    color: var(--color-dark-grey);
+}
 
 /* Footer */
 
@@ -118,6 +124,14 @@ footer {
     min-height: 16px;
 }
 
+
+/* Lists */
+ol, ul {
+    padding-left: 24px;
+}
+ol li, ul li {
+    padding-left: 8px;
+}
 
 
 .col-xs-12 {
