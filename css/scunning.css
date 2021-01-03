@@ -190,3 +190,84 @@ hr {
 
 
 
+
+
+
+
+
+/* Cover Box (Buy Book) */
+
+.cover-box {
+    border-top: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+    padding: 16px 0;
+    margin-bottom: 16px;
+}
+
+.cover-img img {
+    width: 50%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+}
+
+.cover-text-box h2 {
+    margin-top: 0;
+}
+
+.cover-text {
+    line-height: 22px;
+}
+
+.cover-text .chips {
+	padding-bottom: 16px;
+} 
+
+@media (min-width: 768px) {
+	.cover-img img {
+		width: 100%;
+	}
+	.cover-text-box {
+		position: relative;
+		padding-left: 16px;
+	}
+}
+
+
+
+/* App Chip for pdf and other links */
+.chips {
+	display: block;
+}
+.chips p{
+	display: block;
+	float: left;
+	margin-right: 8px;
+}
+
+.app-chip {
+ display: inline-block;
+ font-size: 14px;
+ line-height: 20px;
+ letter-spacing: 0;
+ text-decoration: none;
+ padding: 0.5rem;
+ border: 1px solid #eee;
+ border-radius: 0.2rem;
+
+ transition: all 0.15s linear;
+ transition-property: all;
+}
+
+
+/* Font Awesome icons */
+.app-chip>.fa,
+.app-chip>.fab,
+.app-chip>.far,
+.app-chip>.fas {
+ padding-right: 4px;
+}
+.app-chip>.fa-caret-down, .app-chip>.fa-caret-up {
+ padding-left: 8px;
+}
