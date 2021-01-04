@@ -9,7 +9,6 @@
     --measurement: 2px;
 }
 
-
 /* Basic Font Setup */
 body {
     padding: 0;
@@ -34,7 +33,30 @@ p {
 }
 
 h1, h2, h3, h4, h5 {
-    /* font-family: Merriweather, Times, serif; */
+    font-family: Merriweather, Times, serif;
+}
+
+.col-xs-12 {
+    width: 100%;
+}
+
+/* Change Boostrap Container Width */
+@media (min-width: 544px) {
+    .container {
+        width: 500px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        width: 700px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        width: 770px;
+    }
 }
 
 
@@ -56,6 +78,7 @@ h1, h2, h3, h4, h5 {
 }
 
 .title h1 {
+    font-family: Helvetica, Arial, sans-serif;
     text-align: center;
     font-size: 24px;
     margin: 8px 0;
@@ -134,25 +157,117 @@ ol li, ul li {
 }
 
 
-.col-xs-12 {
-    width: 100%;
+
+
+/* Research Items */
+.research-item {
+    line-height: 22px;
+    margin-bottom: 16px;
+}
+.research-media {
+    margin-bottom: 16px;
 }
 
-/* Change Boostrap Container Width */
-@media (min-width: 544px) {
-    .container {
-        width: 500px;
-    }
+.research-title {
+    font-weight: bold;
+    /* font-family: Merriweather, Times, serif; */
+    font-size: 16px;
 }
+
+.research-coauthors {
+    margin: 4px 0 8px 0;
+}
+
+hr {
+    display: block;
+    margin: 1em 0;
+    border: 0;
+    border-top-color: currentcolor;
+    border-top-style: none;
+    border-top-width: 0px;
+    border-top: 1px solid #bbb;
+}
+
+
+
+
+
+
+
+
+/* Cover Box (Buy Book) */
+
+.cover-box {
+    border-top: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+    padding: 16px 0;
+    margin-bottom: 16px;
+}
+
+.cover-img img {
+    width: 50%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+}
+
+.cover-text-box h2 {
+    margin-top: 0;
+}
+
+.cover-text {
+    line-height: 22px;
+}
+
+.cover-text .chips {
+	padding-bottom: 16px;
+} 
 
 @media (min-width: 768px) {
-    .container {
-        width: 700px;
-    }
+	.cover-img img {
+		width: 100%;
+	}
+	.cover-text-box {
+		position: relative;
+		padding-left: 16px;
+	}
 }
 
-@media (min-width: 992px) {
-    .container {
-        width: 770px;
-    }
+
+
+/* App Chip for pdf and other links */
+.chips {
+	display: block;
+}
+.chips p{
+	display: block;
+	float: left;
+	margin-right: 8px;
+}
+
+.app-chip {
+ display: inline-block;
+ font-size: 14px;
+ line-height: 20px;
+ letter-spacing: 0;
+ text-decoration: none;
+ padding: 0.5rem;
+ border: 1px solid #eee;
+ border-radius: 0.2rem;
+
+ transition: all 0.15s linear;
+ transition-property: all;
+}
+
+
+/* Font Awesome icons */
+.app-chip>.fa,
+.app-chip>.fab,
+.app-chip>.far,
+.app-chip>.fas {
+ padding-right: 4px;
+}
+.app-chip>.fa-caret-down, .app-chip>.fa-caret-up {
+ padding-left: 8px;
 }

@@ -17,6 +17,16 @@
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/scunning.css">
     <!-- <link rel="stylesheet" href="css/site.css"> ->
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4894172-2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-4894172-2');
+    </script>
 </head>
 
 <body>
@@ -55,7 +65,7 @@
                             Teaching
                         </a></li>
                     <li class="in">
-                        <a href="mixtape.html" title="Causal Inference: the Mixtape">
+                        <a href="https://mixtape.scunning.com/" title="Causal Inference: the Mixtape">
                             Causal Inference: the Mixtape
                         </a>
                     </li>
@@ -64,79 +74,60 @@
         </div>
     </header>
 
-
     <!-- Content -->
     <div class="container">
+        <br> 
+
         <!-- The Mixtape -->
         <div class="row">
-            <div class="col-xs-12 col-md-10 no-padding">
-                <h2>Causal Inference: The Mixtape</h2>
+            
+            <div class="col-xs-12 col-md-12 no-padding">
+                
+                <div class="cover-box">
+                    <div class="row">
+                        <div class="col-xs-8 col-md-4 cover-img">
+                            <a href="https://www.amazon.com/dp/0300251688"><img src="images/cover.jpg" alt="Buy Today!"></a>
+                        </div>
+                        
+                        <div class="col-xs-12 col-md-8 cover-text-box">
+                            <h2> 
+                                Causal Inference: <span style="font-style: italic; font-weight:bold; font-size: 20px;">The Mixtape.</span>
+                            </h2> 
+                                
+                            <div class="cover-text">
+                                <p style="font-weight: bold;">
+                                    An accessible, contemporary introduction to the methods for determining cause and effect in the social sciences
+                                </p>
+
+                                <p>
+                                    Causal inference encompasses the tools that allow social scientists to determine what causes what. In a messy world, causal inference is what helps establish the causes and effects of the actions being studied—for example, the impact (or lack thereof) of increases in the minimum wage on employment, the effects of early childhood education on incarceration later in life, or the influence on economic growth of introducing malaria nets in developing regions. The book introduces students and practitioners to the methods necessary to arrive at meaningful answers to the questions of causation, using a range of modeling techniques and coding instructions for both the R and the Stata programming languages.
+                                </p>
+                                
+                                <p>
+                                    Yale University Press is publishing a beautiful physical copy, which is available for preorder now, and physical delivery on January 26, 2021.
+                                </p>
+
+                                <p>
+                                    In addition to a hard copy book, Yale has graciously agree to continue publishing a free online HTML version of the mixtape <a href="https://mixtape.scunning.com">to my website</a>. The free HTML version will be identical to the physical book but also include interactive R programming examples that can be run from the browser, which I think is pretty slick.  It will be easy on the eyes and beautiful to gaze upon. If you like it, consider buying it, unless your willingness to pay for the hard copy is less than $35, in which case don't. Either way, the online HTML version is free and for the people.
+                                </p>
+                                
+                                <p style="font-weight: bold;">Buy the print version today:</p>
+                                
+                                <div class="chips">
+                                    <a href="https://www.amazon.com/dp/0300251688" class="app-chip"> 
+                                        <i class="fab fa-amazon" aria-hidden="true"></i> Buy from Amazon 
+                                    </a>
+                        
+                                    <a href="https://yalebooks.yale.edu/book/9780300251685/causal-inference" class="app-chip"> 
+                                        <i class="fas fa-book" aria-hidden="true"></i> Buy from Yale Press 
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div class = "row">
-            <div class="col-xs-12 col-md-10 no-padding">
-                <p>
-                    <a href="files/causalinference_norap.pdf">
-                        Causal Inference: The Mixtape
-                    </a> (v.1.8) (<a href="https://open.spotify.com/user/scunning/playlist/1VbcV70mnP4uwHbAVDJLPt" target="_blank">Spotify playlist</a>)
-                </p>
-
-                <p>
-                    Stata ado program needed for book exercises (<a href="scuse.ado" target="_blank">scuse.ado</a> and <a href="scuse_files.pdf">description</a>)
-                </p>
-            </div>
-        </div>        
-
-        <div class = "row">
-            <div class="col-xs-12 col-md-10 no-padding">
-                <h2>Comparative case study Stata code</h2>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-xs-12 col-md-10 no-padding">
-                <p>
-                    <strong>
-                        Synthetic control <a href="files/abadie-diamond-and-hainmuel.pdf">(Abadie, Diamond and Hainmueller 2010)</a>
-                    </strong>
-                </p>
-
-                <p>
-                    Readme <a href="files/readme-2.pdf">(pdf)</a>
-                    <br>
-                    STATA do file (<a href="files/texas_synth-2.do">do</a>)
-                    <br>
-                    STATA 14 data file <a href="files/texas.dta">(file)</a>
-                    <br>
-                    STATA 13 data file <a href="files/texas13.dta">(file)</a>
-                </p>
-
-                <p>
-                    <strong>
-                        DD Permutation tests <a href="files/buchmueller-dinardo-and.pdf">(Buchmueller, DiNardo and Valetta 2011)</a>
-                    </strong>
-                </p>
-
-                <p>
-                    Readme <a href="files/readme_permute.pdf">(pdf)</a>
-                    <br>
-                    STATA do file <a href="files/permute.do">(do)</a>
-                    <br>
-                    STATA 14 data file <a href="files/txdd.dta">(file)</a>
-                    <br>
-                    STATA 13 data file <a href="files/txdd13.dta">(file)</a>
-                </p>
-            </div>
-        </div>
-    </div>
-    
-
-    <!-- Footer -->
-    <footer>
-
-    </footer>
-
     
 </body>
 </html>
