@@ -13,9 +13,9 @@
 body {
     padding: 0;
     margin: 0;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: Source Sans Pro, Helvetica, Arial, sans-serif;
     color: var(--color-black);
-    font-size: 16px;
+    font-size: 18px;
 }
 .container {
     min-height:100%;
@@ -55,7 +55,8 @@ h1, h2, h3, h4, h5 {
 
 @media (min-width: 992px) {
     .container {
-        width: 770px;
+        width: 80%;
+        max-width: 1400px;
     }
 }
 
@@ -162,20 +163,31 @@ ol li, ul li {
 /* Research Items */
 .research-item {
     line-height: 22px;
-    margin-bottom: 16px;
-}
-.research-media {
-    margin-bottom: 16px;
+    margin-bottom: 64px;
+    margin-top: 64px;
 }
 
 .research-title {
     font-weight: bold;
-    /* font-family: Merriweather, Times, serif; */
-    font-size: 16px;
+    font-family: Merriweather, Times, serif;
+    font-size: 20px;
 }
 
 .research-coauthors {
-    margin: 4px 0 8px 0;
+    margin: 12px 0 20px 0;
+    font-family: Merriweather, Times, serif;
+    font-style: italic;
+    color: #555;
+}
+
+.research-journal {
+    font-family: Muli, Arial, Helvetica, sans-serif;
+    margin: 4px 0 20px 0;
+}
+
+.research-abstract {
+    line-height: 28px;
+    margin: 4px 0 20px 0;
 }
 
 hr {
