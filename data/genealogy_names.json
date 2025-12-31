@@ -1,0 +1,2450 @@
+[
+  {
+    "name": "Abadie, Alberto",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Abel, Martin",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Abowd, John",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Abraham, Lisa",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Adukia, Anjali",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Agan, Amanda",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Agarwal, Ruchir",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Aguilar, Arturo",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Ajayi, Kehinde",
+    "advisor": "Card"
+  },
+  {
+    "name": "Akhtari, Mitra",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Albouy, David",
+    "advisor": "Card"
+  },
+  {
+    "name": "Albright, Alex",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Almlund, Mathilde",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Almond, Douglas",
+    "advisor": "Card"
+  },
+  {
+    "name": "Anders, Jenna",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Andersen, Eric",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Anderson, Michael L.",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Anderson, Patricia",
+    "advisor": "Card"
+  },
+  {
+    "name": "Angrist, Joshua",
+    "advisor": "Card"
+  },
+  {
+    "name": "Aouad, Marion",
+    "advisor": "Card"
+  },
+  {
+    "name": "Aradillas-Lopez, Andres",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Arceo-Gomez, Eva",
+    "advisor": "Card"
+  },
+  {
+    "name": "Arkhangelsky, Dmitry",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Asai, Yukiko",
+    "advisor": "Card"
+  },
+  {
+    "name": "Ashraf, Nava",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Austin, Benjamin",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Autor, David",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Avelino, Ricardo",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Baicker, Katharine",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Baker, Laurence Claude",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Balan Cohen, Andreea",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Bar-Levy, Gadi",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Barbarino, Alessandro",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Barenboim, Igor",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Barnhardt, Sharon",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Barrios, Thomas",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Barros, Ricardo Paes de",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Barrow, Lisa",
+    "advisor": "Card"
+  },
+  {
+    "name": "Bartik, Alexander Wickman",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Barza, Rachel",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Baum, Herbert",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Bayer, Amanda",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Beauchamp, Jonathan",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Bell, Alex",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Beller, Andrea",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Bellido, Cristina",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Bender, John Richard",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Benjamin, Dwayne",
+    "advisor": "Card"
+  },
+  {
+    "name": "Berdejo, Carlos",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Berman, Elliot",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Berrebi, Claude",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Bertanha, Marinho Angelo",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Bertrand, Marianne",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Bettinger, Eric Perry",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Bhutta, Neil Pravin",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Biroli, Pietro",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Bitler, Marianne",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Black, Sandra",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Bleakley, C. Hoyt",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Bleemer, Zachary",
+    "advisor": "Card"
+  },
+  {
+    "name": "Bloesch, Justin",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Bobonis, Gustavo",
+    "advisor": "Card"
+  },
+  {
+    "name": "Bolotnyy, Valentin",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Boozer, Michael",
+    "advisor": "Card"
+  },
+  {
+    "name": "Borgschulte, Mark",
+    "advisor": "Card"
+  },
+  {
+    "name": "Borjas, George",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Borusyak, Kiril",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Boustan, Leah Platt",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Brachet, Tanguy",
+    "advisor": "Card"
+  },
+  {
+    "name": "Brainerd, Elizabeth",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Brown, James N.",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Brown, Jessica Hedrich",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Brown, Kristine",
+    "advisor": "Card"
+  },
+  {
+    "name": "Bruegmann, Elias",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Bruno, William",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Bucarey, Alonso",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Buckley, Patrick David",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Budd, John",
+    "advisor": "Card"
+  },
+  {
+    "name": "Burkhauser, Richard",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Bursztyn, Leonardo",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Butcher, Kristin",
+    "advisor": "Card"
+  },
+  {
+    "name": "Butler, Matthew",
+    "advisor": "Card"
+  },
+  {
+    "name": "Butler, Richard",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Caetano, Gregorio",
+    "advisor": "Card"
+  },
+  {
+    "name": "Cagetti, Marco",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Caldwell, Sydnee Christian",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Caldwell, Sydney",
+    "advisor": "Card"
+  },
+  {
+    "name": "Cameron, Stephen V.",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Campbell, Romaine",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Campos, Christopher",
+    "advisor": "Card"
+  },
+  {
+    "name": "Campos, Raymundo",
+    "advisor": "Card"
+  },
+  {
+    "name": "Cantoni, Enrico",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Carneiro, Pedro",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Carranza, Eliana",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Carrera, Mariana",
+    "advisor": "Card"
+  },
+  {
+    "name": "Cascio, Elizabeth",
+    "advisor": "Card"
+  },
+  {
+    "name": "Case, Anne",
+    "advisor": "Card"
+  },
+  {
+    "name": "Castleman, Benjamin",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Cattan, Sarah",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Cave, George",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Cawley, John H.",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Centeno, Mario",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Chandrasekher, Andrea Cann",
+    "advisor": "Card"
+  },
+  {
+    "name": "Chang, Fwu-Ranq",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Chay, Kenneth",
+    "advisor": "Card"
+  },
+  {
+    "name": "Chen, Daniel L",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Chen, Daniel L",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Chen, Jinzhu",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Cheng, Stephanie",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Chetty, Raj",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Chiang, Hanley",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Chin, Aimee Yee Ying",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Chingos, Matthew",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Cho, David",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Choi, Kyungsoo",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Christensen, Garret",
+    "advisor": "Card"
+  },
+  {
+    "name": "Cicala, Steven",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Clark, Damon",
+    "advisor": "Card"
+  },
+  {
+    "name": "Clark, Melissa A.",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Clemens, Jeffrey",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Coglianese, John",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Cohen, Jessica Lee",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Cohodes, Sarah",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Cohodes, Sarah Rose",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Coleman, Thomas",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Coles, Melvyn",
+    "advisor": "Card"
+  },
+  {
+    "name": "Conley, Timothy G.",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Conlon, John",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Connolly, Marie",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Coran, Antonio",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Cortes, Kalena",
+    "advisor": "Card"
+  },
+  {
+    "name": "Cortes, Patricia",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Cossa, Ricardo",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Cotterman, Robert",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Courty, Pascal",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Cowgill, Bradford Lee",
+    "advisor": "Card"
+  },
+  {
+    "name": "Craig, Ashley",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Cramer, Judd N. L.",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Cunha, Flavio",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Curran, John",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Currie, Janet",
+    "advisor": "Card"
+  },
+  {
+    "name": "Cutler, David M.",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Dabos, Marcello",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Dahl, Gordon",
+    "advisor": "Card"
+  },
+  {
+    "name": "Danieli, Oren",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Das, Mitali",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Decressin, Jorg",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Dehejia, Rajeev",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Dell, Melissa Lynne",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "DellaVigna, Stefano",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Deming, David",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Demombynes, Grabriel Maurice Gaudefroy",
+    "advisor": "Card"
+  },
+  {
+    "name": "Derenoncourt, Ellora",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Deschenes, Olivier",
+    "advisor": "Card"
+  },
+  {
+    "name": "Devroye, Daniel",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Deza, Monica",
+    "advisor": "Card"
+  },
+  {
+    "name": "DiNardo, John",
+    "advisor": "Card"
+  },
+  {
+    "name": "Diamond, Rebecca",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Dias, Marina Villas Boas",
+    "advisor": "Card"
+  },
+  {
+    "name": "Dickstein, Michael Jonathan",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Diniz, Felipe",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Dobbie, Will",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Dobkin, Carlos",
+    "advisor": "Card"
+  },
+  {
+    "name": "Doudchenko, Nikolay",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Du, Wenfei",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Dube, Oeindrila",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Duflo, Esther",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Duggan, Mark",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Dynarski, Susan",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Ebenstein, Avi",
+    "advisor": "Card"
+  },
+  {
+    "name": "Eccleston Adelman, Melissa",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Eissa, Nada",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Ellis, W. Philip",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Ellman, Matthew",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Emanuel, Natalia",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Engle, Elizabeth",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Ericson, Keith",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Evans, David",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Federman, Maya",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Feigenbaum, James",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Feliciano, Zadia",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Fenizia, Alessandra",
+    "advisor": "Card"
+  },
+  {
+    "name": "Ferman, Bruno",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Fernandez-Val, Ivan",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Fernando, A. Nilesh",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Ferreira, Fernando",
+    "advisor": "Card"
+  },
+  {
+    "name": "Fetter, Daniel",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Firpo, Sergio Pinheiro",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Flinn, Christopher",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Flores, Carlos Arturo",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Fortson, Jane Garrison",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Fortson, Kenneth Noble",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Frandsen, Brigham",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Frank, Sarah Rosen",
+    "advisor": "Card"
+  },
+  {
+    "name": "Freidenberg, Yehuda",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Friedberg, Rachel",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Frydman, Carola",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Funkhouser, Edward",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Galichon, Alfred",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Gallagher, Justin",
+    "advisor": "Card"
+  },
+  {
+    "name": "Ganong, Peter",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Garcia, Daniel",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Garc\u00eda, Jorge Luis",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Garin, Andrew",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Gathmann, Christina",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Gazze, Ludovica Angela",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Gelbach, Jonah",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Gelber, Alexander",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Gelblum, Madeleine",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Gensowski, Miriam",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Gerard, Francois",
+    "advisor": "Card"
+  },
+  {
+    "name": "Gift, Paul Joseph",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Giuliano, Laura",
+    "advisor": "Card"
+  },
+  {
+    "name": "Glazerman, Steven",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Glendon, Spencer",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Goh, Chor-Ching",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Goldman, Benjamin",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Gordon, Nora",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Gottlieb, Joshua",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Gould, Eric",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Graham, Bryan",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Greenberg, Kyle",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Greenstone, Michael",
+    "advisor": "Card"
+  },
+  {
+    "name": "Greenwood, Elizabeth",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Gross, Tal Avi",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Gruber, Jonathan",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Guren, Adam",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Guryan, Jonathan Eric",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Guthrie, Susan",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Haanwinckel, Daniel",
+    "advisor": "Card"
+  },
+  {
+    "name": "Hadass, Yael",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Haegele, Ingrid",
+    "advisor": "Card"
+  },
+  {
+    "name": "Hallock, Kevin",
+    "advisor": "Card"
+  },
+  {
+    "name": "Handwerker, Elizabeth",
+    "advisor": "Card"
+  },
+  {
+    "name": "Hanratty, Maria",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Harrington, Emma",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Hartley, Daniel",
+    "advisor": "Card"
+  },
+  {
+    "name": "Hausman, Naomi",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Haz, Valentina Paredes",
+    "advisor": "Card"
+  },
+  {
+    "name": "Heinrich, Carolyn",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Hellerstein, Judith",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Henriquez, Pablo Munoz",
+    "advisor": "Card"
+  },
+  {
+    "name": "Herr, Jane",
+    "advisor": "Card"
+  },
+  {
+    "name": "Hilger, Nathan",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Hill, Ryan",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Hinrichs, Peter",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Hjort, Jonas, ",
+    "advisor": "Card"
+  },
+  {
+    "name": "Hoffman, Mitchell",
+    "advisor": "Card"
+  },
+  {
+    "name": "Hohmann, Neil",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Hojman, Andre\u0301s",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Honore\u0301, Bo",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Horn, John",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Horton, John",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Horvath, Hedvig",
+    "advisor": "Card"
+  },
+  {
+    "name": "Howell, Vandy",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Howells, Brad",
+    "advisor": "Card"
+  },
+  {
+    "name": "Huang, Bert",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Hudson, Sally Lindquist",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Hull, Peter Davenport",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Humphries, John Eric",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Hunt, Jennifer",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Huo, Yuezho (Celena)",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Hurder, Stephanie",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Hwang, Jisoo",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Hyatt, Henry",
+    "advisor": "Card"
+  },
+  {
+    "name": "Hyslop, Dean",
+    "advisor": "Card"
+  },
+  {
+    "name": "Ibarraran, Pablo",
+    "advisor": "Card"
+  },
+  {
+    "name": "Idoux, Clemence",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Iorio, Karl",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Jackson, C. Kirabo",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Jacobson, Mireille",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Jaravel, Xavier",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Jayachandran, Seema",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Johnson, Erin",
+    "advisor": "Card"
+  },
+  {
+    "name": "Johnson, John",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Johnson, Richard",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Jones, Damon",
+    "advisor": "Card"
+  },
+  {
+    "name": "J\u00e4ger, Simon",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Kaboski, Joseph",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Kahn, Lisa",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Kahn, Matthew E.",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Kahn-Lang Spitzer, Ariella",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Kalyanaraman, Karthik",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Kalyanaraman, Karthik",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Kaufman, Alex",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Kaur, Supreet",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Kautz, Tim",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Kearney, Melissa Schettini",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Khananusapkul, Phanwadee",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Kim, Jun Hyung",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Kim, Yoonha",
+    "advisor": "Card"
+  },
+  {
+    "name": "Kimball, Miles",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Kletzer, Lori",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Kling, Jeffrey",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Kling, Jeffrey",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Kluve, Jochen",
+    "advisor": "Card"
+  },
+  {
+    "name": "Kochar, Anjini",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Kolesar, Michal",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Kolko, Jed",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Korenman, Sanders",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Kornfeld, Robert",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Koustas, Dmitri",
+    "advisor": "Card"
+  },
+  {
+    "name": "Krishnamurthy, Prasad",
+    "advisor": "Card"
+  },
+  {
+    "name": "Krishnan, Kaushik",
+    "advisor": "Card"
+  },
+  {
+    "name": "Kroft, Kory",
+    "advisor": "Card"
+  },
+  {
+    "name": "Krueger, Alan B.",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Krumm, Ronald",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Kruse, Douglas",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Kuziemko, Ilyana",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Kwak, Sally",
+    "advisor": "Card"
+  },
+  {
+    "name": "Kwok, Jennifer",
+    "advisor": "Card"
+  },
+  {
+    "name": "Kwon, Illoong",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Ladant, Fran\u00e7ois-Xavier",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Lafortune, Julien",
+    "advisor": "Card"
+  },
+  {
+    "name": "Lagamarsino, Alejandro",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Lahey, Joanna Nicole",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Laird, Jessica",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Lalonde, Robert",
+    "advisor": "Card"
+  },
+  {
+    "name": "Lam, Chungsang",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Langer, Ashley",
+    "advisor": "Card"
+  },
+  {
+    "name": "Lapid, Patrick",
+    "advisor": "Card"
+  },
+  {
+    "name": "Layne-Farrar, Anne",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "LeBrun, Anne",
+    "advisor": "Card"
+  },
+  {
+    "name": "Lee, David",
+    "advisor": "Card"
+  },
+  {
+    "name": "Lee, Jean Nahrae",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Lemieux, Thomas",
+    "advisor": "Card"
+  },
+  {
+    "name": "Leon, Alexis",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Leung, Siu Fai",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Leventis, Andrew Vernon",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Levine, David I.",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Levine, Phillip",
+    "advisor": "Card"
+  },
+  {
+    "name": "Levitt, Steven",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Lewin, Peter",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Lewis, Ethan",
+    "advisor": "Card"
+  },
+  {
+    "name": "Li, Judith",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Li, Nicholas",
+    "advisor": "Card"
+  },
+  {
+    "name": "Liebman, Jeffrey",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Lindner, Attila",
+    "advisor": "Card"
+  },
+  {
+    "name": "Liu, Elaine Meichen",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Liu, Samuel",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Ljunge, Martin",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Lochner, Lance",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Long, Bridget Terry",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Looney, Adam",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Lubotsky, Darren",
+    "advisor": "Card"
+  },
+  {
+    "name": "Luttmer, Erzo",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Lutz, Byron",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Lyle, David Stephen",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "MaCurdy, Thomas",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Madeira, Tarso",
+    "advisor": "Card"
+  },
+  {
+    "name": "Maestas, Nicole",
+    "advisor": "Card"
+  },
+  {
+    "name": "Malamud, Ofer",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Manacorda, Marco",
+    "advisor": "Card"
+  },
+  {
+    "name": "Marinescu, Ioana",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Marrufo, Grecia",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Marschke, Gerald",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Martin, David",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Martinez, Sebastian",
+    "advisor": "Card"
+  },
+  {
+    "name": "Martorell, Francisco",
+    "advisor": "Card"
+  },
+  {
+    "name": "Mar\u00e8, David C.",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Mas, Alexandre",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Matsa, David Abraham",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Mattheis, Ross",
+    "advisor": "Katz"
+  },
+  {
+    "name": "May, Sean Michael",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Mazingo, Christopher John",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Mazumder, Bhashka",
+    "advisor": "Card"
+  },
+  {
+    "name": "Mazzocco, Mauricio",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "McCall, Brian",
+    "advisor": "Card"
+  },
+  {
+    "name": "McCasland, Jamie Lee",
+    "advisor": "Card"
+  },
+  {
+    "name": "McConnell, Sheena",
+    "advisor": "Card"
+  },
+  {
+    "name": "McCrary, Justin",
+    "advisor": "Card"
+  },
+  {
+    "name": "McGraw, Marquise",
+    "advisor": "Card"
+  },
+  {
+    "name": "McIntosh, Molly Fifer",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "McKie, Allison Nicole",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Meara, Ellen",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Mergo, Teferi",
+    "advisor": "Card"
+  },
+  {
+    "name": "Michaels, Guy",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Miguel, Edward",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Miller, Robert",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Miracky, William",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Miserocchi, Francesca",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Mitchell, Josh",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Model, Karyn",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Model, Karyn Elizabeth",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Molloy, Raven Saks",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Monarrez, Tomas",
+    "advisor": "Card"
+  },
+  {
+    "name": "Monroe, Albert",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Monte, Ferdinando",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Montgomery, James",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Moon, Seong Hyeok",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Morales, Eduardo",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Morantz, Alison",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Morduch, Jonathan",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Moreira, Diana",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Moretti, Enrico",
+    "advisor": "Card"
+  },
+  {
+    "name": "Mortimer, Julie Holland",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Mosso, Stefano",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Mountjoy, John Thomas",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Mullainathan, Sendhil",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Murdock, William",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Myerson, Rebecca",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Nadler, Carl",
+    "advisor": "Card"
+  },
+  {
+    "name": "Narayan, Ayushi",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Narita, Yusuke",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Navarro, Salvador",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Needles, Karen",
+    "advisor": "Card"
+  },
+  {
+    "name": "Nekoei, Arash",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Neri, Marcelo Cortes",
+    "advisor": "Card"
+  },
+  {
+    "name": "Nesheim, Lars",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Neumark, David",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Neymotin, Florence",
+    "advisor": "Card"
+  },
+  {
+    "name": "Nikolov, Plamen",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Noray, Kadeem",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Okafor, Chika",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Olken, Benjamin",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Olsen, Randall",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Olson, Larry",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Oreopoulos, Philip",
+    "advisor": "Card"
+  },
+  {
+    "name": "Oster, Emily",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Ouss, Aurelie",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Oyer, Paul",
+    "advisor": "Card"
+  },
+  {
+    "name": "Pallais, Amanda",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Paradisi, Matteo",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Paredes, Valentina",
+    "advisor": "Card"
+  },
+  {
+    "name": "Park, Jin-Heum",
+    "advisor": "Card"
+  },
+  {
+    "name": "Park, Jisung",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Paserman, Daniele",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Paul-Delvaux, Louise",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Paull, Gillian",
+    "advisor": "Card"
+  },
+  {
+    "name": "Payner, Brook",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Penrod, John",
+    "advisor": "Card"
+  },
+  {
+    "name": "Peracchi, Franco",
+    "advisor": "Card"
+  },
+  {
+    "name": "Pessino, Carola",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Ph\u1ea1m, Th\u00e1i",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Piehl, Anne",
+    "advisor": "Card"
+  },
+  {
+    "name": "Pinto, Rodrigo",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Pioner, Heleno",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Pischke, Jorn-Steffen",
+    "advisor": "Card"
+  },
+  {
+    "name": "Pop-Eleches, Cristian",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Pope, Devin",
+    "advisor": "Card"
+  },
+  {
+    "name": "Qian, Nancy",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Queir\u00f3, Francisco",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Quinby, Laura",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Quintana-Domeque, Climent",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Rackstraw, Emma",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Rajkumar, Karthik",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Ramos, Fernando",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Ramos-Chaves, Alvaro",
+    "advisor": "Card"
+  },
+  {
+    "name": "Rao, Neel",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Rau, Tomas",
+    "advisor": "Card"
+  },
+  {
+    "name": "Reber, Sarah",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Rebick, Marcus",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Rehavi, Marit",
+    "advisor": "Card"
+  },
+  {
+    "name": "Remler, Dahlia",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Resseger, Matt",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Revenga, Ana",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Reyes, Gonzalo",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Reyes, Suzanne",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Rhee, Changyong",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Rhee, Hongjai",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Rice, Eric",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Robb, Richard",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Roberts, Cullen",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Roberts, Russell",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Robles, Omar",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Robles, Silvia",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Robles, Silvia Ceballos",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Rocca, Ana",
+    "advisor": "Card"
+  },
+  {
+    "name": "Rockoff, Jonah",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Rodda, David",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Rodgers, William",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Rodriguez Planas, Nuria",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Rokkanen, Miikka Aatto Tapio",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Romem, Israel",
+    "advisor": "Card"
+  },
+  {
+    "name": "Rosales, Maria",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Roselius, Rebecca",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Rosenzweig, Mark",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Roth, Jonathan",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Rothstein, Jesse",
+    "advisor": "Card"
+  },
+  {
+    "name": "Rotz, Dana",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Roulet, Alexandra",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Rouse, Cecilia",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Royalty, Anne",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Royer, Heather",
+    "advisor": "Card"
+  },
+  {
+    "name": "Rubin, Geoffrey",
+    "advisor": "Card"
+  },
+  {
+    "name": "Sa, Filipa Goncalves",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Saavedra, Juan",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Saggio, Raffaele",
+    "advisor": "Card"
+  },
+  {
+    "name": "Sakoda, Ryan",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Sanchez, Carolina",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Sands, Emily",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Santos, Daniel",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Sarsons, Heather",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Sasser Modestino, Alicia",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Savelyev, Peter",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Saygin, Perihan",
+    "advisor": "Card"
+  },
+  {
+    "name": "Schachar, Eli",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Schellenberg, Jonathan",
+    "advisor": "Card"
+  },
+  {
+    "name": "Schmidt, Christoph",
+    "advisor": "Card"
+  },
+  {
+    "name": "Schmierer, Daniel",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Schmitz, Robert",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Schochet, Peter",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Schoefer, Benjamin",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Schofield, Heather",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Schubert, Gregor",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Schulhofer-Wohl, Sam",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Scott-Clayton, Judith",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Serafinelli, Michel",
+    "advisor": "Card"
+  },
+  {
+    "name": "Setren, Elizabeth Marielle",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Severnini, Edson",
+    "advisor": "Card"
+  },
+  {
+    "name": "Shaffer, Hannah",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Shanmugam, Priya",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Shapiro, Jesse",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Shem-Tov, Yotam",
+    "advisor": "Card"
+  },
+  {
+    "name": "Sheppard, Lara Shore",
+    "advisor": "Card"
+  },
+  {
+    "name": "Shu, Pian",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Shue, Kelly",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Shurtz, Ity",
+    "advisor": "Card"
+  },
+  {
+    "name": "Silver, David",
+    "advisor": "Card"
+  },
+  {
+    "name": "Simkovich, Boris",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Sims, David",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Sitgraves, Claudia Ayanna",
+    "advisor": "Card"
+  },
+  {
+    "name": "Skandalis, Daphne",
+    "advisor": "Card"
+  },
+  {
+    "name": "Smith, Christopher Lane",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Smith, Jeffrey",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Sneeringer, Stacy",
+    "advisor": "Card"
+  },
+  {
+    "name": "Solis, Alex",
+    "advisor": "Card"
+  },
+  {
+    "name": "Soloveichik, Rachel",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Sorensen, Jeffrey",
+    "advisor": "Card"
+  },
+  {
+    "name": "Stange, Kevin",
+    "advisor": "Card"
+  },
+  {
+    "name": "Stanley, Marcus",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Stansbury, Anna",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Stemper, Sam",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Stephens-Davidowitz, Seth",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Stevenson, Betsey",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Stixrud, Jora",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Suarez, Gustavo",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Sullivan, Daniel",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Swagel, Phillip",
+    "advisor": "Katz"
+  },
+  {
+    "name": "S\u00e1ndor, L\u00e1szl\u00f3",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Taber, Chris",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Tambunlertchai, Suchanan",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Tan, Rose Wang",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Te, Bingru",
+    "advisor": "Card"
+  },
+  {
+    "name": "Tebes, Jonathan",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Thakral, Neil",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Thomas, Duncan",
+    "advisor": "Card"
+  },
+  {
+    "name": "Thomas, Mallika",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Thompkins, Allison Victoria",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Thurston, Norman K",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Tiseno, Andrea",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Tobias, Justin",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Todd, Kevin",
+    "advisor": "Card"
+  },
+  {
+    "name": "Todd, Petra",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Tokkman, Andrea",
+    "advisor": "Card"
+  },
+  {
+    "name": "Tomb, Ian",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Troiano, Ugo",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Tsiang, Grace",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Turley, Patrick",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Tyler, Brian",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Tyler, John",
+    "advisor": "Katz"
+  },
+  {
+    "name": "T\u00f4, Linh",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Ulyssea, Gabriel",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Unger, Gabriel",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Unlu, Fatih",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Unrath, Matthew",
+    "advisor": "Card"
+  },
+  {
+    "name": "Urquiola, Miguel",
+    "advisor": "Card"
+  },
+  {
+    "name": "Vaillant Wrobel, Marian",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Valletta, Robert",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Verhoogen, Eric",
+    "advisor": "Card"
+  },
+  {
+    "name": "Verkerke, J. H.",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Vogl, Tom",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Vytlacil, Edward",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Waldmann, Robert J.",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Walker, Jim",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Walters, Christopher Ross",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Ward, Bryce",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Warner, Andrew",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Watson, Tara",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Watts, Timothy M.",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Wei, Thomas",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Weil, David N.",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Wettstein, Gal",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Whitmore, Diane Miriam",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Wie, Dainn",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Williams, Benjamin",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Williams, Heidi",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Williams, Tyler Kenneth",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Wolfers, Justin",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Wolpaw Reyes, Jessica",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Wong, Grace",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Wong, Laurence",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Wozniak, Abigail Waggoner",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Wu, Alice",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Xia, Xiaoyu",
+    "advisor": "Card"
+  },
+  {
+    "name": "Yagan, Danny",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Yakovlev, Evgeny",
+    "advisor": "Card"
+  },
+  {
+    "name": "Yang, Crystal",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Yang, Dean",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Yee, Christine",
+    "advisor": "Card"
+  },
+  {
+    "name": "Yi, Moises",
+    "advisor": "Card"
+  },
+  {
+    "name": "Yuchtman, Noam",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Zajonc, Tristan",
+    "advisor": "Imbens"
+  },
+  {
+    "name": "Zanolini, Arianna",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "Zhang, Hongliang",
+    "advisor": "Angrist"
+  },
+  {
+    "name": "Zheng, Zu",
+    "advisor": "Card"
+  },
+  {
+    "name": "Zhu, Pei",
+    "advisor": "Krueger"
+  },
+  {
+    "name": "Zimmerman, David",
+    "advisor": "Card"
+  },
+  {
+    "name": "Zoido, M. Elena",
+    "advisor": "Katz"
+  },
+  {
+    "name": "Zverina, Clara",
+    "advisor": "Katz"
+  },
+  {
+    "name": "dos Santos, Daniel",
+    "advisor": "Heckman"
+  },
+  {
+    "name": "von Wachter, Till",
+    "advisor": "Card"
+  }
+]
