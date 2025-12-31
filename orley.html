@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Orley Genealogy Project | Scott Cunningham</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Merriweather|Source+Sans+Pro:|Muli" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/e7b3ba2953.js" crossorigin="anonymous"></script>
+
+    <!-- Website Styling -->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/scunning.css">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4894172-2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-4894172-2');
+    </script>
+
+    <style>
+        /* Orley-specific styles */
+        .orley-hero {
+            background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .orley-hero h2 {
+            color: white;
+            margin-bottom: 10px;
+        }
+        .orley-hero p {
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            padding: 30px 0;
+            border-top: 1px solid #bbb;
+            border-bottom: 1px solid #bbb;
+            margin: 20px 0;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 10px 20px;
+        }
+        .stat-number {
+            font-family: Merriweather, Times, serif;
+            font-size: 36px;
+            font-weight: bold;
+            color: #1a365d;
+        }
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--color-dark-grey);
+            letter-spacing: 1px;
+        }
+
+        .tree-container {
+            background: var(--color-light-grey);
+            padding: 30px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .generation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 15px 0;
+            position: relative;
+        }
+        .generation-label {
+            position: absolute;
+            left: 0;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--color-dark-grey);
+            letter-spacing: 1px;
+        }
+        @media (max-width: 768px) {
+            .generation-label {
+                position: relative;
+                margin-bottom: 10px;
+                width: 100%;
+                text-align: center;
+            }
+        }
+        .person-badge {
+            background: #1a365d;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .person-badge.patriarch {
+            background: #ed8936;
+            padding: 12px 24px;
+            font-size: 16px;
+        }
+        .person-badge.nobel {
+            border: 2px solid gold;
+        }
+        .connector-line {
+            width: 2px;
+            height: 30px;
+            background: #cbd5e0;
+            margin: 0 auto;
+        }
+
+        .branch-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .branch-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-top: 4px solid #1a365d;
+            padding: 20px;
+        }
+        .branch-card h4 {
+            margin-top: 0;
+            color: #1a365d;
+        }
+        .branch-card .lineage {
+            font-style: italic;
+            color: var(--color-dark-grey);
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .branch-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .branch-card li {
+            padding: 6px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        .branch-card li:last-child {
+            border-bottom: none;
+        }
+
+        /* Form Styles */
+        .form-container {
+            background: var(--color-light-grey);
+            padding: 30px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .verification-notice {
+            background: #fef3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .form-group .hint {
+            font-weight: normal;
+            color: var(--color-dark-grey);
+            font-size: 13px;
+        }
+        .form-group .required {
+            color: #e53e3e;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2c5282;
+            box-shadow: 0 0 0 2px rgba(44, 82, 130, 0.1);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .submit-btn {
+            background: #ed8936;
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover {
+            background: #dd6b20;
+        }
+
+        .section-title {
+            border-bottom: 1px solid #bbb;
+            padding-bottom: 10px;
+            margin: 40px 0 20px 0;
+        }
+
+        .data-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="container app-header">
+
+        <!-- Scott Cunningham -->
+        <div class="row title">
+            <div class="col-xs-12">
+                <h1>Scott Cunningham</h1>
+                <p>ben h. williams professor of economics<br>baylor university</p>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="row">
+            <div class="col-xs-12 navbar">
+                <ul class="nav-links">
+                    <li>
+                        <a href="index.html" title="Home">Home</a>
+                    </li>
+                    <li>
+                        <a href="publications.html">Publications</a>
+                    </li>
+                    <li>
+                        <a href="working_papers.html">Working Papers</a>
+                    </li>
+                    <li>
+                        <a href="workshops.html" title="Workshops">Workshops</a>
+                    </li>
+                    <li>
+                        <a href="https://mixtape.scunning.com/" title="Causal Inference: the Mixtape">Causal Inference: the Mixtape</a>
+                    </li>
+                    <li class="in">
+                        <a href="orley.html" title="Orley Genealogy">Orley Genealogy</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- Content -->
+    <div class="container">
+
+        <!-- Hero -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="orley-hero">
+                    <h2>The Orley Genealogy Project</h2>
+                    <p>Mapping the intellectual lineage of the credibility revolution in economics</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="stat-number">1,147</div>
+                        <div class="stat-label">Economists Tracked</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">4</div>
+                        <div class="stat-label">Nobel Laureates</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">4</div>
+                        <div class="stat-label">Generations</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Years</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About -->
+        <div class="row">
+            <div class="col-xs-12 col-md-8 offset-md-2">
+                <h2 class="section-title">About This Project</h2>
+                <p>
+                    The credibility revolution transformed empirical economics by emphasizing causal identification through experimental and quasi-experimental methods. This project traces the intellectual lineage from <strong>Orley Ashenfelter</strong> at Princeton through his students and their descendants, documenting how these methods spread through the profession.
+                </p>
+                <p>
+                    The data comes from multiple sources: hand-collected CV data, the Mathematics Genealogy Project, and crowdsourced contributions. If you're part of this academic family tree, please contribute your information below.
+                </p>
+            </div>
+        </div>
+
+        <!-- Tree Visualization -->
+        <div class="row">
+            <div class="col-xs-12 col-md-10 offset-md-1">
+                <h2 class="section-title">The Family Tree</h2>
+
+                <div class="tree-container">
+                    <div class="generation">
+                        <span class="generation-label">Gen 0</span>
+                        <span class="person-badge patriarch">Orley Ashenfelter</span>
+                    </div>
+
+                    <div class="connector-line"></div>
+
+                    <div class="generation">
+                        <span class="generation-label">Gen 1</span>
+                        <span class="person-badge nobel">Card</span>
+                        <span class="person-badge">Katz</span>
+                        <span class="person-badge nobel">Angrist</span>
+                        <span class="person-badge nobel">Imbens</span>
+                        <span class="person-badge nobel">Heckman</span>
+                        <span class="person-badge">Currie</span>
+                        <span class="person-badge">Krueger</span>
+                    </div>
+
+                    <div class="connector-line"></div>
+
+                    <div class="generation">
+                        <span class="generation-label">Gen 2</span>
+                        <span class="person-badge" style="background: #2c5282;">668 Students</span>
+                    </div>
+
+                    <div class="connector-line"></div>
+
+                    <div class="generation">
+                        <span class="generation-label">Gen 3</span>
+                        <span class="person-badge" style="background: #4a5568;">472+ Students</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Branches -->
+        <div class="row">
+            <div class="col-xs-12 col-md-10 offset-md-1">
+                <h2 class="section-title">The Branches</h2>
+
+                <div class="branch-cards">
+                    <div class="branch-card">
+                        <h4>The Ashenfelter Branch</h4>
+                        <div class="lineage">Princeton IRS &rarr; Labor Economics</div>
+                        <ul>
+                            <li><strong>David Card</strong> (Nobel 2021) &mdash; 152 students</li>
+                            <li><strong>Joshua Angrist</strong> (Nobel 2021) &mdash; 63 students</li>
+                            <li><strong>Lawrence Katz</strong> &mdash; 257 students</li>
+                            <li><strong>Guido Imbens</strong> (Nobel 2021) &mdash; 20 students</li>
+                            <li><strong>James Heckman</strong> (Nobel 2000) &mdash; 107 students</li>
+                        </ul>
+                    </div>
+
+                    <div class="branch-card">
+                        <h4>The Fogel-Goldin Branch</h4>
+                        <div class="lineage">Chicago Cliometrics &rarr; Economic History</div>
+                        <ul>
+                            <li><strong>Robert Fogel</strong> (Nobel 1993)</li>
+                            <li><strong>Claudia Goldin</strong> (Nobel 2023) &mdash; 7+ students</li>
+                            <li>Co-advised with Katz at Harvard</li>
+                            <li>Brought experimental design to econ history</li>
+                        </ul>
+                    </div>
+
+                    <div class="branch-card">
+                        <h4>Top Gen 2 Advisors</h4>
+                        <div class="lineage">By students trained (Math Genealogy)</div>
+                        <ul>
+                            <li><strong>David Cutler</strong> &mdash; 39 students</li>
+                            <li><strong>David Autor</strong> &mdash; 32 students</li>
+                            <li><strong>Esther Duflo</strong> &mdash; 26 students</li>
+                            <li><strong>Raj Chetty</strong> &mdash; 21 students</li>
+                            <li><strong>Edward Miguel</strong> &mdash; 22 students</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Download -->
+        <div class="row">
+            <div class="col-xs-12 col-md-8 offset-md-2">
+                <h2 class="section-title">Download the Data</h2>
+                <p>
+                    The full dataset is available for download. If you use this data in research, please cite this project.
+                </p>
+                <div class="data-links">
+                    <a href="files/orley_genealogy_combined.csv" class="app-chip">
+                        <i class="fas fa-download"></i> Full Dataset (CSV)
+                    </a>
+                    <a href="files/orley_genealogy_gen3.csv" class="app-chip">
+                        <i class="fas fa-download"></i> Gen 3 Only (CSV)
+                    </a>
+                    <a href="https://github.com/scunning1975/orley-genealogy" class="app-chip">
+                        <i class="fab fa-github"></i> GitHub Repository
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submission Form -->
+        <div class="row">
+            <div class="col-xs-12 col-md-8 offset-md-2">
+                <h2 class="section-title">Add Your Information</h2>
+                <p>
+                    Are you part of this academic family tree? Help us complete the genealogy by submitting your information. All submissions are verified before being added.
+                </p>
+
+                <div class="form-container">
+                    <div class="verification-notice">
+                        <strong>Verification Required:</strong> Submissions are cross-referenced with Math Genealogy, university records, and public profiles. We'll contact you if we have questions.
+                    </div>
+
+                    <form id="genealogy-form" action="https://formspree.io/f/xnjnadro" method="POST">
+
+                        <h4 style="margin-top: 0;">Your Information</h4>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>First Name <span class="required">*</span></label>
+                                <input type="text" name="first_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name <span class="required">*</span></label>
+                                <input type="text" name="last_name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email <span class="required">*</span> <span class="hint">(for verification only)</span></label>
+                            <input type="email" name="email" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>PhD Year <span class="required">*</span></label>
+                                <input type="number" name="phd_year" min="1950" max="2030" required>
+                            </div>
+                            <div class="form-group">
+                                <label>PhD Institution <span class="required">*</span></label>
+                                <input type="text" name="phd_institution" required placeholder="e.g., Harvard University">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>First Job After PhD <span class="hint">(optional)</span></label>
+                            <input type="text" name="first_placement" placeholder="e.g., UC Berkeley">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Current Position <span class="hint">(optional)</span></label>
+                            <input type="text" name="current_position" placeholder="e.g., Professor, Stanford University">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Link to CV <span class="hint">(helps verification)</span></label>
+                            <input type="url" name="cv_url" placeholder="https://...">
+                        </div>
+
+                        <h4>Your Primary Advisor</h4>
+
+                        <div class="form-group">
+                            <label>Advisor Name <span class="required">*</span></label>
+                            <input type="text" name="advisor_name" required placeholder="e.g., Lawrence Katz">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Relationship <span class="required">*</span></label>
+                            <select name="relationship" required>
+                                <option value="">Select...</option>
+                                <option value="primary">Primary Advisor</option>
+                                <option value="co-advisor">Co-Advisor</option>
+                                <option value="committee">Committee Member</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Co-Advisors <span class="hint">(if any, comma-separated)</span></label>
+                            <input type="text" name="co_advisors" placeholder="e.g., Claudia Goldin, Edward Glaeser">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Your Advisor's Advisor <span class="hint">(if known)</span></label>
+                            <input type="text" name="advisor_advisor" placeholder="e.g., Orley Ashenfelter">
+                        </div>
+
+                        <h4>Your PhD Students (Optional)</h4>
+
+                        <div class="form-group">
+                            <label>List Your Students <span class="hint">(Name, Year, Institution - one per line)</span></label>
+                            <textarea name="students" rows="4" placeholder="Jane Smith, 2020, MIT&#10;John Doe, 2022, Harvard"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Additional Notes</label>
+                            <textarea name="notes" rows="3" placeholder="Any corrections or additional context..."></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Submit for Verification</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Methodology -->
+        <div class="row">
+            <div class="col-xs-12 col-md-8 offset-md-2">
+                <h2 class="section-title">Methodology</h2>
+                <p>
+                    <strong>Data Sources:</strong> Original data was hand-collected from CVs and faculty websites. Generation 3 data was scraped from the Mathematics Genealogy Project. Additional data comes from crowdsourced submissions.
+                </p>
+                <p>
+                    <strong>Inclusion Criteria:</strong> We track primary advisors, co-advisors, and committee members. The "student count" for Gen 1 advisors includes all committee relationships (e.g., Katz's 257 includes students where he served on committees).
+                </p>
+                <p>
+                    <strong>Known Limitations:</strong> Math Genealogy only captures primary advisors, so co-advising relationships are undercounted. Some recent graduates (2024-2025) may be missing. Non-academic placements are harder to track.
+                </p>
+            </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="row">
+            <div class="col-xs-12 col-md-8 offset-md-2">
+                <h2 class="section-title">Contact</h2>
+                <p>
+                    For questions, corrections, or to report issues with the data, please email <a href="mailto:Scott_Cunningham@Baylor.edu">Scott_Cunningham@Baylor.edu</a> or open an issue on <a href="https://github.com/scunning1975/orley-genealogy">GitHub</a>.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row" style="min-height: 100px;"></div>
+
+    <script>
+        // Form submission handler
+        document.getElementById('genealogy-form').addEventListener('submit', function(e) {
+            // Let Formspree handle the submission
+            // Could add client-side validation here if needed
+        });
+    </script>
+
+</body>
+</html>
