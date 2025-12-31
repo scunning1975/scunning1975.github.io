@@ -340,42 +340,68 @@
             </div>
         </div>
 
-        <!-- Tree Visualization -->
+        <!-- Two Rivers Visualization -->
         <div class="row">
             <div class="col-xs-12 col-md-10 offset-md-1">
-                <h2 class="section-title">The Family Tree</h2>
+                <h2 class="section-title">Two Rivers into Causal Inference</h2>
+                <p style="text-align: center; color: var(--color-dark-grey); margin-bottom: 20px;">
+                    The credibility revolution emerged from two intellectual streams converging
+                </p>
 
-                <div class="tree-container">
-                    <div class="generation">
-                        <span class="generation-label">Gen 0</span>
-                        <span class="person-badge patriarch">Orley Ashenfelter</span>
+                <div class="tree-container" style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 40px;">
+                    <!-- Princeton Stream -->
+                    <div style="text-align: center; min-width: 250px;">
+                        <div class="person-badge patriarch" style="margin-bottom: 10px;">Orley Ashenfelter</div>
+                        <div style="font-size: 12px; color: var(--color-dark-grey); margin-bottom: 5px;">Princeton Industrial Relations Section</div>
+                        <div class="connector-line"></div>
+                        <div style="font-size: 13px; margin: 10px 0;">Quasi-Experimental Design</div>
+                        <div class="connector-line"></div>
+                        <div style="margin: 10px 0;">
+                            <span class="person-badge nobel">David Card</span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--color-dark-grey);">+ Henry Farber &rarr; MIT &rarr; Katz</div>
+                        <div style="font-size: 12px; color: var(--color-dark-grey);">+ Heckman, Currie, and others</div>
+                        <div style="font-size: 12px; color: var(--color-dark-grey); margin-top: 5px;">Colleague: Alan Krueger</div>
                     </div>
 
-                    <div class="connector-line"></div>
-
-                    <div class="generation">
-                        <span class="generation-label">Gen 1</span>
-                        <span class="person-badge nobel">Card</span>
-                        <span class="person-badge">Katz</span>
-                        <span class="person-badge nobel">Angrist</span>
-                        <span class="person-badge nobel">Imbens</span>
-                        <span class="person-badge nobel">Heckman</span>
-                        <span class="person-badge">Currie</span>
-                        <span class="person-badge">Krueger</span>
+                    <!-- Harvard/Rubin Stream -->
+                    <div style="text-align: center; min-width: 250px;">
+                        <div class="person-badge" style="background: #744210; margin-bottom: 10px;">Don Rubin</div>
+                        <div style="font-size: 12px; color: var(--color-dark-grey); margin-bottom: 5px;">Harvard Statistics</div>
+                        <div class="connector-line"></div>
+                        <div style="font-size: 13px; margin: 10px 0;">Potential Outcomes Framework</div>
+                        <div class="connector-line"></div>
+                        <div style="margin: 10px 0;">
+                            <span class="person-badge nobel" style="background: #744210;">Guido Imbens</span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--color-dark-grey);">Propensity Score, LATE</div>
                     </div>
+                </div>
 
-                    <div class="connector-line"></div>
-
-                    <div class="generation">
-                        <span class="generation-label">Gen 2</span>
-                        <span class="person-badge" style="background: #2c5282;">668 Students</span>
+                <!-- Confluence -->
+                <div class="tree-container" style="margin-top: 0; border-top: none; text-align: center;">
+                    <div style="font-size: 14px; color: var(--color-dark-grey); margin-bottom: 10px;">The Confluence: Harvard Economics</div>
+                    <div style="margin: 15px 0;">
+                        <span class="person-badge nobel">Joshua Angrist</span>
+                        <span style="margin: 0 10px;">&</span>
+                        <span class="person-badge nobel" style="background: #744210;">Guido Imbens</span>
                     </div>
-
+                    <div style="font-size: 12px; color: var(--color-dark-grey);">Angrist: Orley's student (Card junior co-advisor) | Synthesized both traditions</div>
                     <div class="connector-line"></div>
+                    <div style="font-size: 13px; margin: 10px 0;">Instrumental Variables &bull; LATE &bull; Modern DiD</div>
+                    <div class="connector-line"></div>
+                    <div style="margin: 10px 0;">
+                        <span class="person-badge" style="background: #2c5282;">Alberto Abadie</span>
+                    </div>
+                    <div style="font-size: 12px; color: var(--color-dark-grey);">Synthetic Control</div>
+                </div>
 
-                    <div class="generation">
-                        <span class="generation-label">Gen 3</span>
-                        <span class="person-badge" style="background: #4a5568;">472+ Students</span>
+                <!-- Generations Summary -->
+                <div class="tree-container" style="margin-top: 0; border-top: none; text-align: center;">
+                    <div style="font-size: 14px; color: var(--color-dark-grey); margin-bottom: 15px;">The Extended Family</div>
+                    <div class="generation" style="justify-content: center;">
+                        <span class="person-badge" style="background: #2c5282;">668 Gen 2 Students</span>
+                        <span class="person-badge" style="background: #4a5568;">472+ Gen 3 Students</span>
                     </div>
                 </div>
             </div>
@@ -388,37 +414,46 @@
 
                 <div class="branch-cards">
                     <div class="branch-card">
-                        <h4>The Ashenfelter Branch</h4>
-                        <div class="lineage">Princeton IRS &rarr; Labor Economics</div>
+                        <h4>Orley's Direct Students</h4>
+                        <div class="lineage">Princeton IRS advisees</div>
                         <ul>
                             <li><strong>David Card</strong> (Nobel 2021) &mdash; 152 students</li>
                             <li><strong>Joshua Angrist</strong> (Nobel 2021) &mdash; 63 students</li>
-                            <li><strong>Lawrence Katz</strong> &mdash; 257 students</li>
-                            <li><strong>Guido Imbens</strong> (Nobel 2021) &mdash; 20 students</li>
+                            <li><strong>Henry Farber</strong> &rarr; MIT &rarr; Katz</li>
                             <li><strong>James Heckman</strong> (Nobel 2000) &mdash; 107 students</li>
+                            <li><strong>Janet Currie</strong> &mdash; 60+ students</li>
                         </ul>
                     </div>
 
                     <div class="branch-card">
-                        <h4>The Fogel-Goldin Branch</h4>
-                        <div class="lineage">Chicago Cliometrics &rarr; Economic History</div>
+                        <h4>The Farber-Katz Branch</h4>
+                        <div class="lineage">Orley &rarr; Farber (MIT) &rarr; Katz (Harvard)</div>
                         <ul>
-                            <li><strong>Robert Fogel</strong> (Nobel 1993)</li>
-                            <li><strong>Claudia Goldin</strong> (Nobel 2023) &mdash; 7+ students</li>
-                            <li>Co-advised with Katz at Harvard</li>
-                            <li>Brought experimental design to econ history</li>
+                            <li><strong>Lawrence Katz</strong> &mdash; 257 students</li>
+                            <li>Built Harvard labor program</li>
+                            <li>Co-advised with Claudia Goldin</li>
+                            <li>Major node for credibility methods</li>
                         </ul>
                     </div>
 
                     <div class="branch-card">
-                        <h4>Top Gen 2 Advisors</h4>
-                        <div class="lineage">By students trained (Math Genealogy)</div>
+                        <h4>The Rubin-Imbens Branch</h4>
+                        <div class="lineage">Harvard Statistics &rarr; Potential Outcomes</div>
                         <ul>
-                            <li><strong>David Cutler</strong> &mdash; 39 students</li>
-                            <li><strong>David Autor</strong> &mdash; 32 students</li>
-                            <li><strong>Esther Duflo</strong> &mdash; 26 students</li>
-                            <li><strong>Raj Chetty</strong> &mdash; 21 students</li>
-                            <li><strong>Edward Miguel</strong> &mdash; 22 students</li>
+                            <li><strong>Don Rubin</strong> &mdash; Potential outcomes pioneer</li>
+                            <li><strong>Guido Imbens</strong> (Nobel 2021) &mdash; 20 students</li>
+                            <li>Propensity score, LATE framework</li>
+                            <li>Merged with Princeton quasi-experimental tradition</li>
+                        </ul>
+                    </div>
+
+                    <div class="branch-card">
+                        <h4>Princeton IRS Colleagues</h4>
+                        <div class="lineage">Faculty, not Orley's students</div>
+                        <ul>
+                            <li><strong>Alan Krueger</strong> (hired from Harvard)</li>
+                            <li>Card-Krueger minimum wage studies</li>
+                            <li>Natural experiments tradition</li>
                         </ul>
                     </div>
                 </div>
