@@ -514,9 +514,9 @@
         <!-- Submission Form -->
         <div class="row">
             <div class="col-xs-12 col-md-8 offset-md-2">
-                <h2 class="section-title">Add Your Information</h2>
+                <h2 class="section-title">Submit Your Advisee List</h2>
                 <p>
-                    Are you part of this academic family tree? Help us complete the genealogy by submitting your information. All submissions are verified before being added.
+                    Are you a faculty member in this academic family tree? Help us complete the genealogy by submitting your PhD students. All submissions are verified before being added.
                 </p>
 
                 <div class="form-container">
@@ -526,90 +526,57 @@
 
                     <form id="genealogy-form" action="https://formspree.io/f/xnjnadro" method="POST">
 
-                        <h4 style="margin-top: 0;">Your Information</h4>
+                        <h4 style="margin-top: 0;">Your Information (The Advisor)</h4>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label>First Name <span class="required">*</span></label>
-                                <input type="text" name="first_name" required>
+                                <label>Your Name <span class="required">*</span></label>
+                                <input type="text" name="advisor_name" required placeholder="e.g., Lawrence Katz">
                             </div>
                             <div class="form-group">
-                                <label>Last Name <span class="required">*</span></label>
-                                <input type="text" name="last_name" required>
+                                <label>Email <span class="required">*</span></label>
+                                <input type="email" name="email" required>
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Email <span class="required">*</span> <span class="hint">(for verification only)</span></label>
-                            <input type="email" name="email" required>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label>PhD Year <span class="required">*</span></label>
-                                <input type="number" name="phd_year" min="1950" max="2030" required>
+                                <label>Current Institution <span class="required">*</span></label>
+                                <input type="text" name="institution" required placeholder="e.g., Harvard University">
                             </div>
                             <div class="form-group">
-                                <label>PhD Institution <span class="required">*</span></label>
-                                <input type="text" name="phd_institution" required placeholder="e.g., Harvard University">
+                                <label>Your PhD Advisor <span class="required">*</span></label>
+                                <input type="text" name="your_advisor" required placeholder="e.g., Henry Farber">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label>First Job After PhD <span class="hint">(optional)</span></label>
-                            <input type="text" name="first_placement" placeholder="e.g., UC Berkeley">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Current Position <span class="hint">(optional)</span></label>
-                            <input type="text" name="current_position" placeholder="e.g., Professor, Stanford University">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Link to CV <span class="hint">(helps verification)</span></label>
+                            <label>Link to CV or Faculty Page <span class="hint">(helps verification)</span></label>
                             <input type="url" name="cv_url" placeholder="https://...">
                         </div>
 
-                        <h4>Your Primary Advisor</h4>
+                        <h4>Your PhD Students</h4>
 
                         <div class="form-group">
-                            <label>Advisor Name <span class="required">*</span></label>
-                            <input type="text" name="advisor_name" required placeholder="e.g., Lawrence Katz">
+                            <label>List Your PhD Students <span class="required">*</span></label>
+                            <div class="hint" style="margin-bottom: 8px;">One student per line. Include name, graduation year, and first placement if known.</div>
+                            <textarea name="students" rows="10" required placeholder="Jane Smith, 2018, UC Berkeley
+John Doe, 2020, Federal Reserve Board
+Maria Garcia, 2022, Stanford University
+Alex Chen, 2024 (expected)"></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label>Relationship <span class="required">*</span></label>
-                            <select name="relationship" required>
-                                <option value="">Select...</option>
-                                <option value="primary">Primary Advisor</option>
-                                <option value="co-advisor">Co-Advisor</option>
-                                <option value="committee">Committee Member</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Co-Advisors <span class="hint">(if any, comma-separated)</span></label>
+                            <label>Co-Advisors <span class="hint">(faculty you frequently co-advise with)</span></label>
                             <input type="text" name="co_advisors" placeholder="e.g., Claudia Goldin, Edward Glaeser">
                         </div>
 
                         <div class="form-group">
-                            <label>Your Advisor's Advisor <span class="hint">(if known)</span></label>
-                            <input type="text" name="advisor_advisor" placeholder="e.g., Orley Ashenfelter">
+                            <label>Additional Notes or Corrections</label>
+                            <textarea name="notes" rows="3" placeholder="Any corrections to existing data, missing students, etc."></textarea>
                         </div>
 
-                        <h4>Your PhD Students (Optional)</h4>
-
-                        <div class="form-group">
-                            <label>List Your Students <span class="hint">(Name, Year, Institution - one per line)</span></label>
-                            <textarea name="students" rows="4" placeholder="Jane Smith, 2020, MIT&#10;John Doe, 2022, Harvard"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Additional Notes</label>
-                            <textarea name="notes" rows="3" placeholder="Any corrections or additional context..."></textarea>
-                        </div>
-
-                        <button type="submit" class="submit-btn">Submit for Verification</button>
+                        <button type="submit" class="submit-btn">Submit Advisee List</button>
                     </form>
                 </div>
             </div>
