@@ -5,6 +5,9 @@
 
 # This script demonstrates statistical power and sample size calculations.
 # Key insight: Power depends on effect size, sample size, and alpha.
+#
+# ESTIMATED RUNTIME: ~20-25 seconds on a standard laptop
+# (The simulations take time but are important for understanding power)
 
 # -----------------------------------------------------------------------------
 # Setup
@@ -115,9 +118,14 @@ cat("\n=== PRE-STUDY POWER ANALYSIS EXAMPLE ===\n")
 cat("Scenario: Planning a GOTV experiment\n\n")
 
 # Step 1: Specify expected effect based on prior research
-cat("STEP 1: Determine expected effect size\n")
-cat("  - Prior GOTV studies show effects of 2-5 percentage points\n")
-cat("  - We'll be conservative and target detecting a 3pp effect\n")
+cat("STEP 1: Determine expected effect size from prior literature\n")
+cat("  Review of GOTV experiments:\n")
+cat("    - Gerber & Green (2000): 8.7 pp (door-to-door, New Haven)\n")
+cat("    - Green, Gerber, Nickerson (2003): 7-10 pp (meta of 6 RCTs)\n")
+cat("    - Arceneaux (2005): 2.5 pp (low-salience election)\n")
+cat("    - Nickerson (2008): 2.1 pp (Denver, Minneapolis)\n")
+cat("    - Green & Gerber (2015) book: 2-5 pp typical range\n\n")
+cat("  Decision: Target detecting a 3pp effect (conservative)\n")
 cat("  - Control group turnout expected: ~40%\n")
 cat("  - Treatment group turnout expected: ~43%\n\n")
 
@@ -220,6 +228,122 @@ for (eff in effects_to_test) {
 
 cat("\nThis is why specifying effect size matters:\n")
 cat("If the true effect is only 2pp, you'd need a MUCH larger sample.\n")
+
+# -----------------------------------------------------------------------------
+# VISUALIZATION: Power Curves for GOTV Experiment
+# -----------------------------------------------------------------------------
+
+cat("\n=== Power Curve Visualization ===\n")
+cat("Creating power curves for the GOTV example...\n")
+
+# Calculate power analytically for a range of sample sizes and effect sizes
+# Using normal approximation for proportions
+
+gotv_power <- function(n_per_group, effect, p0 = 0.40, alpha = 0.05) {
+  # Pooled SD for proportions
+  p1 <- p0 + effect
+  pooled_sd <- sqrt((p0 * (1 - p0) + p1 * (1 - p1)) / 2)
+  se <- pooled_sd * sqrt(2 / n_per_group)
+
+  # Critical value and power
+  z_crit <- qnorm(1 - alpha / 2)
+  z_power <- effect / se - z_crit
+  power <- pnorm(z_power)
+  return(power)
+}
+
+# Sample sizes to plot (per group)
+n_seq <- seq(500, 10000, by = 100)
+
+# Effect sizes (in percentage points)
+effects_pp <- c(2, 2.5, 3, 3.5, 4) / 100
+
+# Colors for different effect sizes
+colors <- c("#E41A1C", "#FF7F00", "#4DAF4A", "#377EB8", "#984EA3")
+
+# Create the plot
+par(mar = c(5, 5, 4, 2))
+plot(NULL, xlim = c(500, 10000), ylim = c(0, 1),
+     xlab = "Sample Size (per treatment arm)",
+     ylab = "Statistical Power",
+     main = "Power Curves for GOTV Experiment\n(Baseline turnout = 40%, alpha = 0.05)",
+     cex.lab = 1.2, cex.main = 1.1)
+
+# Add grid
+grid(col = "gray90")
+
+# Plot power curves for each effect size
+for (i in seq_along(effects_pp)) {
+  powers <- sapply(n_seq, function(n) gotv_power(n, effects_pp[i]))
+  lines(n_seq, powers, col = colors[i], lwd = 2.5)
+}
+
+# Add 80% power threshold
+abline(h = 0.80, col = "gray40", lty = 2, lwd = 2)
+text(9500, 0.83, "80% power", col = "gray40", cex = 0.9)
+
+# Add vertical line at our planned sample size
+abline(v = n_per_group, col = "gray40", lty = 3, lwd = 1.5)
+text(n_per_group + 300, 0.15, paste0("n = ", n_per_group),
+     col = "gray40", cex = 0.8, srt = 90)
+
+# Legend
+legend("bottomright",
+       legend = paste0(effects_pp * 100, " pp effect"),
+       col = colors, lwd = 2.5,
+       title = "Effect Size",
+       bg = "white", cex = 0.9)
+
+cat("Plot created!\n\n")
+
+# Print power at key sample sizes for the different effect sizes
+cat("Power at n = ", format(n_per_group, big.mark = ","), " per group:\n", sep = "")
+cat("Effect Size | Power\n")
+cat("------------|-------\n")
+for (i in seq_along(effects_pp)) {
+  p <- gotv_power(n_per_group, effects_pp[i])
+  cat(sprintf("   %.1f pp    | %.1f%%\n", effects_pp[i] * 100, p * 100))
+}
+
+cat("\nKey insight from the visualization:\n")
+cat("  - With n = ", format(n_per_group, big.mark = ","), " per group, we have ~80% power for 3pp effect\n", sep = "")
+cat("  - If true effect is only 2pp, power drops to ~50%\n")
+cat("  - If true effect is 4pp, power exceeds 95%\n")
+cat("  - Smaller effects require MUCH larger samples\n\n")
+
+# Save figure for slides
+cat("Saving figure for slides...\n")
+pdf("../decks/figures/gotv_power_curves.pdf", width = 8, height = 6)
+
+par(mar = c(5, 5, 4, 2))
+plot(NULL, xlim = c(500, 10000), ylim = c(0, 1),
+     xlab = "Sample Size (per treatment arm)",
+     ylab = "Statistical Power",
+     main = "Power Curves for GOTV Experiment\n(Baseline turnout = 40%, alpha = 0.05)",
+     cex.lab = 1.2, cex.main = 1.1)
+
+grid(col = "gray90")
+
+for (i in seq_along(effects_pp)) {
+  powers <- sapply(n_seq, function(n) gotv_power(n, effects_pp[i]))
+  lines(n_seq, powers, col = colors[i], lwd = 2.5)
+}
+
+abline(h = 0.80, col = "gray40", lty = 2, lwd = 2)
+text(9500, 0.83, "80% power", col = "gray40", cex = 0.9)
+
+abline(v = n_per_group, col = "gray40", lty = 3, lwd = 1.5)
+text(n_per_group + 300, 0.15, paste0("n = ", n_per_group),
+     col = "gray40", cex = 0.8, srt = 90)
+
+legend("bottomright",
+       legend = paste0(effects_pp * 100, " pp effect"),
+       col = colors, lwd = 2.5,
+       title = "Effect Size",
+       bg = "white", cex = 0.9)
+
+dev.off()
+cat("Saved to ../decks/figures/gotv_power_curves.pdf\n")
 
 # -----------------------------------------------------------------------------
 # Power Analysis: How Many Subjects Do I Need? (General Formula)
