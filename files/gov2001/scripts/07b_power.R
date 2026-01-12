@@ -102,10 +102,130 @@ for (i in seq_along(alphas)) {
 cat("\nNote: Higher alpha -> higher power, but also higher Type I error!\n")
 
 # -----------------------------------------------------------------------------
-# Power Analysis: How Many Subjects Do I Need?
+# PRE-STUDY POWER ANALYSIS: A Complete Example
 # -----------------------------------------------------------------------------
 
-cat("\n=== Sample Size Calculation ===\n")
+# This is what you'd do BEFORE collecting data for a study.
+# The key insight: You specify the effect size AHEAD OF TIME based on:
+#   - Prior literature
+#   - Minimum effect that would be practically meaningful
+#   - Pilot data
+
+cat("\n=== PRE-STUDY POWER ANALYSIS EXAMPLE ===\n")
+cat("Scenario: Planning a GOTV experiment\n\n")
+
+# Step 1: Specify expected effect based on prior research
+cat("STEP 1: Determine expected effect size\n")
+cat("  - Prior GOTV studies show effects of 2-5 percentage points\n")
+cat("  - We'll be conservative and target detecting a 3pp effect\n")
+cat("  - Control group turnout expected: ~40%\n")
+cat("  - Treatment group turnout expected: ~43%\n\n")
+
+expected_effect <- 0.03      # 3 percentage point increase
+control_turnout <- 0.40
+treatment_turnout <- 0.43
+
+# Step 2: Set target power and significance level
+cat("STEP 2: Set target power and alpha\n")
+cat("  - Target power: 80% (standard convention)\n")
+cat("  - Alpha: 0.05 (two-sided)\n\n")
+
+target_power <- 0.80
+alpha <- 0.05
+
+# Step 3: Estimate the standard deviation
+# For proportions, SD = sqrt(p*(1-p))
+# Pool across groups for rough estimate
+pooled_p <- (control_turnout + treatment_turnout) / 2
+sigma <- sqrt(pooled_p * (1 - pooled_p))
+
+cat("STEP 3: Estimate variability\n")
+cat("  - Using binomial SD: sqrt(p*(1-p))\n")
+cat("  - SD estimate:", round(sigma, 3), "\n\n")
+
+# Step 4: Calculate required sample size (per group)
+cat("STEP 4: Calculate required sample size\n")
+
+# Using power.t.test as approximation for large samples
+power_result <- power.t.test(
+  delta = expected_effect,
+  sd = sigma,
+  sig.level = alpha,
+  power = target_power,
+  type = "two.sample"
+)
+
+n_per_group <- ceiling(power_result$n)
+
+cat("  Required n PER GROUP:", n_per_group, "\n")
+cat("  Total sample needed:", 2 * n_per_group, "\n\n")
+
+# Step 5: Simulation-based verification
+cat("STEP 5: Verify with simulation\n")
+
+set.seed(2026)
+n_sims <- 2000
+rejections <- 0
+
+for (i in 1:n_sims) {
+  # Simulate the experiment
+  control <- rbinom(n_per_group, 1, control_turnout)
+  treatment <- rbinom(n_per_group, 1, treatment_turnout)
+
+  # Run the test we'd actually use
+  test <- t.test(treatment, control)
+
+  if (test$p.value < alpha) rejections <- rejections + 1
+}
+
+simulated_power <- rejections / n_sims
+
+cat("  Simulated power:", round(simulated_power, 3), "\n")
+cat("  Target power:   ", target_power, "\n")
+cat("  (These should be close)\n\n")
+
+# Step 6: Document your power analysis
+cat("STEP 6: Document for pre-registration\n")
+cat("--------------------------------------\n")
+cat("POWER ANALYSIS SUMMARY\n")
+cat("  Hypotheses:\n")
+cat("    H0: Treatment effect = 0\n")
+cat("    H1: Treatment effect != 0\n")
+cat("  Expected effect: 3 percentage points\n")
+cat("  Control baseline: 40% turnout\n")
+cat("  Alpha: 0.05 (two-sided)\n")
+cat("  Target power: 80%\n")
+cat("  Required sample: ", 2 * n_per_group, " total\n", sep = "")
+cat("                   (", n_per_group, " per group)\n", sep = "")
+cat("--------------------------------------\n\n")
+
+# What if the effect is smaller than expected?
+cat("SENSITIVITY ANALYSIS: What if effect is smaller?\n")
+effects_to_test <- c(0.02, 0.025, 0.03, 0.035, 0.04)
+
+cat("Effect Size | Power with n=", 2 * n_per_group, "\n", sep = "")
+cat("------------|---------------\n")
+
+for (eff in effects_to_test) {
+  # Simulate with the planned sample size
+  power_at_effect <- 0
+  for (i in 1:1000) {
+    ctrl <- rbinom(n_per_group, 1, control_turnout)
+    trt <- rbinom(n_per_group, 1, control_turnout + eff)
+    if (t.test(trt, ctrl)$p.value < alpha) power_at_effect <- power_at_effect + 1
+  }
+  power_at_effect <- power_at_effect / 1000
+  cat(sprintf("   %.1f pp    |    %.1f%%\n", eff * 100, power_at_effect * 100))
+}
+
+cat("\nThis is why specifying effect size matters:\n")
+cat("If the true effect is only 2pp, you'd need a MUCH larger sample.\n")
+
+# -----------------------------------------------------------------------------
+# Power Analysis: How Many Subjects Do I Need? (General Formula)
+# -----------------------------------------------------------------------------
+
+cat("\n=== Sample Size Calculation (General Formula) ===\n")
 cat("Goal: Find n needed for 80% power\n\n")
 
 # Analytical formula for z-test (approximate):
