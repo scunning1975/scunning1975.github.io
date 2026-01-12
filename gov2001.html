@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gov 2001 | Scott Cunningham</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Merriweather|Source+Sans+Pro:|Muli" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/e7b3ba2953.js" crossorigin="anonymous"></script>
+
+    <!-- Website Styling -->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/scunning.css">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-4894172-2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-4894172-2');
+    </script>
+
+    <style>
+        .course-section {
+            margin-bottom: 40px;
+        }
+        .course-section h3 {
+            border-bottom: 2px solid #111;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+        }
+        .material-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .material-table th, .material-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .material-table th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+        .material-table tr:hover {
+            background-color: #fafafa;
+        }
+        .week-header {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        .pset-row td {
+            background-color: #fff8e6;
+        }
+        .exam-row td {
+            background-color: #ffe6e6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="container app-header">
+
+        <!-- Scott Cunningham -->
+        <div class="row title">
+            <div class="col-xs-12">
+                <h1>scott cunningham</h1>
+                <p>ben h. williams professor of economics<br>baylor university</p>
+            </div>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="row">
+            <div class="col-xs-12 navbar">
+                <ul class="nav-links">
+                    <li>
+                        <a href="index.html" title="Home">home</a>
+                    </li>
+                    <li>
+                        <a href="publications.html">publications</a>
+                    </li>
+                    <li>
+                        <a href="working_papers.html">working papers</a>
+                    </li>
+                    <li class="in">
+                        <a href="teaching.html" title="Teaching">teaching</a>
+                    </li>
+                    <li>
+                        <a href="workshops.html" title="Workshops">workshops</a>
+                    </li>
+                    <li>
+                        <a href="cv.html" title="Curriculum Vitae">curriculum vitae</a>
+                    </li>
+                    <li>
+                        <a href="https://mixtape.scunning.com/" title="Causal Inference: the Mixtape">causal inference: the mixtape</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div class="container">
+
+        <!-- Course Header -->
+        <div class="row">
+            <div class="col-xs-12 col-md-10 offset-md-1">
+                <h2>Gov 2001: Quantitative Social Science Methods I</h2>
+                <p style="font-size: 20px; color: #555;">Spring 2026 — Harvard University</p>
+            </div>
+        </div>
+
+        <!-- Course Info Box -->
+        <div class="row">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <div class="cover-box">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <p><strong>Instructor:</strong> Scott Cunningham</p>
+                            <p><strong>Email:</strong> scunningham@fas.harvard.edu</p>
+                            <p><strong>Meeting:</strong> Mon & Wed, 1:30–2:45 PM</p>
+                            <p><strong>Office Hours:</strong> TBD</p>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <p><strong>Teaching Fellow:</strong> Kaixiao Liu</p>
+                            <p><strong>TF Email:</strong> kaixiaoliu@g.harvard.edu</p>
+                            <p><strong>Section:</strong> TBD</p>
+                        </div>
+                    </div>
+                    <div class="chips" style="margin-top: 16px;">
+                        <a href="files/gov2001/syllabus.pdf" class="app-chip">
+                            <i class="fas fa-file-pdf" aria-hidden="true"></i> Syllabus
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Description -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Course Description</h3>
+                <p>
+                    This course provides a rigorous foundation in quantitative social science methods for first-year PhD students. After reviewing basic probability theory, we offer a systematic introduction to statistical inference and linear regression—the workhorse tools for empirical research in political science.
+                </p>
+                <p>
+                    We take a "population-first" approach: define what you want to know about the population before worrying about estimation. Probability is the language for describing populations; statistics is the machinery for learning about them from samples.
+                </p>
+            </div>
+        </div>
+
+        <!-- Required Texts -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Required Texts</h3>
+                <ul>
+                    <li><strong>Blackwell, Matthew.</strong> <em>A User's Guide to Statistical Inference and Regression.</em> <a href="https://mattblackwell.github.io/gov2002-book/">Free online</a></li>
+                    <li><strong>Aronow, Peter M. and Benjamin T. Miller.</strong> <em>Foundations of Agnostic Statistics.</em> Cambridge University Press.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Grading -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Grading</h3>
+                <table class="material-table">
+                    <tr>
+                        <th>Component</th>
+                        <th>Weight</th>
+                    </tr>
+                    <tr>
+                        <td>Problem Sets (5 bi-weekly)</td>
+                        <td>30%</td>
+                    </tr>
+                    <tr>
+                        <td>Midterm Exam (in-class)</td>
+                        <td>40%</td>
+                    </tr>
+                    <tr>
+                        <td>Final Exam (in-class)</td>
+                        <td>30%</td>
+                    </tr>
+                </table>
+                <p><em>Note: 70% of your grade comes from in-class exams. Problem sets are for learning; exams are for assessment.</em></p>
+            </div>
+        </div>
+
+        <!-- Problem Sets -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Problem Sets</h3>
+                <p>Problem sets are due Fridays at 11:59 PM. Each includes analytical problems and R simulation components.</p>
+                <table class="material-table">
+                    <tr>
+                        <th>Assignment</th>
+                        <th>Due Date</th>
+                        <th>Topics</th>
+                        <th>Files</th>
+                    </tr>
+                    <tr>
+                        <td>Problem Set 1</td>
+                        <td>Feb 13</td>
+                        <td>Probability, conditional probability, Bayes' rule</td>
+                        <td>
+                            <a href="files/gov2001/pset1.pdf">PDF</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Problem Set 2</td>
+                        <td>Feb 27</td>
+                        <td>Random variables, expectation, variance, CEF</td>
+                        <td>
+                            <a href="files/gov2001/pset2.pdf">PDF</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Problem Set 3</td>
+                        <td>Mar 13</td>
+                        <td>Sampling, CLT, estimation, hypothesis testing</td>
+                        <td>
+                            <a href="files/gov2001/pset3.pdf">PDF</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Problem Set 4</td>
+                        <td>Apr 10</td>
+                        <td>OLS introduction, mechanics, properties</td>
+                        <td>
+                            <a href="files/gov2001/pset4.pdf">PDF</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Problem Set 5</td>
+                        <td>Apr 24</td>
+                        <td>Multiple regression, OVB, interactions, inference</td>
+                        <td>
+                            <a href="files/gov2001/pset5.pdf">PDF</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Schedule -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Schedule</h3>
+
+                <h4>Part I: Statistical Inference (Weeks 1–7)</h4>
+                <table class="material-table">
+                    <tr>
+                        <th>Week</th>
+                        <th>Dates</th>
+                        <th>Topic</th>
+                        <th>Readings</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Jan 27, 29</td>
+                        <td>Introduction; Probability Foundations</td>
+                        <td>A&M 1.1; Blackwell 2.1</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Feb 3, 5</td>
+                        <td>Random Variables and Distributions</td>
+                        <td>A&M 1.2; Blackwell 2.2–2.3</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Feb 10, 12</td>
+                        <td>Expected Value and Variance</td>
+                        <td>A&M 2.1, 2.2.1–2.2.2; Blackwell 2.4–2.5</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Feb 17, 19</td>
+                        <td>Joint Distributions and the CEF</td>
+                        <td>A&M 1.3, 2.2.3–2.2.4; Blackwell Ch. 1</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Feb 24, 26</td>
+                        <td>From Population to Sample (LLN, CLT)</td>
+                        <td>A&M 3.1–3.2; Blackwell Ch. 3</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Mar 3, 5</td>
+                        <td>Estimation and Confidence Intervals</td>
+                        <td>A&M 3.2.3, 3.3.1; Blackwell Ch. 2</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Mar 10, 12</td>
+                        <td>Hypothesis Testing and Power</td>
+                        <td>A&M 3.3.2–3.3.3, 3.4.3; Blackwell Ch. 4</td>
+                    </tr>
+                    <tr class="exam-row">
+                        <td colspan="4"><strong>Spring Break: March 14–22</strong></td>
+                    </tr>
+                    <tr class="exam-row">
+                        <td>8</td>
+                        <td>Mar 23 or 25</td>
+                        <td colspan="2"><strong>MIDTERM EXAM</strong></td>
+                    </tr>
+                </table>
+
+                <h4>Part II: Regression (Weeks 8–13)</h4>
+                <table class="material-table">
+                    <tr>
+                        <th>Week</th>
+                        <th>Dates</th>
+                        <th>Topic</th>
+                        <th>Readings</th>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Mar 23, 25</td>
+                        <td>What Is Regression? (BLP, OLS intro)</td>
+                        <td>Blackwell Ch. 5; A&M 2.2.4; A&P 3.1</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Mar 31, Apr 2</td>
+                        <td>OLS Mechanics and Properties</td>
+                        <td>Blackwell Ch. 6–7; A&M 4.1</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Apr 7, 9</td>
+                        <td>Multiple Regression and OVB</td>
+                        <td>Blackwell Ch. 6; A&P 3.1.3, 3.2.2</td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>Apr 14, 16</td>
+                        <td>Interactions, Nonlinearities, F-tests</td>
+                        <td>Blackwell Ch. 7; A&M 4.2</td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>Apr 21, 23</td>
+                        <td>Robust and Clustered Standard Errors</td>
+                        <td>A&M 4.1.4, 3.5; A&P 8.2</td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>Apr 28, 29</td>
+                        <td>Variance Weights and Regression Adjustment</td>
+                        <td>Angrist (1998); Sloczyński (2022)</td>
+                    </tr>
+                    <tr class="exam-row">
+                        <td colspan="4"><strong>Reading Period: April 30 – May 6</strong></td>
+                    </tr>
+                    <tr class="exam-row">
+                        <td></td>
+                        <td>May 7–16</td>
+                        <td colspan="2"><strong>FINAL EXAM</strong></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Policies -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Course Policies</h3>
+
+                <h4>AI Policy</h4>
+                <p>
+                    <strong>Do not use AI assistants (ChatGPT, Claude, Copilot, etc.) on problem sets.</strong> Work with your classmates instead. The learning happens when you struggle through confusion. The 70% of your grade that comes from in-class exams will reveal whether you actually understand the material.
+                </p>
+
+                <h4>Collaboration</h4>
+                <p>
+                    You may discuss problem sets with classmates, but you must write your own solutions and code independently. List all collaborators on your submission.
+                </p>
+
+                <h4>Late Policy</h4>
+                <p>
+                    Problem sets lose 10% per day late. Extensions require advance approval.
+                </p>
+            </div>
+        </div>
+
+        <!-- Back to Teaching -->
+        <div class="row">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <p><a href="teaching.html">&larr; Back to Teaching</a></p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row" style="min-height: 200px;"></div>
+
+</body>
+</html>
