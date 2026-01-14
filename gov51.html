@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gov 51 | Scott Cunningham</title>
 
-    <link href="https://fonts.googleapis.com/css?family=Merriweather|Source+Sans+Pro:|Muli" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Merriweather|Source+Sans+Pro|Muli" rel="stylesheet">
 
     <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/e7b3ba2953.js" crossorigin="anonymous"></script>
@@ -22,6 +22,51 @@
         gtag('js', new Date());
         gtag('config', 'UA-4894172-2');
     </script>
+
+    <style>
+        .course-section {
+            margin-bottom: 40px;
+        }
+        .course-section h3 {
+            border-bottom: 2px solid #111;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+        }
+        .material-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .material-table th, .material-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .material-table th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+        .material-table tr:hover {
+            background-color: #fafafa;
+        }
+        .week-header {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        .week-header td {
+            background-color: #f0f0f0;
+        }
+        .pset-row td {
+            background-color: #fff8e6;
+        }
+        .exam-row td {
+            background-color: #ffe6e6;
+        }
+        .break-row td {
+            background-color: #e6f3ff;
+            font-style: italic;
+        }
+    </style>
 </head>
 
 <body>
@@ -78,14 +123,441 @@
             </div>
         </div>
 
-        <!-- Coming Soon -->
+        <!-- Course Info Box -->
         <div class="row">
             <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
                 <div class="cover-box">
-                    <p style="font-size: 18px; text-align: center; padding: 40px 0;">
-                        <em>Course materials coming soon.</em>
-                    </p>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <p><strong>Instructor:</strong> Scott Cunningham</p>
+                            <p><strong>Email:</strong> scunningham@fas.harvard.edu</p>
+                            <p><strong>Meeting:</strong> Tuesday &amp; Thursday, TBD</p>
+                            <p><strong>Office Hours:</strong> TBD</p>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <p><strong>Teaching Fellows:</strong> TBD</p>
+                            <p><strong>Sections:</strong> TBD</p>
+                            <p><strong>Location:</strong> TBD</p>
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Course Description -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Course Description</h3>
+                <p>
+                    This course introduces students to quantitative methods for analyzing political data. We cover four main pillars: <strong>causality</strong> (how do we know if X causes Y?), <strong>measurement</strong> (how do we summarize and visualize data?), <strong>prediction</strong> (how do we use data to forecast outcomes?), and <strong>inference</strong> (how confident should we be in our conclusions?).
+                </p>
+                <p>
+                    Throughout the course, students learn to program in R using real political science datasets. By the end, you will be able to critically evaluate empirical claims, conduct your own data analyses, and communicate findings effectively.
+                </p>
+            </div>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Learning Objectives</h3>
+                <p>By the end of this course, you will be able to:</p>
+                <ul>
+                    <li>Distinguish causal claims from correlational ones and identify threats to causal inference</li>
+                    <li>Summarize and visualize data using appropriate statistics and graphics</li>
+                    <li>Use linear regression to make predictions and quantify relationships</li>
+                    <li>Construct confidence intervals and conduct hypothesis tests</li>
+                    <li>Write R code to load, manipulate, analyze, and visualize data</li>
+                    <li>Communicate statistical findings clearly and honestly</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Required Text -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Required Text</h3>
+                <ul>
+                    <li><strong>Imai, Kosuke and Nora Webb Williams.</strong> <em>Quantitative Social Science: An Introduction in tidyverse.</em> Princeton University Press, 2022. <a href="https://press.princeton.edu/books/hardcover/9780691222271/quantitative-social-science" target="_blank" rel="noopener noreferrer">Publisher</a> | <a href="https://www.amazon.com/Quantitative-Social-Science-Introduction-tidyverse/dp/0691222274" target="_blank" rel="noopener noreferrer">Amazon</a></li>
+                </ul>
+                <p><em>This is the tidyverse edition of Imai's popular QSS textbook. All R code uses modern tidyverse syntax (dplyr, ggplot2, etc.).</em></p>
+            </div>
+        </div>
+
+        <!-- Grading -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Grading</h3>
+                <table class="material-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Component</th>
+                        <th scope="col">Weight</th>
+                        <th scope="col">Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Weekly Tutorials</td>
+                        <td>10%</td>
+                        <td>Online R tutorials completed before each week's class</td>
+                    </tr>
+                    <tr>
+                        <td>Problem Sets</td>
+                        <td>40%</td>
+                        <td>Weekly assignments combining conceptual questions and R coding</td>
+                    </tr>
+                    <tr>
+                        <td>Exams</td>
+                        <td>30%</td>
+                        <td>Two in-class exams (Midterm and Final)</td>
+                    </tr>
+                    <tr>
+                        <td>Final Project</td>
+                        <td>20%</td>
+                        <td>Independent data analysis project on a topic of your choice</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Schedule -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Schedule</h3>
+
+                <table class="material-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Week</th>
+                        <th scope="col">Dates</th>
+                        <th scope="col">Topic</th>
+                        <th scope="col">Reading</th>
+                        <th scope="col">Slides</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Week 1 -->
+                    <tr>
+                        <td>1</td>
+                        <td>Jan 27, 29</td>
+                        <td>Introduction to R and the Course</td>
+                        <td>QSS 1</td>
+                        <td><a href="files/gov51/slides/week01-introduction.pdf">Slides</a></td>
+                    </tr>
+
+                    <!-- Part I: Causality -->
+                    <tr class="week-header">
+                        <td colspan="5"><strong>Part I: Causality</strong></td>
+                    </tr>
+
+                    <!-- Week 2 -->
+                    <tr>
+                        <td>2</td>
+                        <td>Feb 3, 5</td>
+                        <td>Causality I: Randomized Experiments</td>
+                        <td>QSS 2.1–2.4</td>
+                        <td><a href="files/gov51/slides/week02-randomized-experiments.pdf">Slides</a></td>
+                    </tr>
+
+                    <!-- Week 3 -->
+                    <tr>
+                        <td>3</td>
+                        <td>Feb 10, 12</td>
+                        <td>Causality II: Observational Studies</td>
+                        <td>QSS 2.5–2.6</td>
+                        <td><a href="files/gov51/slides/week03-observational-studies.pdf">Slides</a></td>
+                    </tr>
+
+                    <!-- Part II: Measurement -->
+                    <tr class="week-header">
+                        <td colspan="5"><strong>Part II: Measurement</strong></td>
+                    </tr>
+
+                    <!-- Week 4 -->
+                    <tr>
+                        <td>4</td>
+                        <td>Feb 17, 19</td>
+                        <td>Measurement I: Descriptive Statistics</td>
+                        <td>QSS 3.1–3.4</td>
+                        <td><a href="files/gov51/slides/week04-descriptive-statistics.pdf">Slides</a></td>
+                    </tr>
+
+                    <!-- Week 5 -->
+                    <tr>
+                        <td>5</td>
+                        <td>Feb 24, 26</td>
+                        <td>Measurement II: Sampling and Bivariate Statistics</td>
+                        <td>QSS 3.5–3.7</td>
+                        <td><a href="files/gov51/slides/week05-sampling-bivariate.pdf">Slides</a></td>
+                    </tr>
+
+                    <!-- Part III: Prediction -->
+                    <tr class="week-header">
+                        <td colspan="5"><strong>Part III: Prediction</strong></td>
+                    </tr>
+
+                    <!-- Week 6 -->
+                    <tr>
+                        <td>6</td>
+                        <td>Mar 3, 5</td>
+                        <td>Prediction I: Elections and Linear Regression</td>
+                        <td>QSS 4.1–4.2.3</td>
+                        <td><a href="files/gov51/slides/week06-prediction-regression.pdf">Slides</a></td>
+                    </tr>
+
+                    <!-- Week 7 -->
+                    <tr>
+                        <td>7</td>
+                        <td>Mar 10, 12</td>
+                        <td>Prediction II: Multiple Regression</td>
+                        <td>QSS 4.2.4–4.2.6</td>
+                        <td><a href="files/gov51/slides/week07-multiple-regression.pdf">Slides</a></td>
+                    </tr>
+
+                    <!-- Spring Break -->
+                    <tr class="break-row">
+                        <td></td>
+                        <td>Mar 14–22</td>
+                        <td colspan="3">Spring Recess — No Classes</td>
+                    </tr>
+
+                    <!-- Week 8 -->
+                    <tr>
+                        <td>8</td>
+                        <td>Mar 24, 26</td>
+                        <td>Prediction III: Interactions and Nonlinearities</td>
+                        <td>QSS 4.3</td>
+                        <td><a href="files/gov51/slides/week08-interactions-nonlinear.pdf">Slides</a></td>
+                    </tr>
+
+                    <!-- Part IV: Probability -->
+                    <tr class="week-header">
+                        <td colspan="5"><strong>Part IV: Probability</strong></td>
+                    </tr>
+
+                    <!-- Week 9 -->
+                    <tr>
+                        <td>9</td>
+                        <td>Mar 31, Apr 2</td>
+                        <td>Probability I: Basics</td>
+                        <td>QSS 6.1–6.2</td>
+                        <td><a href="files/gov51/slides/week09-probability-basics.pdf">Slides</a></td>
+                    </tr>
+
+                    <!-- Week 10 -->
+                    <tr>
+                        <td>10</td>
+                        <td>Apr 7, 9</td>
+                        <td>Probability II: Random Variables and Large Samples</td>
+                        <td>QSS 6.3–6.4</td>
+                        <td><a href="files/gov51/slides/week10-random-variables.pdf">Slides</a></td>
+                    </tr>
+
+                    <!-- Part V: Inference -->
+                    <tr class="week-header">
+                        <td colspan="5"><strong>Part V: Inference</strong></td>
+                    </tr>
+
+                    <!-- Week 11 -->
+                    <tr>
+                        <td>11</td>
+                        <td>Apr 14, 16</td>
+                        <td>Inference I: Estimation and Hypothesis Testing</td>
+                        <td>QSS 7.1–7.2</td>
+                        <td><a href="files/gov51/slides/week11-inference-estimation.pdf">Slides</a></td>
+                    </tr>
+
+                    <!-- Week 12 -->
+                    <tr>
+                        <td>12</td>
+                        <td>Apr 21, 23</td>
+                        <td>Inference II: Uncertainty in Regression</td>
+                        <td>QSS 7.3</td>
+                        <td><a href="files/gov51/slides/week12-regression-inference.pdf">Slides</a></td>
+                    </tr>
+
+                    <!-- Week 13 -->
+                    <tr>
+                        <td>13</td>
+                        <td>Apr 28</td>
+                        <td>Review and Synthesis</td>
+                        <td>—</td>
+                        <td><a href="files/gov51/slides/week13-review-synthesis.pdf">Slides</a></td>
+                    </tr>
+
+                    <!-- Midterm Exam -->
+                    <tr class="exam-row">
+                        <td></td>
+                        <td>Mar 10</td>
+                        <td colspan="3"><strong>Midterm Exam</strong> (in class)</td>
+                    </tr>
+
+                    <!-- Final Exam -->
+                    <tr class="exam-row">
+                        <td></td>
+                        <td>TBD</td>
+                        <td colspan="3"><strong>Final Exam</strong> (during exam period)</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Problem Sets -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Problem Sets</h3>
+                <p>Problem sets are due Fridays at 11:59 PM via Canvas. Late submissions lose 10% per day.</p>
+                <table class="material-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Assignment</th>
+                        <th scope="col">Due Date</th>
+                        <th scope="col">Topics</th>
+                        <th scope="col">Files</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Problem Set 1</td>
+                        <td>Feb 7</td>
+                        <td>R basics, data manipulation</td>
+                        <td><a href="files/gov51/pset1.pdf">PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td>Problem Set 2</td>
+                        <td>Feb 14</td>
+                        <td>Causality, potential outcomes, experiments</td>
+                        <td><a href="files/gov51/pset2.pdf">PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td>Problem Set 3</td>
+                        <td>Feb 21</td>
+                        <td>Observational studies, confounding</td>
+                        <td><a href="files/gov51/pset3.pdf">PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td>Problem Set 4</td>
+                        <td>Feb 28</td>
+                        <td>Descriptive statistics, visualization</td>
+                        <td><a href="files/gov51/pset4.pdf">PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td>Problem Set 5</td>
+                        <td>Mar 7</td>
+                        <td>Sampling, correlation</td>
+                        <td><a href="files/gov51/pset5.pdf">PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td>Problem Set 6</td>
+                        <td>Mar 28</td>
+                        <td>Linear regression, prediction</td>
+                        <td><a href="files/gov51/pset6.pdf">PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td>Problem Set 7</td>
+                        <td>Apr 4</td>
+                        <td>Multiple regression, interactions</td>
+                        <td><a href="files/gov51/pset7.pdf">PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td>Problem Set 8</td>
+                        <td>Apr 11</td>
+                        <td>Probability</td>
+                        <td><a href="files/gov51/pset8.pdf">PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td>Problem Set 9</td>
+                        <td>Apr 18</td>
+                        <td>Statistical inference</td>
+                        <td><a href="files/gov51/pset9.pdf">PDF</a></td>
+                    </tr>
+                    <tr>
+                        <td>Problem Set 10</td>
+                        <td>Apr 25</td>
+                        <td>Regression inference</td>
+                        <td><a href="files/gov51/pset10.pdf">PDF</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Final Project -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Final Project</h3>
+                <p>
+                    The final project is an independent data analysis on a political science topic of your choice. You will find a dataset, formulate a research question, conduct an analysis using the methods from this course, and write up your findings.
+                </p>
+                <table class="material-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Milestone</th>
+                        <th scope="col">Due Date</th>
+                        <th scope="col">Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Project Proposal</td>
+                        <td>Mar 7</td>
+                        <td>Research question and data source</td>
+                    </tr>
+                    <tr>
+                        <td>Draft Analysis</td>
+                        <td>Apr 11</td>
+                        <td>Preliminary results and visualizations</td>
+                    </tr>
+                    <tr>
+                        <td>Final Report</td>
+                        <td>Apr 28</td>
+                        <td>Complete written report with code</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Policies -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Course Policies</h3>
+
+                <h4>Academic Integrity</h4>
+                <p>
+                    You are expected to complete all work honestly and independently unless collaboration is explicitly permitted. On problem sets, you may discuss approaches with classmates, but you must write your own solutions and code. List all collaborators on your submission.
+                </p>
+
+                <h4>AI Policy</h4>
+                <p>
+                    <strong>Do not use AI assistants (ChatGPT, Claude, GitHub Copilot, etc.) on problem sets or exams.</strong> The goal of this course is for you to learn to think with data. Using AI to generate answers defeats that purpose and will leave you unprepared for exams, which are completed in-class without AI assistance.
+                </p>
+
+                <h4>Accessibility</h4>
+                <p>
+                    If you have a disability or condition that may affect your learning, please contact the Disability Access Office and speak with me so we can make appropriate accommodations.
+                </p>
+
+                <h4>Getting Help</h4>
+                <p>
+                    If you're struggling, please reach out early. Come to office hours, attend TF sections, and use the course discussion board. Learning statistics is hard—confusion is normal and expected.
+                </p>
+            </div>
+        </div>
+
+        <!-- Resources -->
+        <div class="row course-section">
+            <div class="col-xs-12 col-md-10 offset-md-1 no-padding">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://posit.cloud/" target="_blank" rel="noopener noreferrer">Posit Cloud</a> — Browser-based R environment (no installation needed)</li>
+                    <li><a href="https://r4ds.hadley.nz/" target="_blank" rel="noopener noreferrer">R for Data Science (2nd ed.)</a> — Free online book on tidyverse</li>
+                    <li><a href="https://ggplot2.tidyverse.org/" target="_blank" rel="noopener noreferrer">ggplot2 Documentation</a> — Reference for data visualization</li>
+                    <li><a href="https://www.datacamp.com/courses/free-introduction-to-r" target="_blank" rel="noopener noreferrer">DataCamp: Intro to R</a> — Interactive R tutorials</li>
+                </ul>
             </div>
         </div>
 
