@@ -37,8 +37,8 @@ class(congress)
 
 # Step 1: Check dimensions
 dim(congress)
-## [1] 55  8
-# 55 rows (Congresses from 1917-2024), 8 columns
+## [1] 54  8
+# 54 rows (Congresses from 1917-2024), 8 columns
 
 # Step 2: Check column names
 names(congress)
@@ -69,24 +69,25 @@ summary(congress)
 # Now that we spotted something wrong, let's find it
 
 # What rows have suspicious values?
-which(congress$women_house > 100)
-## [1] 39
+# Since recent Congresses legitimately have >100 women, let's look for extreme values
+which(congress$women_house > 200)
+## [1] 38
 
 # What year is that?
-congress[39, ]
+congress[38, ]
 ##    year congress women_house women_senate total_house total_senate ...
-## 39 1992      102         290            2         435          100 ...
+## 38 1992      102         290            2         435          100 ...
 
 # The problem: 290 women in 1992 is clearly wrong
 # It should be 29 (the "Year of the Woman" election)
 
 # Also check for missing values
 which(is.na(congress$women_senate))
-## [1] 52
+## [1] 51
 
-congress[52, ]
+congress[51, ]
 ##    year congress women_house women_senate total_house total_senate ...
-## 52 2018      115          84           NA         435          100 ...
+## 51 2018      115          84           NA         435          100 ...
 
 # Found another issue: 2018 has a missing value for women_senate
 
@@ -101,12 +102,12 @@ congress$pct_women_senate <- congress$women_senate / congress$total_senate * 100
 # Look at recent years
 tail(congress[, c("year", "pct_women_house", "pct_women_senate")])
 ##    year pct_women_house pct_women_senate
-## 50 2014            18.2             20.0
-## 51 2016            19.3             20.0
-## 52 2018            19.3               NA
-## 53 2020            23.2             26.0
-## 54 2022            27.1             24.0
-## 55 2024            28.7             25.0
+## 49 2014            18.2             20.0
+## 50 2016            19.3             20.0
+## 51 2018            19.3               NA
+## 52 2020            23.2             26.0
+## 53 2022            27.1             24.0
+## 54 2024            28.7             25.0
 
 # ----------------------------------------------------------------------------
 # PART 6: VISUALIZE THE TREND
