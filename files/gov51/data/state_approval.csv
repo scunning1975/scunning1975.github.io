@@ -1,0 +1,51 @@
+state,abbrev,approval,population,region
+Alabama,AL,38,5024279,South
+Alaska,AK,41,733391,West
+Arizona,AZ,44,7151502,West
+Arkansas,AR,36,3011524,South
+California,CA,52,39538223,West
+Colorado,CO,48,5773714,West
+Connecticut,CT,51,3605944,Northeast
+Delaware,DE,49,989948,Northeast
+Florida,FL,43,21538187,South
+Georgia,GA,42,10711908,South
+Hawaii,HI,58,1455271,West
+Idaho,ID,34,1839106,West
+Illinois,IL,47,12812508,Midwest
+Indiana,IN,39,6785528,Midwest
+Iowa,IA,41,3190369,Midwest
+Kansas,KS,38,2937880,Midwest
+Kentucky,KY,37,4505836,South
+Louisiana,LA,39,4657757,South
+Maine,ME,50,1362359,Northeast
+Maryland,MD,53,6177224,Northeast
+Massachusetts,MA,56,7029917,Northeast
+Michigan,MI,45,10077331,Midwest
+Minnesota,MN,47,5706494,Midwest
+Mississippi,MS,35,2961279,South
+Missouri,MO,40,6154913,Midwest
+Montana,MT,39,1084225,West
+Nebraska,NE,38,1961504,Midwest
+Nevada,NV,45,3104614,West
+New Hampshire,NH,46,1377529,Northeast
+New Jersey,NJ,48,9288994,Northeast
+New Mexico,NM,47,2117522,West
+New York,NY,50,20201249,Northeast
+North Carolina,NC,43,10439388,South
+North Dakota,ND,37,779094,Midwest
+Ohio,OH,42,11799448,Midwest
+Oklahoma,OK,35,3959353,South
+Oregon,OR,49,4237256,West
+Pennsylvania,PA,45,13002700,Northeast
+Rhode Island,RI,52,1097379,Northeast
+South Carolina,SC,40,5118425,South
+South Dakota,SD,38,886667,Midwest
+Tennessee,TN,39,6910840,South
+Texas,TX,41,29145505,South
+Utah,UT,36,3271616,West
+Vermont,VT,57,643077,Northeast
+Virginia,VA,46,8631393,South
+Washington,WA,50,7705281,West
+West Virginia,WV,34,1793716,South
+Wisconsin,WI,44,5893718,Midwest
+Wyoming,WY,32,576851,West
