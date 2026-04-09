@@ -16,6 +16,17 @@ library(tidyverse)
 library(estimatr)
 
 # ============================================================================
+# Set working directory to script location (works in RStudio and Rscript)
+# ============================================================================
+
+if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+  setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+} else {
+  script_path <- tryCatch(normalizePath(sys.frame(1)$ofile), error = function(e) NULL)
+  if (!is.null(script_path)) setwd(dirname(script_path))
+}
+
+# ============================================================================
 # 0. Harvard color palette (matches gov51-style.sty)
 # ============================================================================
 
