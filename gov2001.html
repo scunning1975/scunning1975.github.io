@@ -396,7 +396,7 @@
                         <td>Apr 27, 29</td>
                         <td>Robust &amp; Clustered SEs (Mon); Variance Weights (Wed)</td>
                         <td>Blackwell Ch. 7; A&M 4.1.4, 4.2; MHE 8.2; Angrist (1998); Sloczyński (2022); A&M 7.3</td>
-                        <td><a href="files/gov2001/slides/14a_nonspherical_se.pdf">Non-spherical SEs</a> &middot; <a href="https://vimeo.com/1187326498?share=copy&amp;fl=sv&amp;fe=ci">recording</a><br><a href="files/gov2001/slides/14b_variance_weights.pdf">Variance Weights</a> &middot; <a href="https://vimeo.com/1187818784?share=copy&amp;fl=sv&amp;fe=ci">recording</a></td>
+                        <td><a href="files/gov2001/slides/14a_nonspherical_se.pdf">Non-spherical SEs</a> &middot; <a href="https://vimeo.com/1187326498?share=copy&amp;fl=sv&amp;fe=ci">recording</a><br><a href="files/gov2001/slides/14b_variance_weights.pdf">Variance Weights</a> &middot; <a href="https://vimeo.com/1187818784?share=copy&amp;fl=sv&amp;fe=ci">recording</a> &middot; <a href="files/gov2001/shiny/ols_weights/">Shiny app</a></td>
                         <td></td>
                     </tr>
                     <tr class="exam-row">
@@ -420,6 +420,9 @@
                 </p>
                 <p>
                     <strong>Suggested approach.</strong> Do the third problem in each part (1c, 2c, 3a or 3b, 4c, 5c) first, closed-book and timed. The c-problems are the full rehearsals; the a's and b's are scaffolds you can fall back on if you get stuck. Solutions will be posted later this week.
+                </p>
+                <p>
+                    <strong>Companion Shiny app for Problem 5c (variance-weighted regression):</strong> the <a href="files/gov2001/shiny/ols_weights/"><strong>OLS weights interactive app</strong></a> lets you slide $P(G{=}1)$, $p_0$, $p_1$, $\tau_0$, $\tau_1$ in real time and watch the ATE, the OLS coefficient, and the gap update live. The first load is slow (the WebAssembly R runtime downloads in your browser); after that it's instant. Use it to build intuition for how the variance weights respond to take-up and stratum size.
                 </p>
             </div>
         </div>
