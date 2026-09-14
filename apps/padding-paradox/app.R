@@ -123,6 +123,12 @@ CSS <- "
            white-space: pre; overflow-x: auto; margin: 0; }
   .flexrow { display: flex; justify-content: space-between; align-items: center;
              flex-wrap: wrap; gap: 12px; }
+  .board { padding: 16px 18px; margin: 14px 0 0; }
+  .budget { font-family: Menlo, monospace; font-size: 14px; margin-top: 10px; }
+  .budget.over { color: #9B2C2C; font-weight: 700; }
+  .radio-inline { margin-right: 12px; }
+  details.card summary { cursor: pointer; outline: none; }
+  details.card ul { margin: 10px 0 0; padding-left: 18px; font-size: 14px; line-height: 1.5; }
 "
 CSS <- gsub("%GOLD%", BAYLOR_GOLD, gsub("%GREEN%", BAYLOR_GREEN, CSS, fixed = TRUE),
             fixed = TRUE)
@@ -442,6 +448,196 @@ final_panel <- function(scores) {
   )
 }
 
+# ================================================================ BEAT LSU
+# Tennessee vs LSU, Neyland Stadium, Sat Nov 21 2026.
+# Team numbers: 40/60 blend of 2026-to-date (2 games) and full 2025, from
+# cfbstats / ESPN, pulled Sept 14 2026. The default matchup is anchored to
+# the DraftKings line that day (LSU -1.5, O/U 57.5). Every lever effect and
+# every price is an assumption, listed in the app so it can be argued with.
+
+BL <- list(
+  base   = c(TENN = 28.0, LSU = 29.5),   # expected points, from the line
+  sd     = 10,                            # per-team scoring sd
+  budget = 10.0,                          # $M of NIL / portal room (assumed)
+  n      = 2000,
+  tenn = list(off = 7.0, def = 5.12, pass = .42, ypa = 9.0,
+              qb = "Faizon Brandon, true freshman: 23/38, 374 yds, 5 TD, 0 INT"),
+  lsu  = list(off = 5.8, def = 4.13, pass = .50, ypa = 7.7,
+              qb = "Sam Leavitt, RS junior via Arizona State: 41/66, 574 yds, 2 TD, 4 INT")
+)
+
+BL_QB <- data.frame(
+  key   = c("brandon", "portal", "manning", "manziel"),
+  label = c("Faizon Brandon — the true freshman · $0",
+            "Portal QB — an SEC starter · $4.0M",
+            "Peyton Manning, 1997 — 3,819 yds, 36 TD, 8.0 YPA · $6.0M",
+            "Johnny Manziel, 2012 — 3,706 passing + 1,410 rushing · $5.0M"),
+  short = c("Brandon", "Portal QB", "Manning '97", "Manziel '12"),
+  cost  = c(0, 4.0, 6.0, 5.0),
+  off   = c(0, .07, .10, .09),      # % change in Tennessee's expected points
+  sd    = c(0, 0, -1, 3),           # Manning calms the game; Manziel is chaos
+  stringsAsFactors = FALSE)
+
+BL_MOVES <- data.frame(
+  key   = c("wr", "ol", "edge", "star", "gambit"),
+  label = c("Portal WR — 4.3 speed · $2.0M",
+            "Portal OL pair — protect the quarterback · $3.0M",
+            "Portal edge rusher — 255 lb · $2.5M",
+            "Portal STAR — the safety-corner hybrid · $1.5M",
+            "The Kiffin Gambit — sign three ex-NFL players · $3.0M"),
+  short = c("Portal WR", "Portal OL", "Portal edge", "Portal STAR", "Kiffin Gambit"),
+  cost  = c(2.0, 3.0, 2.5, 1.5, 3.0),
+  off   = c(.03, .03, 0, 0, .03),   # % change in Tennessee's expected points
+  def   = c(0, 0, .04, .03, .06),   # % reduction in LSU's expected points
+  stringsAsFactors = FALSE)
+
+BL_LEVERS <- list(
+  pads = list(choices = c("Light 1.5 lb" = "light", "Medium 4 lb" = "medium",
+                          "Heavy 9 lb" = "heavy"),
+              off = c(light = .02, medium = 0, heavy = -.03),
+              inj = c(light = .08, medium = .05, heavy = .03)),   # P(QB hurt) → -4 pts
+  pers = list(choices = c("Base 4-3" = "base", "Nickel" = "nickel", "STAR" = "star"),
+              def = c(base = -.03, nickel = .02, star = .03)),
+  rpo  = list(choices = c("Huddle up" = "off", "Run the RPO" = "on"),
+              off = c(off = 0, on = .04)),
+  edge = list(choices = c("Run-stuffer 300" = "stuffer", "Balanced 275" = "balanced",
+                          "Speed rusher 255" = "speed"),
+              def = c(stuffer = 0, balanced = .015, speed = .03))
+)
+BL_GAMBIT_ELIG <- 0.55   # chance the ex-NFL players are cleared before kickoff (assumed)
+
+bl_build <- function(qb, moves, pads, pers, rpo, edge) {
+  if (is.null(moves)) moves <- character(0)
+  q  <- BL_QB[BL_QB$key == qb, ]
+  bT <- BL$base[["TENN"]]; bL <- BL$base[["LSU"]]
+  eT <- bT; eL <- bL; sdT <- BL$sd + q$sd; sdL <- BL$sd
+  items <- data.frame(what = character(), pts = numeric(), stringsAsFactors = FALSE)
+  add <- function(what, pts) items <<- rbind(items, data.frame(what = what, pts = pts,
+                                                             stringsAsFactors = FALSE))
+  if (q$off != 0) { add(q$short, bT * q$off); eT <- eT + bT * q$off }
+  for (k in setdiff(moves, "gambit")) {
+    m <- BL_MOVES[BL_MOVES$key == k, ]
+    if (m$off != 0) { add(m$short, bT * m$off); eT <- eT + bT * m$off }
+    if (m$def != 0) { add(m$short, bL * m$def); eL <- eL - bL * m$def }
+  }
+  lv <- BL_LEVERS
+  if (lv$pads$off[[pads]] != 0) { add(paste0("Pads: ", pads), bT * lv$pads$off[[pads]])
+                                  eT <- eT + bT * lv$pads$off[[pads]] }
+  pinj <- lv$pads$inj[[pads]]
+  add(sprintf("QB injury risk, %s pads (%.0f%%)", pads, 100 * pinj), -4 * pinj)
+  add(paste0("Personnel: ", pers), bL * lv$pers$def[[pers]]); eL <- eL - bL * lv$pers$def[[pers]]
+  if (rpo == "on") { add("The RPO", bT * lv$rpo$off[["on"]]); eT <- eT + bT * lv$rpo$off[["on"]]
+                     sdT <- sdT + 1 }
+  if (lv$edge$def[[edge]] != 0) { add(paste0("Edge: ", edge), bL * lv$edge$def[[edge]])
+                                  eL <- eL - bL * lv$edge$def[[edge]] }
+  gambit <- "gambit" %in% moves
+  g_off <- bT * BL_MOVES$off[BL_MOVES$key == "gambit"]
+  g_def <- bL * BL_MOVES$def[BL_MOVES$key == "gambit"]
+  if (gambit) add(sprintf("Kiffin Gambit (%.0f%% cleared to play)", 100 * BL_GAMBIT_ELIG),
+                  BL_GAMBIT_ELIG * (g_off + g_def))
+  cost <- q$cost + sum(BL_MOVES$cost[BL_MOVES$key %in% moves])
+  list(qb = q, moves = moves, pads = pads, pers = pers, rpo = rpo, edge = edge,
+       eT = eT, eL = eL, sdT = sdT, sdL = sdL, cost = cost, items = items,
+       pinj = pinj, gambit = gambit, g_off = g_off, g_def = g_def)
+}
+
+bl_sim <- function(b, n = BL$n, seed = NULL) {
+  if (!is.null(seed)) set.seed(seed)
+  elig <- if (b$gambit) runif(n) < BL_GAMBIT_ELIG else rep(FALSE, n)
+  hurt <- runif(n) < b$pinj
+  eT <- b$eT + ifelse(elig, b$g_off, 0) - ifelse(hurt, 4, 0)
+  eL <- b$eL - ifelse(elig, b$g_def, 0)
+  sT <- pmax(0, round(rnorm(n, eT, b$sdT)))
+  sL <- pmax(0, round(rnorm(n, eL, b$sdL)))
+  tie <- sT == sL
+  win <- (sT > sL) | (tie & runif(n) < .5)
+  list(win = mean(win), sT = sT, sL = sL, mT = mean(sT), mL = mean(sL),
+       hurt = mean(hurt), elig = if (b$gambit) mean(elig) else NA_real_, build = b)
+}
+
+bl_pad <- function(s, w) paste0(s, strrep(" ", max(0, w - nchar(s))))
+bl_board_txt <- function(b, r, best) {
+  sT  <- if (is.null(r)) round(b$eT) else round(r$mT)
+  sL  <- if (is.null(r)) round(b$eL) else round(r$mL)
+  win <- if (is.null(r)) " —  " else sprintf("%3.0f%%", 100 * r$win)
+  bst <- if (is.na(best)) " —  " else sprintf("%3.0f%%", 100 * best)
+  row <- function(x) paste0("║  ", bl_pad(x, 48), "  ║")
+  paste(
+    "╔════════════════════════════════════════════════════╗",
+    row("NEYLAND STADIUM  ·  SAT NOV 21 2026  ·  KICK TBA"),
+    row(""),
+    row(sprintf("TENNESSEE  [ %2d ]        LSU  [ %2d ]", sT, sL)),
+    row(if (is.null(r)) "expected score from the line, before your moves"
+        else sprintf("average of %s games with your build", format(BL$n, big.mark = ","))),
+    row(""),
+    row(sprintf("your build wins  %s      best so far  %s", win, bst)),
+    "╚════════════════════════════════════════════════════╝",
+    sep = "\n")
+}
+
+bl_share <- function(r) {
+  b <- r$build
+  mv <- BL_MOVES$short[BL_MOVES$key %in% b$moves]
+  who <- paste(c(b$qb$short, mv), collapse = " + ")
+  sprintf("BEAT LSU  ·  Tennessee wins %.0f%%  ·  %d–%d\n%s\n%s pads · %s · %s · %s edge\nscunning.com/apps/padding-paradox",
+          100 * r$win, round(r$mT), round(r$mL), who, b$pads, b$pers,
+          if (b$rpo == "on") "RPO on" else "huddle", b$edge)
+}
+
+bl_tab <- function() {
+  tabPanel("Beat LSU · The game",
+    uiOutput("bl_board"),
+    div(class = "howto",
+        div(class = "small-caps", "the game"),
+        p(class = "lead",
+          "Neyland, November 21. You have $10M of NIL and portal room and ",
+          "Pearson's four levers. Build the Tennessee side, play the game 2,000 ",
+          "times, and watch the one number that matters. LSU plays its actual ",
+          "2026 self.")),
+    fluidRow(
+      column(6,
+        div(class = "card",
+            div(class = "small-caps", "quarterback — one starts"),
+            radioButtons("bl_qb", NULL, choices = setNames(BL_QB$key, BL_QB$label),
+                         selected = "brandon"),
+            div(class = "small-caps", style = "margin-top:10px;", "the portal, and the gambit"),
+            checkboxGroupInput("bl_moves", NULL,
+                               choices = setNames(BL_MOVES$key, BL_MOVES$label)),
+            uiOutput("bl_budget"))),
+      column(6,
+        div(class = "card",
+            div(class = "small-caps", "your football — pearson's levers"),
+            radioButtons("bl_pads", "Pads", choices = BL_LEVERS$pads$choices,
+                         selected = "medium", inline = TRUE),
+            radioButtons("bl_pers", "Personnel vs LSU's three receivers",
+                         choices = BL_LEVERS$pers$choices, selected = "nickel", inline = TRUE),
+            radioButtons("bl_rpo", "Offense", choices = BL_LEVERS$rpo$choices,
+                         selected = "off", inline = TRUE),
+            radioButtons("bl_edge", "Your edge", choices = BL_LEVERS$edge$choices,
+                         selected = "balanced", inline = TRUE),
+            actionButton("bl_run", "Play it 2,000 times", class = "btn-primary",
+                         width = "100%")))
+    ),
+    uiOutput("bl_result"),
+    tags$details(class = "card",
+      tags$summary(class = "small-caps", "where the numbers come from"),
+      tags$ul(
+        tags$li(strong("Measured. "), "Team stats: cfbstats.com and ESPN, 2026 through ",
+                "Sept 12 (two games each) blended 40/60 with the full 2025 season. ",
+                "Quarterback lines: ESPN. Line and rankings: DraftKings via ESPN and the ",
+                "AP poll, Sept 13–14, 2026. Manning 1997 and Manziel 2012 season lines: ",
+                "Wikipedia and the schools' sites."),
+        tags$li(strong("Reported. "), "NIL spending: LSU above $40M, Tennessee mid-to-high ",
+                "$30Ms (On3, 247Sports). The $10M of ", em("room"), " here is an assumption."),
+        tags$li(strong("True. "), "The Gambit: the SEC sued LSU and Lane Kiffin in 2026 over ",
+                "recruiting former NFL players; a Louisiana judge blocked the SEC; LSU ",
+                "held two of them out of Week 1 anyway (ESPN). The 55% is a guess."),
+        tags$li(strong("Assumed. "), "Everything else — every effect size, every price, the ",
+                "injury odds, the scoring spread. Argue with them in the chat.")
+      ))
+  )
+}
+
 # ---------------------------------------------------------------- UI
 ui <- fluidPage(
   title = "The Padding Paradox",
@@ -453,7 +649,8 @@ ui <- fluidPage(
     '<pre class="ascii"><span class="art">%s</span></pre>', ASCII_ART)))),
 
   tabsetPanel(id = "tabs",
-    tabPanel("Play · Coach the Decades",
+    bl_tab(),
+    tabPanel("Coach the Decades · The lessons",
       div(class = "howto",
           div(class = "small-caps", "the game"),
           p(class = "lead",
@@ -557,6 +754,83 @@ sim_player <- function(load_lbs, base_40, assump, n_plays = 1000) {
 
 # ---------------------------------------------------------------- server
 server <- function(input, output, session) {
+
+  # ---- Beat LSU -----------------------------------------------------------
+  bl_best <- reactiveVal(NA_real_)
+  bl_last <- reactiveVal(NULL)
+  bl_b <- reactive(bl_build(input$bl_qb, input$bl_moves, input$bl_pads,
+                            input$bl_pers, input$bl_rpo, input$bl_edge))
+
+  output$bl_budget <- renderUI({
+    b <- bl_b(); over <- b$cost > BL$budget + 1e-9
+    div(class = paste("budget", if (over) "over"),
+        sprintf("spent  $%.1fM  of  $%.1fM%s", b$cost, BL$budget,
+                if (over) "   — over budget" else ""))
+  })
+
+  output$bl_board <- renderUI({
+    HTML(sprintf('<pre class="ascii board"><span class="art">%s</span></pre>',
+                 bl_board_txt(bl_b(), bl_last(), bl_best())))
+  })
+
+  observeEvent(input$bl_run, {
+    b <- bl_b()
+    if (b$cost > BL$budget + 1e-9) {
+      showNotification("Over budget. Drop something.", type = "error", duration = 3)
+      return()
+    }
+    r <- bl_sim(b, BL$n, sample.int(1e6, 1))
+    bl_last(r)
+    if (is.na(bl_best()) || r$win > bl_best()) bl_best(r$win)
+  })
+
+  output$bl_result <- renderUI({
+    r <- bl_last(); req(r); b <- r$build
+    notes <- c(
+      sprintf("The quarterback got hurt in %.0f%% of games.", 100 * r$hurt),
+      if (b$gambit) sprintf("The ex-NFL players were cleared to play in %.0f%% of games.",
+                            100 * r$elig))
+    tagList(
+      fluidRow(class = "tiles",
+        column(4, div(class = "card", div(class = "small-caps", "tennessee wins"),
+                      div(class = "big", sprintf("%.0f%%", 100 * r$win)))),
+        column(4, div(class = "card", div(class = "small-caps", "average score"),
+                      div(class = "big", sprintf("%d–%d", round(r$mT), round(r$mL))))),
+        column(4, div(class = "card", div(class = "small-caps", "spent"),
+                      div(class = "big", sprintf("$%.1fM", b$cost))))),
+      div(class = "card", plotOutput("bl_plot", height = "250px")),
+      fluidRow(
+        column(6, div(class = "card",
+                      div(class = "small-caps", "what moved the needle · points toward tennessee"),
+                      tableOutput("bl_items"),
+                      tags$small(class = "era-note", paste(notes, collapse = " ")))),
+        column(6, div(class = "card",
+                      div(class = "small-caps", "paste this into the chat"),
+                      tags$pre(class = "share", bl_share(r)))))
+    )
+  })
+
+  output$bl_plot <- renderPlot({
+    r <- bl_last(); req(r)
+    d <- data.frame(m = r$sT - r$sL); d$won <- d$m > 0
+    ggplot(d, aes(m, fill = won)) +
+      geom_histogram(binwidth = 3, color = "white", linewidth = .3, boundary = 0) +
+      geom_vline(xintercept = 0, color = "#1A1A1A", linewidth = 1) +
+      scale_fill_manual(values = c(`TRUE` = BAYLOR_GREEN, `FALSE` = "#BFC3C7"), guide = "none") +
+      labs(title = sprintf("Tennessee wins %.0f%% of %s games",
+                           100 * r$win, format(length(d$m), big.mark = ",")),
+           x = "Margin  (Tennessee − LSU)", y = NULL) +
+      theme_minimal(base_size = 13) +
+      theme(panel.grid.minor = element_blank(),
+            plot.title = element_text(face = "bold", color = BAYLOR_GREEN))
+  })
+
+  output$bl_items <- renderTable({
+    r <- bl_last(); req(r); it <- r$build$items
+    it <- it[order(-abs(it$pts)), ]
+    data.frame(` ` = it$what, Points = sprintf("%+.1f", it$pts), check.names = FALSE)
+  }, striped = TRUE, align = "lr")
+
 
   # ---- Play ---------------------------------------------------------------
   lvl      <- reactiveVal(1L)
