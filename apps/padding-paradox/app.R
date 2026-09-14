@@ -275,7 +275,7 @@ lvl3_curve <- function(t, L, era) {
     run <- L$u < 0.65
     y <- ifelse(run, ifelse(fit, 2.5, 7.0), ifelse(fit, 9.0, 4.0))
   } else {
-    y <- ifelse(fit, 6.5, 6.0)      # he reads you: fit → he throws, drop → he hands off
+    y <- ifelse(fit, 6.3, 6.1)      # he reads you: fit → he throws, drop → he hands off
   }
   mean(y + 3 * L$z)
 }
@@ -456,7 +456,8 @@ final_panel <- function(scores) {
 # every price is an assumption, listed in the app so it can be argued with.
 
 BL <- list(
-  base   = c(TENN = 28.0, LSU = 29.5),   # expected points, from the line
+  base   = c(TENN = 28.0, LSU = 30.6),   # LSU raw; the default levers (nickel,
+                                          # balanced edge) bring it to 29.5 = the line
   sd     = 10,                            # per-team scoring sd
   budget = 10.0,                          # $M of NIL / portal room (assumed)
   n      = 2000,
