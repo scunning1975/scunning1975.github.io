@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ricardo: Where Does the Net Produce Go?</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--cream:#FBFAF7;--green:#154734;--gold:#FFB81C;--golddeep:#C98F00;--ink:#1A1A1A;--warm:#6B7280;--brick:#9B2C2C;--pale:#D8D4CB;--earth:#8C7B6B;--mist:#EDE9DE}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--cream)}
+  body{cursor:pointer;user-select:none;-webkit-user-select:none}
+  #stage{position:fixed;inset:0;width:100vw;height:100vh;display:block}
+  svg text{font-family:"Fira Sans",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--ink)}
+  svg rect.bar{transition:y .6s cubic-bezier(.2,.8,.2,1),height .6s cubic-bezier(.2,.8,.2,1),opacity .4s}
+  .fade{transition:opacity .45s ease}
+  #help{position:fixed;left:16px;bottom:12px;font:13px "Fira Sans",sans-serif;color:var(--pale)}
+</style>
+</head>
+<body>
+<svg id="stage" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="1600" height="900" fill="#FBFAF7"/>
+  <text id="title" x="80" y="92" font-size="50" font-weight="700" fill="#154734" class="fade"></text>
+  <rect x="80" y="114" width="146" height="3" fill="#FFB81C"/>
+  <text id="sub" x="80" y="150" font-size="24" fill="#6B7280" class="fade"></text>
+  <g id="body"></g>
+  <text id="counter" x="1565" y="882" font-size="18" fill="#D8D4CB" text-anchor="end"></text>
+</svg>
+<div id="help">← → or click · End fills the scene · N next scene · F full screen · R restart</div>
+<script>
+(() => {
+const NS='http://www.w3.org/2000/svg';
+const C={green:'#154734',gold:'#FFB81C',golddeep:'#C98F00',ink:'#1A1A1A',warm:'#6B7280',brick:'#9B2C2C',pale:'#D8D4CB',earth:'#8C7B6B',mist:'#EDE9DE',cream:'#FBFAF7'};
+const $=id=>document.getElementById(id);
+const el=(tag,attrs,parent,text)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;(parent||$('body')).appendChild(e);return e;};
+const sum=a=>a.reduce((x,y)=>x+y,0);
+
+// ---------------- model ----------------
+function solve(P,w,x,rents,floor){ // rents given (static) or null (equilibrium); floor = import-set no-rent level
+  const net=P.map(p=>p-w);
+  let r;
+  if(rents) r=rents.slice(0,x);
+  else { const pm=floor!=null?floor:P[x-1]; r=P.slice(0,x).map(p=>Math.max(0,p-pm)); }
+  const prof=net.slice(0,x).map((n,i)=>n-r[i]);
+  return {net,r,prof,rent:sum(r),profit:sum(prof),wages:w*x,surplus:sum(net.slice(0,x))};
+}
+
+// ---------------- farm renderer ----------------
+// stage: 0 produce, 1 wages, 2 net produce, 3 rent, 4 profit (default 4 = everything)
+let bars={};
+function farm(g,P,w,x,st,o){
+  o=o||{};const stage=o.stage==null?4:o.stage;
+  const L=110,R=830,T=200,B=720,ymax=Math.max(...P)*1.12;
+  const n=P.length,bw=(R-L)/n,sy=v=>T+(B-T)*(1-v/ymax);
+  el('line',{x1:L,y1:T-10,x2:L,y2:B,stroke:C.ink,'stroke-width':2},g);
+  el('line',{x1:L,y1:B,x2:R+20,y2:B,stroke:C.ink,'stroke-width':2},g);
+  el('text',{x:L-10,y:T-18,'font-size':18,fill:C.warm,'text-anchor':'start'},g,'corn per parcel');
+  el('text',{x:R+20,y:B+34,'font-size':18,fill:C.warm,'text-anchor':'end'},g,'parcels');
+  const drawn={};
+  for(let i=0;i<n;i++){
+    const used=i<x, xx=L+i*bw+10, wd=bw-20;
+    // outline of the whole parcel
+    el('rect',{x:xx,y:sy(P[i]),width:wd,height:B-sy(P[i]),fill:'none',stroke:used?C.earth:C.pale,'stroke-width':2,'stroke-dasharray':used?'none':'8 6'},g);
+    const segs=[];
+    if(used){
+      if(stage>=1)segs.push(['w',C.earth,0,w]);
+      if(stage>=3)segs.push(['r',C.gold,w+st.prof[i],P[i]]);
+      if(stage>=4)segs.push(['p',C.green,w,w+st.prof[i]]);
+    }
+    segs.forEach(([k,f,a,b])=>{
+      const rc=el('rect',{class:'bar',x:xx,width:wd,fill:f,stroke:'#fff','stroke-width':1.5},g);
+      const prev=bars[k+i]; if(prev){rc.setAttribute('y',prev.y);rc.setAttribute('height',prev.h);}
+      else {rc.setAttribute('y',sy(a));rc.setAttribute('height',0);}
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{rc.setAttribute('y',sy(b));rc.setAttribute('height',Math.max(0,sy(a)-sy(b)));}));
+      bars[k+i]={y:sy(b),h:Math.max(0,sy(a)-sy(b))};drawn[k+i]=1;
+      const mid=(sy(a)+sy(b))/2, h=sy(a)-sy(b);
+      if(h>22){const lbl=k==='w'?w:(k==='p'?st.prof[i]:st.r[i]);const t=el('text',{x:xx+wd/2,y:mid+7,'font-size':20,'font-weight':700,'text-anchor':'middle',fill:k==='p'?'#fff':C.ink,class:'fade',opacity:prev?1:0},g,lbl);if(!prev)setTimeout(()=>t.setAttribute('opacity',1),350);}
+    });
+    // net produce, outlined before it is divided
+    if(used&&stage>=2&&stage<4){
+      const top=stage===2?P[i]:w+st.prof[i];
+      el('rect',{x:xx+4,y:sy(top)+3,width:wd-8,height:Math.max(0,sy(w)-sy(top)-6),fill:'none',stroke:C.golddeep,'stroke-width':2,'stroke-dasharray':'6 5'},g);
+      if(stage===2)el('text',{x:xx+wd/2,y:(sy(top)+sy(w))/2+7,'font-size':20,'font-weight':700,'text-anchor':'middle',fill:C.golddeep},g,'net '+st.net[i]);
+      else el('text',{x:xx+wd/2,y:(sy(top)+sy(w))/2+7,'font-size':26,'font-weight':700,'text-anchor':'middle',fill:C.golddeep},g,'?');
+    }
+    el('text',{x:xx+wd/2,y:B+30,'font-size':20,'text-anchor':'middle',fill:used?C.ink:C.pale,'font-weight':used?500:400},g,'No. '+(i+1));
+    el('text',{x:xx+wd/2,y:sy(P[i])-10,'font-size':18,'text-anchor':'middle',fill:used?C.ink:C.pale},g,P[i]);
+    if(!used) el('text',{x:xx+wd/2,y:(sy(P[i])+B)/2,'font-size':16,'text-anchor':'middle',fill:C.pale},g,o.unusedLabel||'not yet farmed');
+  }
+  for(const key in bars)if(!drawn[key])delete bars[key];
+  if(stage>=1){el('line',{x1:L,y1:sy(w),x2:R,y2:sy(w),stroke:C.earth,'stroke-width':2,'stroke-dasharray':'10 6'},g);
+  el('text',{x:R+8,y:sy(w)+6,'font-size':18,fill:C.earth},g,'w = '+w);}
+  if(o.marginLine!==false&&stage>=3){const pm=o.floor!=null?o.floor:P[x-1];el('line',{x1:L,y1:sy(pm),x2:L+x*bw,y2:sy(pm),stroke:C.golddeep,'stroke-width':2,'stroke-dasharray':'4 5'},g);el('text',{x:L+x*bw+8,y:sy(pm)+6,'font-size':18,fill:C.golddeep},g,(o.floor!=null?'import price ':'margin ')+pm);}
+  const leg=[];if(stage>=1)leg.push(['wages → laborers',C.earth]);if(stage>=3)leg.push(['rent → landlords',C.gold]);if(stage>=4)leg.push(['profit → farmers',C.green]);
+  leg.forEach(([t,f],i)=>{el('rect',{x:L+i*230,y:760,width:22,height:22,fill:f},g);el('text',{x:L+i*230+30,y:778,'font-size':18,fill:C.ink},g,t);});
+}
+
+// ---------------- table renderer ----------------
+function table(g,P,w,x,st,o){
+  o=o||{};const stage=o.stage==null?4:o.stage;
+  const X0=900,Y0=200,colW=[70,95,90,95,95,95],rowH=46;
+  const heads=['Parcel','Produce','Wages','Net','Rent','Farmer profit'];
+  const showCol=[true,true,stage>=1,stage>=2,stage>=3,stage>=4];
+  let cx=X0;const xs=[];for(let i=0;i<heads.length;i++){xs.push(cx+colW[i]/2);cx+=colW[i];}
+  heads.forEach((h,i)=>el('text',{x:xs[i],y:Y0,'font-size':17,'text-anchor':'middle',fill:showCol[i]?C.warm:C.pale},g,h));
+  el('line',{x1:X0,y1:Y0+12,x2:cx,y2:Y0+12,stroke:C.pale,'stroke-width':2},g);
+  const cell=(x,y,v,attrs,fresh)=>{const t=el('text',Object.assign({x:x,y:y,'font-size':22,'text-anchor':'middle',class:'fade',opacity:fresh?0:1},attrs),g,v);if(fresh)setTimeout(()=>t.setAttribute('opacity',1),30);};
+  const fresh=j=>[0,0,1,2,3,4][j]===stage; // the column that just appeared
+  for(let i=0;i<P.length;i++){
+    const y=Y0+rowH*(i+1)+10, used=i<x;
+    const vals=used?[i+1,P[i],w,st.net[i],st.r[i],st.prof[i]]:[i+1,P[i],'—','—','—','—'];
+    const hi=o.hl&&o.hl.includes(i)&&stage>=4;
+    if(hi) el('rect',{x:X0-8,y:y-30,width:cx-X0+16,height:rowH,fill:'#FFF3CF',rx:6},g);
+    vals.forEach((v,j)=>{if(!showCol[j])return;cell(xs[j],y,v,{fill:used?(j===5?C.green:(j===4?C.golddeep:C.ink)):C.pale,'font-weight':(j>=4&&used)?700:400},fresh(j));});
+  }
+  const yt=Y0+rowH*(P.length+1)+16;
+  el('line',{x1:X0,y1:yt-28,x2:cx,y2:yt-28,stroke:C.pale,'stroke-width':2},g);
+  ['Total','',st.wages,st.surplus,st.rent,st.profit].forEach((v,j)=>{if(!showCol[j])return;cell(xs[j],yt,v,{'font-weight':700,fill:j===4?C.golddeep:(j===5?C.green:C.ink)},fresh(j));});
+  if(stage<4)return;
+  el('text',{x:X0,y:yt+44,'font-size':20,fill:C.ink},g,`surplus ${st.surplus} = rent ${st.rent} + profit ${st.profit}`);
+  if(o.r!=null) el('text',{x:X0,y:yt+76,'font-size':20,fill:C.ink},g,`rate of profit r = ${o.r.num} ÷ ${w} = ${o.r.val}`);
+  if(o.ledger){
+    const best=Math.max(...st.prof);
+    el('text',{x:X0,y:yt+120,'font-size':18,fill:C.warm},g,'gain from moving to the best parcel');
+    for(let i=0;i<x;i++){const gain=best-st.prof[i];el('text',{x:X0+i*120,y:yt+152,'font-size':22,'font-weight':700,fill:gain>0?C.brick:C.green},g,'No. '+(i+1)+': '+(gain>0?'+':'')+gain);}
+  }
+}
+function note(g,text,y){ // wrapped narration at the bottom
+  const words=text.split(' ');let line='',lines=[];
+  for(const wd of words){if((line+' '+wd).length>120){lines.push(line);line=wd;}else line=line?line+' '+wd:wd;}
+  lines.push(line);
+  lines.forEach((l,i)=>el('text',{x:80,y:(y||805)+i*30,'font-size':23,fill:C.ink},g,l));
+}
+function bullets(g,lines,y0,size){let y=y0||225;const fs=size||30;lines.forEach(l=>{el('text',{x:90,y:y,'font-size':fs,fill:C.gold,'font-weight':700},g,'•');
+  const words=l.split(' ');let line='',rows=[];for(const wd of words){if((line+' '+wd).length>88){rows.push(line);line=wd;}else line=line?line+' '+wd:wd;}rows.push(line);
+  rows.forEach((r,k)=>el('text',{x:130,y:y+k*38,'font-size':fs,fill:C.ink},g,r));y+=rows.length*38+34;});}
+
+// ---------------- scenes ----------------
+const A={P:[140,125,115,100,90],w:70};
+const Bx={P:[130,120,100,90,75],w:60};
+const S=[];
+const txt=(title,sub,lines,extra)=>S.push({title,sub,draw:g=>{bullets(g,lines);if(extra)extra(g);}});
+const farmScene=(title,sub,P,w,x,opts)=>{const s0=opts.reveal===false?4:(opts.start||0);S.push({title,sub,stages:5-s0,draw:(g,k)=>{const stage=s0+k;const st=solve(P,w,x,opts.rents,opts.floor);const oo=Object.assign({},opts,{stage});farm(g,P,w,x,st,oo);table(g,P,w,x,st,Object.assign({},oo,opts.showR?{r:{num:st.prof[x-1],val:(st.prof[x-1]/w).toFixed(2)}}:{}));if(opts.note&&stage>=4)note(g,opts.note);}});};
+
+// 1 objectives
+txt('Today: two things you will be able to do','History of Economic Thought · Ricardo, day 3',[
+ '1. Take any schedule of parcels and a wage, find the equilibrium rents and profits, and say why competition forces it.',
+ '2. Say why Malthus pushed Ricardo into a theory of value, what that theory claims, and the one problem Ricardo could not solve.',
+ 'We do the first one three times. Once I drive. Once you drive, on the worksheet. Once you do it alone, on the quiz.']);
+// 2 the claim
+txt('The claim to test','Ricardo, preface to the Principles, 1817',[
+ '“The produce of the earth … is divided among three classes … To determine the laws which regulate this distribution is the principal problem in Political Economy.”',
+ 'Production is not the question. Where the net produce goes is the question.',
+ 'Net produce = what a parcel yields minus the wages of the labor on it. It goes to the landlord as rent or to the farmer as profit, nowhere else.']);
+// 3 the farm
+txt('Example A: the setup','What the model assumes before a single number',[
+ 'Five parcels of land, from best to worst. Each takes one dose of capital and labor, and the labor costs a subsistence wage of 70 quarters of corn.',
+ 'Three kinds of people. The landlord owns a parcel and collects rent. The farmer rents it, hires the labor, and keeps whatever is left. The laborer gets the wage.',
+ 'The population needs three parcels\' worth of corn, so three are farmed. The question for the next ten minutes: who gets the corn that is left after wages?']);
+farmScene('Example A: the farm','Five parcels, one dose of capital and labor each, wage 70',A.P,A.w,3,{rents:[20,20,20],marginLine:false,note:'Three parcels are in use because that is how much corn the population needs. Read each bar: wages at the bottom, then whatever is left, which is the net produce.'});
+// 4 static allocation
+txt('First, a world without competition','A land agent posts the rents and nobody may move',[
+ 'Suppose rents are simply announced: 20 on every parcel in use. No bidding, no moving.',
+ 'We will fill in the table and the picture under that rule, and then ask one question: would this last if farmers could move?',
+ 'Watch the last column. If profits differ across parcels, somebody has a reason to act.']);
+farmScene('A static allocation: posted rents','The land agent posts 20, 20, 20',A.P,A.w,3,{start:2,rents:[20,20,20],marginLine:false,ledger:true,hl:[0,1,2],note:'Farmer profits are 50, 35, 25. Is this an equilibrium? Look at the ledger: a farmer on No. 3 would gain 25 by farming No. 1. Someone is going to move.'});
+// 5 round 1
+txt('Now let the farmers move','The rules of the bidding, HL p. 93',[
+ 'A farmer may leave his parcel, or offer any landlord a higher rent than the landlord is getting now. A landlord takes the highest offer. A parcel nobody wants at a positive rent goes for nothing.',
+ 'Ricardo: the “restless desire on the part of all the employers of stock … to quit a less profitable for a more advantageous business has a strong tendency to equalize the rate of profits of all.”',
+ 'We play it in rounds. Watch the ledger: it says what each farmer would gain by moving. The bidding stops when every entry is zero.']);
+farmScene('Round 1: the marginal parcel loses its rent','Nobody will pay 20 for the worst land in use',A.P,A.w,3,{reveal:false,rents:[20,20,0],marginLine:true,ledger:true,hl:[2],note:'The farmer on No. 3 keeps 25 while others keep more. He tells landlord 3 he will leave. No other farmer wants the worst parcel at any rent, so its rent falls to zero. No. 3 now keeps all 45 of its net produce.'});
+// 6 round 2
+farmScene('Round 2: the best parcel gets bid up','A farmer offers landlord 1 more than 20',A.P,A.w,3,{reveal:false,rents:[25,20,0],marginLine:true,ledger:true,hl:[0],note:'No. 1 kept 50; anyone would rather farm it than earn 45 on No. 3. A farmer offers 21, then 23, then 25. At 25 the farmer on No. 1 keeps 45, the same as No. 3, and the offers stop.'});
+// 7 round 3
+farmScene('Round 3: the middle parcel comes down','No. 2 was overpriced',A.P,A.w,3,{reveal:false,rents:[25,10,0],marginLine:true,ledger:true,hl:[1],note:'At rent 20 the farmer on No. 2 kept only 35. He would rather take No. 3 for nothing and keep 45. Landlord 2 has to come down to 10. Rent moved up on No. 1 and down on No. 2 and No. 3. Landlords set none of it.'});
+// 8 equilibrium
+farmScene('Equilibrium: nobody gains by moving','One rate of profit, zero rent at the margin',A.P,A.w,3,{start:2,marginLine:true,ledger:true,showR:true,note:'Every farmer keeps 45, which is exactly the net produce of the marginal parcel. Rent on each parcel is its produce minus the margin: 25, 10, 0. The margin sets profit, and it sets the price of corn.'});
+// 9 surplus unchanged
+txt('What changed, and what did not','Static allocation versus equilibrium',[
+ 'Wages: 210 in both. The surplus: 170 in both. Competition did not create or destroy a quarter of corn.',
+ 'The split: landlords 60 → 35, farmers 110 → 135, and every farmer now keeps the same 45.',
+ 'That is Ricardo\'s point. The laws of distribution are about who gets the net produce, and here the farmers\' own competition decided it.']);
+// 10 population 4
+txt('Why not farm No. 4 right now?','It yields 100, the wage is 70, rent would be zero. Isn\'t 30 sitting there?',[
+ 'Who would farm it? There are three doses of capital and labor in this economy and all three are busy. A farmer who moves to No. 4 gives up 45 on a better parcel to earn 30.',
+ 'A fourth dose has to be saved out of profit first. That is accumulation, and when it happens population grows to fill it (Malthus). Only then is No. 4 ploughed.',
+ 'And who eats it? Three parcels already feed everyone. Corn with no mouths behind it will not sell at a price that covers the wage on No. 4. Cultivation follows population, not the other way around (HL p. 93).',
+ 'So the 30 is not free. It is what the next dose of capital will earn when it exists, which is the next scene.']);
+txt('Now the population grows','Malthus enters the model',[
+ 'More people need more corn. The three parcels are already fully worked, so the only way to get it is to plough a worse parcel: No. 4, which yields 100.',
+ 'The wage does not move. It is subsistence, 70 quarters, whatever happens to rent and profit.',
+ 'Watch three things: where the margin goes, what happens to profit on every parcel at once, and who ends up with the extra corn.']);
+farmScene('Population grows: parcel 4 comes in','More mouths, so a worse parcel is ploughed',A.P,A.w,4,{marginLine:true,showR:true,note:'The margin is now No. 4 with net produce 30. The same rounds happen in a week: rents rise to 40, 25, 15, 0 and every farmer keeps 30. The wage never moved. r fell from 0.64 to 0.43.'});
+// 11 population 5
+farmScene('Parcel 5 comes in','The squeeze continues',A.P,A.w,5,{marginLine:true,showR:true,note:'Margin at 20. Rents 50, 35, 25, 10, 0, total 120. Profit per parcel 20, r = 0.29. The surplus grew from 170 to 220, and the landlords took all of the growth and 35 more from the farmers.'});
+// 12 stationary state
+txt('Zero rent is not the same as not farmed','Two things students mix up',[
+ 'No. 5 is farmed. The farmer hires 70 of labor, grows 90, and keeps the 20 that is left. He pays the landlord nothing because nobody else will bid for the worst land when 20 is available everywhere.',
+ 'The marginal parcel is always in use and always rent-free. Zero rent is what farming the worst parcel looks like, not a sign that nobody is there.',
+ 'The parcel that is not farmed is the one that would yield only 70: net produce zero, nothing for a farmer, no reason to bring it in. On the quiz that one is hatched and says “not in use.”',
+ 'Rule of thumb: find the worst parcel in use. Its rent is zero, its net produce is everyone\'s profit, and the next-worse parcel is the one that stays idle.']);
+txt('Where it stops','Ricardo\'s stationary state',[
+ 'The next parcel would have to yield 70, exactly the wage. Net produce zero. Nothing for the farmer, so no motive to accumulate, no demand for more labor, no more population.',
+ '“Without a motive there could be no accumulation.” (HL p. 114)',
+ 'Rent did not take profit directly. The margin moving out raised the cost of corn and so of labor; profit is what was left. Rent is the residual.']);
+// 13 corn laws
+txt('The Corn Laws, 1815','Why Ricardo built the model in the first place',[
+ 'After the Napoleonic wars Parliament banned imports of foreign grain unless the domestic price was very high. Landlords wrote the law. Ricardo\'s 1815 Essay on Profits was the attack on it.',
+ 'In the model, repeal means ships. Foreign corn arrives at a price equal to what some domestic parcel produces, and no parcel worse than that is worth farming. The margin moves back in.',
+ 'The population still eats five parcels\' worth; the missing corn comes by sea. Go back to three parcels with imports priced at 115, and watch who loses.']);
+farmScene('The Corn Laws','Imports arrive at a price equal to a parcel yielding 115',A.P,A.w,3,{start:2,floor:115,marginLine:true,showR:true,unusedLabel:'corn imported',note:'If foreign corn costs what No. 3 produces, nothing worse than No. 3 is worth farming. The no-rent level is 115 again: rents 25, 10, 0; profit 45. Landlords lose 85. Who votes for the ban?'});
+// 14 parallels
+S.push({title:'What you already know this as',sub:'Ricardo\'s words and ours',draw:g=>{
+  const rows=[['Farmers bid until profits are equal','No-arbitrage; one rate of return in equilibrium'],['The marginal parcel pays no rent','Entry continues until the marginal unit earns zero economic profit'],['The margin sets profit and the price of corn','Price is set by the marginal producer\'s cost'],['Rent = produce minus the margin','Inframarginal surplus; producer surplus; Ricardian rent'],['Population pushes the margin out','Demand shifts move the margin; long-run adjustment'],['The landlord did nothing','Scarcity rent accrues to a fixed factor']];
+  el('text',{x:90,y:215,'font-size':20,fill:C.warm},g,'RICARDO, 1817');el('text',{x:830,y:215,'font-size':20,fill:C.warm},g,'A PRINCIPLES CLASS TODAY');
+  rows.forEach((r,i)=>{const y=270+i*78;el('rect',{x:80,y:y-34,width:1440,height:62,fill:i%2?'#F3F0E6':'none',rx:6},g);el('text',{x:90,y:y,'font-size':24,fill:C.green,'font-weight':500},g,r[0]);el('text',{x:830,y:y,'font-size':24,fill:C.ink},g,r[1]);});
+  note(g,'He had none of the right-hand vocabulary. He had three plots of corn and the sentence about the restless desire of the employers of stock.',770);
+}});
+// 15 example B: you drive
+txt('Example B: you drive','Worksheet, page 1. I will show each answer after you have written yours.',[
+ 'Parcels 1 to 5 produce 130, 120, 100, 90, 75. The wage is 60.',
+ 'Three parcels are in use. The agent posted rents of 35, 15, and 10.',
+ 'Fill in the static table first: wages, net produce, farmer profit, the totals. Then stop.']);
+farmScene('B1. The static allocation','Check your table',Bx.P,Bx.w,3,{rents:[35,15,10],marginLine:false,ledger:true,hl:[0,1,2],note:'Net 70, 60, 40. Profits 35, 45, 30. Rent 60, profit 110, surplus 170. Not an equilibrium: No. 2 keeps 45, No. 3 keeps 30, and the gains from moving are not zero.'});
+txt('B2. Find the equilibrium','Worksheet, page 2. Three rounds, then the table.',[
+ 'Which parcel is the margin, and what will its rent be?',
+ 'What profit must every farmer end up with?',
+ 'Then: rent on No. 1 and No. 2, the totals, and the surplus check.']);
+farmScene('B2. The equilibrium','Check your table',Bx.P,Bx.w,3,{start:2,marginLine:true,ledger:true,showR:true,note:'Margin No. 3, rent 0, so profit everywhere is 40. Rents 30, 20, 0; total rent 50, profit 120, surplus 170 again. r = 40 ÷ 60 = 0.67.'});
+txt('B3. Population grows','Worksheet, page 2. Fill both rows.',[
+ 'Parcel 4 (90) comes in. Marginal net produce, profit per parcel, r, total rent, total profit, total wages, surplus.',
+ 'Then parcel 5 (75).',
+ 'At what produce on the next parcel does cultivation stop?']);
+farmScene('B3. Four parcels','Check your row',Bx.P,Bx.w,4,{marginLine:true,showR:true,note:'Margin 30. Profit 30, r = 0.50. Rents 40, 30, 10, 0 = 80. Profit 120, wages 240, surplus 200.'});
+farmScene('B3. Five parcels','Check your row',Bx.P,Bx.w,5,{marginLine:true,showR:true,note:'Margin 15. Profit 15, r = 0.25. Rents 55, 45, 25, 15, 0 = 140. Profit 75, wages 300, surplus 215. Cultivation stops when the next parcel produces 60.'});
+txt('B4. Draw it, then the Corn Laws','Worksheet, page 3.',[
+ 'Four parcels in use. Draw P, mark the margin, shade rent, profit, wages, write the totals: 80, 120, 240.',
+ 'Imports at a price equal to a parcel yielding 100. Which parcels stay? What are rent on No. 1, profit, r?',
+ 'Who votes for the ban, and what did Ricardo say about that class?']);
+farmScene('B4. The Corn Laws','Check your answers',Bx.P,Bx.w,3,{start:2,floor:100,marginLine:true,showR:true,unusedLabel:'corn imported',note:'Parcels 1 to 3 stay. No-rent level 100: rents 30, 20, 0; profit 40; r = 0.67. Landlords lose 90 against the five-parcel world. “The interest of the landlord is always opposed to the interest of every other class.” (HL p. 96)'});
+// quiz
+txt('Now alone: Quiz 5','Twenty minutes. Pencil. Show the arithmetic.',[
+ 'Same steps, new numbers. The quiz will not tell you which parcel is the margin.',
+ 'Find the margin first. Then take differences. Then check: surplus = rent + profit.',
+ 'When you finish, trade with a neighbor and check only one thing: do the profits come out equal?']);
+// LTV bridge
+txt('Objective 2: why Ricardo needed a theory of value','Malthus\'s objection, HL p. 98',[
+ 'Everything you just did assumed one good, corn, and a constant average level of prices.',
+ 'Malthus: “profits depend upon the prices of commodities, and upon the cause which determines these prices, namely the supply compared with the demand.” If some prices rise and others fall when wages change, you can infer nothing about profit from the corn model alone.',
+ 'Ricardo agreed that he needed a theory of prices to defend his theory of distribution. The Principles is that defense.']);
+txt('What the labor theory of value claims','HL pp. 98–100',[
+ 'Utility is necessary for value but does not regulate it. For freely reproducible goods, “commodities derive their exchangeable value … from the quantity of labour required to obtain them.”',
+ 'Rare statues and old wine are priced by scarcity. Ricardo set them aside as unimportant for distribution.',
+ 'Smith\'s beaver and deer: two days\' labor exchanges for two of one day\'s. Ricardo kept that rule for capitalist society, with modifications, and said the modifications showed the theory\'s realism, not its failure.']);
+txt('Two objections he answered','HL pp. 100–102',[
+ 'Different kinds of labor, different wages. Ricardo: the structure of skills “when once formed is liable to little variation,” so for prices over time it drops out. (Marx later reduced skill to the labor spent acquiring it.)',
+ 'Land and capital are productive. Ricardo: tools are past labor; a loom is “so much partly produced cloth.” Natural resources “perform their work gratuitously” and adds nothing to exchange value. Rent is a way of dividing what labor made, not a cost.']);
+txt('The problem he could not solve','HL pp. 103–114; your two bakeries',[
+ 'Two bakeries, same number of bakers. One spends mostly on bakers, the other mostly on ovens. Raise the wage: the first bakery\'s costs jump, the second\'s barely move, and the ratio of their prices changes though the labor in each loaf did not.',
+ 'So prices are not strictly proportional to labor embodied whenever capital differs in composition, durability, or turnover. Ricardo admitted all three and called them one phenomenon.',
+ 'He thought the deviations small and looked for an “invariable measure of value” to net them out. He never found one. Tuesday: the numbers, Tables 5.1 and 5.2, and what Marx did with the gap.']);
+txt('What to take out the door','Three sentences',[
+ 'Production is not the question; the division of the net produce is. In the corn model the farmers\' competition divides it, and the marginal parcel sets profit and price.',
+ 'Growth enriches the landlord who did nothing and squeezes the capitalist who drove it, so the landlord\'s interest is opposed to every other class.',
+ 'To defend that, Ricardo had to say what sets prices. Labor embodied, mostly, and the “mostly” is where the next fifty years of economics begins.']);
+
+// ---------------- engine ----------------
+let i=0,k=0;
+const stagesOf=n=>S[n].stages||1;
+function show(si,sk){
+  i=Math.max(0,Math.min(S.length-1,si));
+  const s=S[i];k=Math.max(0,Math.min(stagesOf(i)-1,sk||0));
+  $('title').textContent=s.title;$('sub').textContent=s.sub||'';
+  const g=$('body');while(g.firstChild)g.removeChild(g.firstChild);
+  if(!s.stages)bars={}; // text scene resets bar memory
+  s.draw(g,k);
+  const steps=['produce','wages','net produce','rent','profit'];const abs=5-stagesOf(i)+k;
+  $('counter').textContent=(i+1)+' / '+S.length+(stagesOf(i)>1?'   ·   '+steps[abs]+(abs<4?'  →':''):'');
+  try{localStorage.setItem('rcw.i',i);localStorage.setItem('rcw.k',k);}catch(e){}
+}
+const next=()=>{if(k<stagesOf(i)-1)show(i,k+1);else show(i+1,0);};
+const prev=()=>{if(k>0)show(i,k-1);else if(i>0)show(i-1,stagesOf(i-1)-1);};
+document.body.addEventListener('click',e=>{next();});
+window.addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown','Enter'].includes(e.key)){e.preventDefault();next();}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev();}else if(e.key==='End'||e.key==='.'){show(i,stagesOf(i)-1);}else if(e.key==='n'||e.key==='N'){show(i+1,0);}else if(e.key==='r'||e.key==='R'){show(0,0);}else if(e.key==='f'||e.key==='F'){const d=document.documentElement;if(document.fullscreenElement||document.webkitFullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document);}else{(d.requestFullscreen||d.webkitRequestFullscreen).call(d);}}});
+let si=0,sk=0;try{si=+localStorage.getItem('rcw.i')||0;sk=+localStorage.getItem('rcw.k')||0;}catch(e){}
+show(si,sk);
+})();
+</script>
+</body>
+</html>
