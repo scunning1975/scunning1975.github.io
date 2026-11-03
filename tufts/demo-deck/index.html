@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artificial Intimacy</title>
+<style>
+  :root{
+    --tufts-blue:#3E8EDE;
+    --tufts-navy:#002F6C;
+    --tufts-brown:#8A5A2B;
+    --ink:#16233A;
+    --paper:#F7F9FC;
+    --muted:#5A6B82;
+    --accent:#C24D2C;
+    --line:#D9E2EF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    background:#0b1b33;
+    color:var(--ink);
+    overflow:hidden;
+  }
+  /* stage */
+  #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;}
+  .slide{
+    position:absolute;
+    width:min(1180px,96vw);
+    height:min(690px,94vh);
+    background:var(--paper);
+    border-radius:14px;
+    box-shadow:0 30px 80px rgba(0,0,0,.45);
+    padding:62px 72px 58px;
+    opacity:0;
+    transform:translateY(24px) scale(.985);
+    transition:opacity .5s ease,transform .5s ease;
+    pointer-events:none;
+    display:flex;flex-direction:column;
+    overflow:hidden;
+  }
+  .slide.active{opacity:1;transform:none;pointer-events:auto;}
+  .slide.navy{background:var(--tufts-navy);color:#eaf1fb;}
+  .slide.blue{background:linear-gradient(135deg,#2f6fb0,#3E8EDE);color:#fff;}
+
+  /* banner + mascot */
+  .banner{
+    position:absolute;top:0;left:0;right:0;height:8px;
+    background:linear-gradient(90deg,var(--tufts-navy),var(--tufts-blue));
+    border-radius:14px 14px 0 0;
+  }
+  .kicker{
+    display:flex;align-items:center;gap:10px;
+    font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);font-weight:700;margin-bottom:18px;
+  }
+  .slide.navy .kicker,.slide.blue .kicker{color:rgba(255,255,255,.8);}
+  .kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--tufts-blue);}
+  .mascot{position:absolute;bottom:20px;right:26px;width:96px;opacity:.16;}
+  .slide.navy .mascot,.slide.blue .mascot{opacity:.22;}
+  .pagenum{position:absolute;bottom:22px;left:30px;font-size:13px;color:var(--muted);font-weight:600;}
+  .slide.navy .pagenum,.slide.blue .pagenum{color:rgba(255,255,255,.6);}
+
+  /* typography */
+  h1{font-family:Georgia,"Times New Roman",serif;font-size:58px;line-height:1.05;color:var(--tufts-navy);font-weight:700;}
+  h2{font-family:Georgia,serif;font-size:38px;line-height:1.12;color:var(--tufts-navy);margin-bottom:6px;font-weight:700;}
+  .slide.navy h1,.slide.navy h2,.slide.blue h1,.slide.blue h2{color:#fff;}
+  h3{font-size:21px;color:var(--tufts-blue);font-weight:700;margin-bottom:14px;letter-spacing:.01em;}
+  p{font-size:22px;line-height:1.5;color:var(--ink);}
+  .slide.navy p,.slide.blue p{color:#e8f0fb;}
+  .lead{font-size:30px;line-height:1.4;font-weight:400;}
+  .big{font-size:40px;line-height:1.25;font-family:Georgia,serif;}
+  .sub{font-size:18px;color:var(--muted);}
+  .slide.navy .sub{color:rgba(255,255,255,.75);}
+
+  ul{list-style:none;margin-top:10px;}
+  li{
+    font-size:22px;line-height:1.42;color:var(--ink);
+    padding:11px 0 11px 36px;position:relative;
+    border-bottom:1px solid var(--line);
+  }
+  .slide.navy li{color:#e8f0fb;border-color:rgba(255,255,255,.14);}
+  li:before{content:"";position:absolute;left:4px;top:20px;width:12px;height:12px;border-radius:3px;
+    background:var(--tufts-blue);transform:rotate(45deg);}
+  li.plain{border-bottom:none;}
+  li b,p b{color:var(--tufts-navy);}
+  .slide.navy li b,.slide.navy p b,.slide.blue p b{color:#ffd37a;}
+
+  .cols{display:flex;gap:40px;flex:1;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;}
+  .fig{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;margin-top:6px;}
+  .fig img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;
+    background:#fff;box-shadow:0 8px 28px rgba(0,0,0,.14);}
+  .cap{font-size:15px;color:var(--muted);margin-top:10px;text-align:center;}
+  .slide.navy .cap{color:rgba(255,255,255,.7);}
+
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 22px;
+    box-shadow:0 6px 18px rgba(16,35,64,.06);}
+  .slide.navy .card{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px;}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:10px;}
+
+  .eq{font-family:"Latin Modern Math",Georgia,serif;font-size:26px;text-align:center;
+    background:#fff;border-radius:10px;padding:18px;margin:10px 0;border:1px solid var(--line);color:var(--tufts-navy);}
+  .slide.navy .eq{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.16);}
+  .em{color:var(--accent);font-weight:700;}
+  .pill{display:inline-block;background:var(--tufts-blue);color:#fff;border-radius:999px;
+    padding:4px 14px;font-size:15px;font-weight:700;letter-spacing:.02em;}
+
+  /* staged reveal, pure CSS triggered by .active */
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease;}
+  .slide.active .reveal{opacity:1;transform:none;}
+  .r1{transition-delay:.05s;}.r2{transition-delay:.18s;}.r3{transition-delay:.31s;}
+  .r4{transition-delay:.44s;}.r5{transition-delay:.57s;}.r6{transition-delay:.70s;}
+
+  /* timeline */
+  .tl{position:relative;margin-top:26px;padding-left:4px;}
+  .tl:before{content:"";position:absolute;left:10px;top:6px;bottom:6px;width:3px;background:var(--line);}
+  .tl .ev{position:relative;padding:9px 0 9px 42px;font-size:20px;}
+  .tl .ev:before{content:"";position:absolute;left:4px;top:15px;width:15px;height:15px;border-radius:50%;
+    background:var(--tufts-blue);border:3px solid var(--paper);}
+  .tl .ev.shock:before{background:var(--accent);}
+  .tl .ev .d{font-weight:700;color:var(--tufts-navy);}
+  .tl .ev.shock .d{color:var(--accent);}
+
+  /* progress */
+  #bar{position:fixed;left:0;bottom:0;height:4px;background:var(--tufts-blue);width:0;transition:width .3s ease;z-index:50;}
+  #hint{position:fixed;bottom:12px;right:16px;font-size:12px;color:rgba(255,255,255,.5);z-index:50;}
+
+  .content{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0;width:100%;}
+  .center{align-items:center;justify-content:center;text-align:center;}
+  .fill{flex:1;display:flex;flex-direction:column;justify-content:center;}
+  .note{font-size:14px;color:var(--muted);font-style:italic;margin-top:8px;}
+  .slide.navy .note{color:rgba(255,255,255,.65);}
+  .sim-flag{display:inline-block;background:var(--accent);color:#fff;font-size:13px;font-weight:700;
+    padding:3px 10px;border-radius:6px;letter-spacing:.06em;}
+  .v{font-family:Georgia,serif;font-style:italic;color:var(--tufts-blue);font-weight:600;}
+  .slide.navy .v,.slide.blue .v{color:#9fd0ff;}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="bar"></div>
+<div id="hint">arrow keys to navigate</div>
+
+<!-- Jumbo mascot (discreet elephant silhouette) -->
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="jumbo" viewBox="0 0 140 110">
+    <g fill="var(--tufts-brown)">
+      <ellipse cx="58" cy="52" rx="40" ry="30"/>
+      <circle cx="104" cy="46" r="26"/>
+      <ellipse cx="97" cy="33" rx="16" ry="19"/>
+      <path d="M124 52 q16 10 11 30 q-3 13 -14 15 q-8 1 -9 -7 q-1 -6 6 -7 q6 -1 6 -8 q0 -9 -12 -16 z"/>
+      <rect x="30" y="74" width="12" height="26" rx="5"/>
+      <rect x="52" y="76" width="12" height="24" rx="5"/>
+      <rect x="72" y="76" width="12" height="24" rx="5"/>
+      <rect x="90" y="74" width="12" height="26" rx="5"/>
+      <path d="M20 50 q-12 -4 -14 6 q-2 7 6 8 q4 0 4 -5" fill="none" stroke="var(--tufts-brown)" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="110" cy="40" r="3" fill="#fff"/>
+    </g>
+  </symbol>
+</svg>
+
+<script>
+const slides = [
+
+/* 1 TITLE */
+`<div class="slide center blue">
+  <div class="fill center">
+    <div class="pill reveal r1">Tufts University seminar</div>
+    <h1 class="reveal r2" style="margin:22px 0 10px;max-width:16ch;">Artificial Intimacy</h1>
+    <p class="lead reveal r3" style="max-width:34ch;">AI Companions, Loneliness, and the Market for Human Connection</p>
+    <p class="reveal r4" style="margin-top:34px;font-size:20px;">Claude (Opus 4.8) &nbsp;&middot;&nbsp; prompted by Scott Cunningham</p>
+    <p class="sub reveal r5" style="margin-top:6px;">A research design and a theory, not an empirical claim.</p>
+  </div>
+</div>`,
+
+/* 2 HOOK */
+`<div class="slide center navy">
+  <div class="fill">
+    <p class="big reveal r1" style="max-width:30ch;margin:0 auto;text-align:center;">
+      Americans are lonelier than they have been in living memory,</p>
+    <p class="big reveal r3" style="max-width:34ch;margin:18px auto 0;text-align:center;color:#ffd37a;">
+      and for the first time, many are forming their closest daily relationships with software.</p>
+  </div>
+</div>`,
+
+/* 3 FIG1A friendship recession */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>The problem has two halves</div>
+  <h2>Human connection has thinned</h2>
+  <div class="cols">
+    <div class="col fig reveal r1"><img src="figures/fig1_motivation.png" alt="Figure 1"></div>
+    <div class="col" style="max-width:320px;justify-content:center;">
+      <ul>
+        <li class="reveal r2">Men with <b>no</b> close friends rose from 3% to 15% since 1990.</li>
+        <li class="reveal r3">Adults aged 25 to 54 living without a partner rose from 29% to 38%.</li>
+        <li class="reveal r4">Over the same years, online platforms became the leading way couples meet.</li>
+      </ul>
+      <p class="note reveal r5">Real descriptive series. Sources on the figure.</p>
+    </div>
+  </div>
+</div>`,
+
+/* 4 THE NEW GOOD */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>A new good enters the market</div>
+  <h2>The artificial companion</h2>
+  <div class="grid3">
+    <div class="card reveal r1"><h3>Cheap</h3><p>Free or a few dollars a month, against the high cost and risk of human courtship.</p></div>
+    <div class="card reveal r2"><h3>Reliable</h3><p>Always available, infinitely patient, tuned to affirm, never leaving.</p></div>
+    <div class="card reveal r3"><h3>At scale</h3><p>Leading apps report user bases in the millions and daily engagement rivaling social media.</p></div>
+  </div>
+  <p class="reveal r4" style="margin-top:22px;">Whatever else it is, it is a large fall in the price of a close substitute for one of life's central goods. Economics says behavior will move.</p>
+  <p class="note reveal r5">User and engagement counts here are company reported, not audited.</p>
+</div>`,
+
+/* 5 POLICY TIMELINE */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>The policy clock is already running</div>
+  <h2>Regulation is arriving before evidence</h2>
+  <div class="tl">
+    <div class="ev reveal r1"><span class="d">Nov 2022.</span> ChatGPT launches. General AI becomes a cultural event.</div>
+    <div class="ev shock reveal r2"><span class="d">Feb 2023.</span> Italy restricts Replika; the app abruptly removes companionship features. Users describe losing a relationship.</div>
+    <div class="ev reveal r3"><span class="d">May 2023.</span> U.S. Surgeon General declares an epidemic of loneliness.</div>
+    <div class="ev reveal r4"><span class="d">Oct 2024.</span> A wrongful-death suit ties a teenager's suicide to an AI companion.</div>
+    <div class="ev reveal r5"><span class="d">Oct 2025.</span> California enacts the first companion-chatbot safety statute.</div>
+  </div>
+</div>`,
+
+/* 6 THE QUESTION */
+`<div class="slide center navy">
+  <div class="fill center">
+    <p class="sub reveal r1" style="letter-spacing:.2em;text-transform:uppercase;">The question</p>
+    <p class="big reveal r2" style="max-width:28ch;margin:18px auto 0;text-align:center;">
+      When an artificial companion enters the market for human connection, does it
+      <span style="color:#ffd37a;">substitute</span> for the real thing, or help people
+      <span style="color:#7ec4ff;">find</span> it?</p>
+    <p class="reveal r4" style="margin-top:26px;max-width:40ch;text-align:center;">And is the world better or worse for the trade?</p>
+  </div>
+</div>`,
+
+/* 7 TWO OBSTACLES */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Why the honest answer is not yet known</div>
+  <h2>Two obstacles to measurement</h2>
+  <div class="grid2" style="margin-top:14px;">
+    <div class="card reveal r1"><h3>Selection</h3>
+      <p>The people who reach for an artificial companion tend to be those with the thinnest human options. Comparing users to non-users confounds the companion with the loneliness that drew them in.</p></div>
+    <div class="card reveal r2"><h3>The confounder of record</h3>
+      <p>Companions arrived inside the broader wave of generative AI. Any series that rises with companion use also rises with AI at large.</p></div>
+  </div>
+  <p class="reveal r3" style="margin-top:22px;"><b>A credible design must break both at once:</b> variation in companionship unrelated to a person's loneliness, and specific to companionship rather than the whole technology.</p>
+</div>`,
+
+/* 8 ROADMAP */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Where we are going</div>
+  <h2>The plan</h2>
+  <ul>
+    <li class="reveal r1"><b>A model</b> that says what to look for, and reduces the question to one number.</li>
+    <li class="reveal r2"><b>A natural experiment</b> and a body of policy variation that make a credible comparison possible.</li>
+    <li class="reveal r3"><b>A falsification plan</b> that separates companionship from the general AI wave.</li>
+    <li class="reveal r4"><b>A power study</b> showing the design can see an effect of the size the theory implies.</li>
+  </ul>
+</div>`,
+
+/* 9 MODEL SETUP */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Theory</div>
+  <h2>A relationship-market model</h2>
+  <p class="reveal r1">A person combines human companionship <span class="v">h</span> and machine companionship <span class="v">m</span> into one aggregate, with authenticity <span class="v">&phi;</span> discounting the machine:</p>
+  <div class="eq reveal r2">C(h,m) = [ &alpha; h<sup>&rho;</sup> + (1&minus;&alpha;)(&phi; m)<sup>&rho;</sup> ]<sup>1/&rho;</sup>,
+    &nbsp;&nbsp; &sigma; = 1/(1&minus;&rho;)</div>
+  <div class="grid3" style="margin-top:8px;">
+    <div class="card reveal r3"><h3>Human</h3><p>Valuable but costly and uncertain, cost <span class="v">c(h;&theta;)</span> falling in prospects <span class="v">&theta;</span>.</p></div>
+    <div class="card reveal r4"><h3>Machine</h3><p>Cheap at price <span class="v">p</span>, reliable, authenticity <span class="v">&phi;</span> set by platform and policy.</p></div>
+    <div class="card reveal r5"><h3>Shock</h3><p>The Feb 2023 removal is a fall in <span class="v">&phi;</span>. A ban is <span class="v">p &rarr; &infin;</span>.</p></div>
+  </div>
+</div>`,
+
+/* 10 OBJECTIVE + FOC */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Theory</div>
+  <h2>The agent's problem</h2>
+  <div class="eq reveal r1">max<sub>h,m</sub> &nbsp; v(C(h,m)) &minus; c(h;&theta;) &minus; p&middot;m</div>
+  <p class="reveal r2">First-order conditions depend on choices only through one scalar,
+    <span class="v">&mu; = v'(C) &middot; C<sup>1&minus;&rho;</sup></span>:</p>
+  <div class="grid2">
+    <div class="eq reveal r3">v'(C) C<sub>h</sub> = c<sub>h</sub>(h;&theta;)</div>
+    <div class="eq reveal r4">v'(C) C<sub>m</sub> = p</div>
+  </div>
+  <p class="reveal r5" style="margin-top:10px;">Human companionship rises with <span class="v">&mu;</span> and with prospects <span class="v">&theta;</span>. Machine use rises with <span class="v">&mu;</span> and authenticity. The whole comparative static runs through <span class="v">&mu;</span>.</p>
+</div>`,
+
+/* 11 THEOREM 1 */
+`<div class="slide navy">
+  <div class="kicker"><span class="dot"></span>Result 1</div>
+  <h2>Crowd-out turns on one number</h2>
+  <div class="eq reveal r1" style="font-size:30px;">sign( &part;h*/&part;&phi; ) = sign( 1 &minus; &gamma;&sigma; )</div>
+  <ul>
+    <li class="reveal r2"><b>&gamma;</b> is the curvature of companionship utility. <b>&sigma;</b> is the elasticity of substitution between human and machine company.</li>
+    <li class="reveal r3">If <b>&gamma;&sigma; &gt; 1</b>, better artificial companions <span style="color:#ffd37a;">crowd out</span> human connection.</li>
+    <li class="reveal r4">If <b>&gamma;&sigma; &lt; 1</b>, they <span style="color:#7ec4ff;">scaffold</span> it.</li>
+    <li class="reveal r5 plain">The sign of <span class="v">&gamma;&sigma; &minus; 1</span> is the object the whole design is built to recover.</li>
+  </ul>
+</div>`,
+
+/* 12 FIG2 comparative statics */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Result 1, in pictures</div>
+  <h2>Two regimes, opposite signs</h2>
+  <div class="fig reveal r1"><img src="figures/fig2_comparative_statics.png" alt="Figure 2"></div>
+  <p class="cap reveal r2">Model-implied. Human connection falls as authenticity rises when substitutes dominate (left), and rises when complements dominate (right).</p>
+</div>`,
+
+/* 13 THE WEDGE */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Result 1, the part that matters</div>
+  <h2>Utility up, connection down</h2>
+  <div class="cols">
+    <div class="col fig reveal r1"><img src="figures/fig3_wedge_incidence.png" alt="Figure 3"></div>
+    <div class="col" style="max-width:360px;justify-content:center;">
+      <p class="reveal r2">Better artificial companions <b>always</b> raise measured utility. By the envelope theorem, <span class="v">&part;&Pi;*/&part;&phi; &gt; 0</span>.</p>
+      <p class="reveal r3" style="margin-top:16px;">Yet in the substitutes regime the same improvement is eroding the stock of real relationships, the produced good whose external value the person does not internalize.</p>
+      <p class="reveal r4" style="margin-top:16px;"><span class="em">A wedge between utils and value.</span></p>
+    </div>
+  </div>
+</div>`,
+
+/* 14 THEOREM 2 */
+`<div class="slide navy">
+  <div class="kicker"><span class="dot"></span>Result 2</div>
+  <h2>The lonely bear the shock</h2>
+  <ul>
+    <li class="reveal r1">Reliance on artificial companions falls in prospects: <span class="v">&part;m*/&part;&theta; &lt; 0</span>. The lonely use them most.</li>
+    <li class="reveal r2">The marginal value of authenticity falls in prospects: <span class="v">&part;&sup2;&Pi;*/&part;&phi;&part;&theta; &lt; 0</span>.</li>
+    <li class="reveal r3">So withdrawing or degrading a companion hurts the already isolated the most.</li>
+    <li class="reveal r4 plain"><b>Sharp, testable prediction:</b> the effect of the Feb 2023 shock should concentrate in thin relationship markets, by sex ratio, rurality, age, and prior isolation.</li>
+  </ul>
+</div>`,
+
+/* 15 POLICY COROLLARY */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Why the sign is worth measuring</div>
+  <h2>The same law, good or bad</h2>
+  <div class="grid2" style="margin-top:14px;">
+    <div class="card reveal r1"><h3>If substitutes (&gamma;&sigma; &gt; 1)</h3>
+      <p>Private use over-consumes the machine relative to the social optimum. A quality floor or an age restriction is corrective. The instruments legislatures are already reaching for have a reason behind them.</p></div>
+    <div class="card reveal r2"><h3>If complements (&gamma;&sigma; &lt; 1)</h3>
+      <p>Artificial companions are a ladder back into the human market. The same restriction removes it from the people who most need it.</p></div>
+  </div>
+  <p class="reveal r3" style="margin-top:22px;text-align:center;"><b>One pivotal quantity decides which policy is right.</b></p>
+</div>`,
+
+/* 16 FROM THEORY TO TEST */
+`<div class="slide blue center">
+  <div class="fill center">
+    <p class="sub reveal r1" style="letter-spacing:.2em;text-transform:uppercase;">From theory to test</p>
+    <p class="big reveal r2" style="max-width:26ch;margin:18px auto 0;">Recover the sign of <span class="v">&gamma;&sigma; &minus; 1</span> from a shock to authenticity.</p>
+    <p class="reveal r3" style="margin-top:22px;max-width:40ch;">If degrading the machine pushes people back toward humans, they are substitutes. If it pulls human connection down too, they are complements.</p>
+  </div>
+</div>`,
+
+/* 17 THE NATURAL EXPERIMENT */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Identification</div>
+  <h2>The February 2023 shock</h2>
+  <ul>
+    <li class="reveal r1">A leading companionship app abruptly removed the intimate features at the heart of its product.</li>
+    <li class="reveal r2">An existing community of users experienced it as the sudden loss of a relationship. Moderators pinned suicide-prevention resources.</li>
+    <li class="reveal r3">The change fell on an existing user base for reasons internal to the platform, plausibly unrelated to how loneliness was evolving across places.</li>
+    <li class="reveal r4 plain">This is close to an exogenous degradation of authenticity, the hard part of identification handed over by circumstance.</li>
+  </ul>
+</div>`,
+
+/* 18 DESIGN 1 */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Design one</div>
+  <h2>Event study on prior exposure</h2>
+  <div class="eq reveal r1" style="font-size:22px;">Y<sub>it</sub> = &Sigma;<sub>k&ne;&minus;1</sub> &beta;<sub>k</sub> &middot; 1[t=t&#8320;+k] &times; D<sub>i</sub> + &alpha;<sub>i</sub> + &delta;<sub>t</sub> + &epsilon;<sub>it</sub></div>
+  <ul>
+    <li class="reveal r2"><span class="v">D<sub>i</sub></span> is pre-shock exposure to the app across places. <span class="v">t&#8320;</span> is the shock.</li>
+    <li class="reveal r3">Post coefficients <span class="v">&beta;<sub>k</sub></span> trace the effect of losing companionship quality where exposure was high.</li>
+    <li class="reveal r4">Pre coefficients are the parallel-trends test. Inference clustered by region.</li>
+  </ul>
+</div>`,
+
+/* 19 DATA */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Data to triangulate, not rest on one series</div>
+  <h2>Nine high-quality sources</h2>
+  <div class="grid3">
+    <div class="card reveal r1"><h3>Exposure</h3><p>Search indices, app analytics, archived community text.</p></div>
+    <div class="card reveal r2"><h3>Proximate outcomes</h3><p>Distress and help search, crisis-line volumes, time-use.</p></div>
+    <div class="card reveal r3"><h3>Distal outcomes</h3><p>Psychological distress surveys, suicide and self-harm mortality.</p></div>
+    <div class="card reveal r4"><h3>Market</h3><p>How couples meet, online dating prevalence.</p></div>
+    <div class="card reveal r5"><h3>Treatment timing</h3><p>Regulatory actions and statutes across jurisdictions.</p></div>
+    <div class="card reveal r6"><h3>Mechanism</h3><p>Heterogeneity by thin-market measures, per Result 2.</p></div>
+  </div>
+</div>`,
+
+/* 20 DESIGN 2 */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Design two</div>
+  <h2>Staggered policy, done correctly</h2>
+  <ul>
+    <li class="reveal r1">Restrictions arrive across jurisdictions at different dates. With heterogeneous effects, two-way fixed effects is biased.</li>
+    <li class="reveal r2">Use group-time effects with not-yet-treated comparisons, an interaction-weighted event study, and a transparent decomposition.</li>
+    <li class="reveal r3">For the single largest policy change, add a synthetic-control comparison with permutation inference.</li>
+    <li class="reveal r4 plain"><b>Two designs, different variation, same question.</b> That is the triangulation.</li>
+  </ul>
+</div>`,
+
+/* 21 CONFOUNDER */
+`<div class="slide navy">
+  <div class="kicker"><span class="dot"></span>The confounder of record</div>
+  <h2>Separating the companion from the wave</h2>
+  <p class="reveal r1">Artificial companions diffused inside the broader rise of generative AI. How do we know we are measuring companionship and not the whole technology?</p>
+  <ul>
+    <li class="reveal r2"><b>Placebo outcome.</b> A companionship-specific shock should move companionship behavior but not search tied to general-purpose AI that the change did not touch.</li>
+    <li class="reveal r3">If the placebo moves, the interpretation is in doubt, and the paper says so.</li>
+    <li class="reveal r4 plain">If the confounder cannot be purged, the honest move is to characterize it, not to force a causal claim.</li>
+  </ul>
+</div>`,
+
+/* 22 FALSIFICATION CHECKLIST */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Design trumps analysis</div>
+  <h2>The falsification checklist</h2>
+  <div class="grid2">
+    <div class="col">
+      <ul>
+        <li class="reveal r1">Pre-trends, tested and bounded by sensitivity analysis.</li>
+        <li class="reveal r2">Placebo dates with no policy or platform change.</li>
+        <li class="reveal r3">Placebo regions with near-zero exposure.</li>
+      </ul>
+    </div>
+    <div class="col">
+      <ul>
+        <li class="reveal r4">Leave-one-region-out and permutation inference.</li>
+        <li class="reveal r5">Placebo outcomes for the AI wave.</li>
+        <li class="reveal r6">Mechanism as a test: the effect must concentrate where Result 2 says.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="reveal r6" style="margin-top:18px;">Each test is written down in advance. Credibility comes from the structure of the comparison, not from the estimator.</p>
+</div>`,
+
+/* 23 POWER INTRO */
+`<div class="slide blue center">
+  <div class="fill center">
+    <span class="sim-flag reveal r1">SIMULATION</span>
+    <p class="big reveal r2" style="max-width:28ch;margin:20px auto 0;">Before touching a real outcome, prove the design can see the answer.</p>
+    <p class="reveal r3" style="margin-top:20px;max-width:42ch;">Everything on the next three slides is simulated. No real data. The point is the design, not a finding.</p>
+  </div>
+</div>`,
+
+/* 24 FIG4 */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Simulation 1 of 3 &nbsp;&middot;&nbsp; recovery</div>
+  <h2>The design recovers the truth</h2>
+  <div class="fig reveal r1"><img src="figures/fig4_event_study_sim.png" alt="Figure 4"></div>
+  <p class="cap reveal r2">Estimated dynamic path sits on the imposed path; pre-period coefficients at zero. Unbiased when assumptions hold.</p>
+</div>`,
+
+/* 25 FIG5 */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Simulation 2 of 3 &nbsp;&middot;&nbsp; power</div>
+  <h2>How much data we will need</h2>
+  <div class="fig reveal r1"><img src="figures/fig5_power_sim.png" alt="Figure 5"></div>
+  <p class="cap reveal r2">A design with roughly a hundred regions detects plausibly sized effects with high probability. A small one does not.</p>
+</div>`,
+
+/* 26 FIG6 */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Simulation 3 of 3 &nbsp;&middot;&nbsp; inference</div>
+  <h2>Serial correlation forces clustering</h2>
+  <div class="fig reveal r1"><img src="figures/fig6_size_sim.png" alt="Figure 6"></div>
+  <p class="cap reveal r2">With serially correlated errors, naive standard errors reject a true null far too often. Clustered inference restores nominal size.</p>
+</div>`,
+
+/* 27 WHAT EACH ANSWER MEANS */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Interpretation</div>
+  <h2>What a credible answer would mean</h2>
+  <div class="grid2" style="margin-top:12px;">
+    <div class="card reveal r1"><h3>If substitutes</h3>
+      <p>Certifying companions on user satisfaction measures the wrong thing. The felt gain is bought by eroding relationships that carry value beyond the user.</p></div>
+    <div class="card reveal r2"><h3>If complements</h3>
+      <p>Companions help the isolated re-enter the human market. Restricting them removes a ladder from those who need it most.</p></div>
+  </div>
+  <p class="reveal r3" style="margin-top:20px;">And because reliance concentrates among the already lonely, both the benefit and the harm fall on the same vulnerable tail. Look at the tail, not the average.</p>
+</div>`,
+
+/* 28 BIG IDEA */
+`<div class="slide navy center">
+  <div class="fill center">
+    <p class="sub reveal r1" style="letter-spacing:.2em;text-transform:uppercase;">The idea worth keeping</p>
+    <p class="big reveal r2" style="max-width:32ch;margin:18px auto 0;">A technology can deliver the sensation of connection while hollowing out the thing that produced it.</p>
+    <p class="reveal r3" style="margin-top:22px;max-width:40ch;">The wedge between felt utility and produced value is an abstraction for most goods. It becomes concrete when the good is love.</p>
+  </div>
+</div>`,
+
+/* 29 CONCLUSION */
+`<div class="slide">
+  <div class="kicker"><span class="dot"></span>Conclusion</div>
+  <h2>Ready to measure the real thing</h2>
+  <ul>
+    <li class="reveal r1">A theory that reduces the question to one recoverable number.</li>
+    <li class="reveal r2">A real event and a body of policy variation that make a credible comparison.</li>
+    <li class="reveal r3">A falsification plan that isolates companionship from the AI wave.</li>
+    <li class="reveal r4">Simulation evidence that the design has the power to see the effect.</li>
+    <li class="reveal r5 plain">The next two to three years supply the data. The apparatus is ready.</li>
+  </ul>
+</div>`,
+
+/* 30 CLOSE */
+`<div class="slide center blue">
+  <div class="fill center">
+    <h1 class="reveal r1" style="font-size:46px;max-width:24ch;">Measure the real. Refuse to manufacture.</h1>
+    <p class="lead reveal r3" style="margin-top:22px;">Thank you, Tufts.</p>
+    <p class="sub reveal r4" style="margin-top:8px;">Artificial Intimacy &nbsp;&middot;&nbsp; Claude (Opus 4.8), prompted by Scott Cunningham</p>
+  </div>
+</div>`
+
+];
+
+/* ---- render ---- */
+const stage=document.getElementById('stage');
+slides.forEach((html,i)=>{
+  const wrap=document.createElement('div');
+  wrap.innerHTML=html;
+  const s=wrap.firstElementChild;
+  const content=document.createElement('div');
+  content.className='content';
+  while(s.firstChild){content.appendChild(s.firstChild);}
+  s.appendChild(content);
+  s.insertAdjacentHTML('afterbegin','<div class="banner"></div>');
+  s.insertAdjacentHTML('beforeend',
+    `<svg class="mascot"><use href="#jumbo"></use></svg>`+
+    `<div class="pagenum">${i+1} / ${slides.length}</div>`);
+  stage.appendChild(s);
+});
+
+const slideEls=[...document.querySelectorAll('.slide')];
+let cur=0;
+
+function go(n){
+  if(n<0||n>=slideEls.length)return;
+  slideEls[cur].classList.remove('active');
+  cur=n;
+  slideEls[cur].classList.add('active');
+  document.getElementById('bar').style.width=((cur+1)/slideEls.length*100)+'%';
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();go(cur+1);}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(cur-1);}
+  else if(e.key==='Home'){go(0);}
+  else if(e.key==='End'){go(slideEls.length-1);}
+});
+stage.addEventListener('click',e=>{if(e.clientX < window.innerWidth*0.28) go(cur-1); else go(cur+1);});
+window.addEventListener('hashchange',()=>{const n=parseInt(location.hash.slice(1),10);if(!isNaN(n))go(Math.max(0,Math.min(slideEls.length-1,n-1)));});
+const start=parseInt(location.hash.slice(1),10);
+go(!isNaN(start)?Math.max(0,Math.min(slideEls.length-1,start-1)):0);
+</script>
+</body>
+</html>
