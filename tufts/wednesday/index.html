@@ -593,28 +593,171 @@
     <div class="num"></div>
   </section>
 
+  <!-- ===== ADD OR MULTIPLY: 7-step build (after Shockley) ===== -->
+  <!-- Step 1: additive, all present -->
+  <section class="slide figure">
+    <h3 class="figtitle">Additive production: the inputs add</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="70" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="145" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8321;</text>
+      <text x="145" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="272" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">+</text>
+      <rect x="300" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="375" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8322;</text>
+      <text x="375" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="490" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">+</text>
+      <rect x="530" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="605" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8323;</text>
+      <text x="605" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="705" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">=</text>
+      <text x="895" y="222" text-anchor="middle" fill="#718096" font-size="20" letter-spacing="3">OUTPUT</text>
+      <text x="895" y="305" text-anchor="middle" fill="#1C5FA8" font-size="88" font-weight="700" font-family="Georgia,serif">1.5</text>
+    </svg>
+    <figcaption>Three inputs, each one half. Output is their sum.</figcaption>
+  </section>
+
+  <!-- Step 2: additive, one to zero -->
+  <section class="slide figure">
+    <h3 class="figtitle">Take one input away</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="70" y="175" width="150" height="150" rx="14" fill="#f8ece8" stroke="#e3b9ae" stroke-width="2"/>
+      <text x="145" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8321;</text>
+      <text x="145" y="285" text-anchor="middle" fill="#B7472A" font-size="54" font-weight="700" font-family="Georgia,serif">0</text>
+      <text x="272" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">+</text>
+      <rect x="300" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="375" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8322;</text>
+      <text x="375" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="490" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">+</text>
+      <rect x="530" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="605" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8323;</text>
+      <text x="605" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="705" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">=</text>
+      <text x="895" y="222" text-anchor="middle" fill="#718096" font-size="20" letter-spacing="3">OUTPUT</text>
+      <text x="895" y="305" text-anchor="middle" fill="#1C5FA8" font-size="88" font-weight="700" font-family="Georgia,serif">1.0</text>
+    </svg>
+    <figcaption>One input drops to zero. Output falls by exactly that much.</figcaption>
+  </section>
+
+  <!-- Step 3: additive, buy it back (perfect substitutes) -->
+  <section class="slide figure">
+    <h3 class="figtitle">Perfect substitutes: buy the lost input back</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="70" y="175" width="150" height="150" rx="14" fill="#f8ece8" stroke="#e3b9ae" stroke-width="2"/>
+      <text x="145" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8321;</text>
+      <text x="145" y="285" text-anchor="middle" fill="#B7472A" font-size="54" font-weight="700" font-family="Georgia,serif">0</text>
+      <text x="272" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">+</text>
+      <rect x="300" y="175" width="150" height="150" rx="14" fill="#e9f3ee" stroke="#aacdbb" stroke-width="2"/>
+      <text x="375" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8322;</text>
+      <text x="375" y="285" text-anchor="middle" fill="#276749" font-size="54" font-weight="700" font-family="Georgia,serif">1.0</text>
+      <text x="490" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">+</text>
+      <rect x="530" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="605" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8323;</text>
+      <text x="605" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="705" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">=</text>
+      <text x="895" y="222" text-anchor="middle" fill="#718096" font-size="20" letter-spacing="3">OUTPUT</text>
+      <text x="895" y="305" text-anchor="middle" fill="#276749" font-size="88" font-weight="700" font-family="Georgia,serif">1.5</text>
+    </svg>
+    <figcaption>Add the lost half back to another input. Output returns to 1.5. Under addition the inputs are perfect substitutes.</figcaption>
+  </section>
+
+  <!-- Step 4: multiplicative, all present -->
+  <section class="slide figure">
+    <h3 class="figtitle">Multiplicative production: the inputs multiply</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="70" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="145" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8321;</text>
+      <text x="145" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="272" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="300" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="375" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8322;</text>
+      <text x="375" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="490" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="530" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="605" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8323;</text>
+      <text x="605" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="705" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">=</text>
+      <text x="895" y="222" text-anchor="middle" fill="#718096" font-size="20" letter-spacing="3">OUTPUT</text>
+      <text x="895" y="305" text-anchor="middle" fill="#1C5FA8" font-size="76" font-weight="700" font-family="Georgia,serif">0.125</text>
+    </svg>
+    <figcaption>Same three inputs. Now output is their product. This is Shockley&rsquo;s claim, a Cobb&ndash;Douglas form.</figcaption>
+  </section>
+
+  <!-- Step 5: multiplicative, one to zero -->
+  <section class="slide figure">
+    <h3 class="figtitle">Take one input away</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="70" y="175" width="150" height="150" rx="14" fill="#f8ece8" stroke="#e3b9ae" stroke-width="2"/>
+      <text x="145" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8321;</text>
+      <text x="145" y="285" text-anchor="middle" fill="#B7472A" font-size="54" font-weight="700" font-family="Georgia,serif">0</text>
+      <text x="272" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="300" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="375" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8322;</text>
+      <text x="375" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="490" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="530" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="605" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8323;</text>
+      <text x="605" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="705" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">=</text>
+      <text x="895" y="222" text-anchor="middle" fill="#718096" font-size="20" letter-spacing="3">OUTPUT</text>
+      <text x="895" y="305" text-anchor="middle" fill="#B7472A" font-size="88" font-weight="700" font-family="Georgia,serif">0</text>
+    </svg>
+    <figcaption>One input is zero, so the product is zero.</figcaption>
+  </section>
+
+  <!-- Step 6: multiplicative, crank others to 100 -->
+  <section class="slide figure">
+    <h3 class="figtitle">Try to make it up</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="70" y="175" width="150" height="150" rx="14" fill="#f8ece8" stroke="#e3b9ae" stroke-width="2"/>
+      <text x="145" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8321;</text>
+      <text x="145" y="285" text-anchor="middle" fill="#B7472A" font-size="54" font-weight="700" font-family="Georgia,serif">0</text>
+      <text x="272" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="300" y="175" width="150" height="150" rx="14" fill="#fdf1e3" stroke="#eccda0" stroke-width="2"/>
+      <text x="375" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8322;</text>
+      <text x="375" y="285" text-anchor="middle" fill="#E8820C" font-size="54" font-weight="700" font-family="Georgia,serif">100</text>
+      <text x="490" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="530" y="175" width="150" height="150" rx="14" fill="#fdf1e3" stroke="#eccda0" stroke-width="2"/>
+      <text x="605" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8323;</text>
+      <text x="605" y="285" text-anchor="middle" fill="#E8820C" font-size="54" font-weight="700" font-family="Georgia,serif">100</text>
+      <text x="705" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">=</text>
+      <text x="895" y="222" text-anchor="middle" fill="#718096" font-size="20" letter-spacing="3">OUTPUT</text>
+      <text x="895" y="305" text-anchor="middle" fill="#B7472A" font-size="88" font-weight="700" font-family="Georgia,serif">0</text>
+    </svg>
+    <figcaption>Crank the other inputs all the way up. The product is still zero.</figcaption>
+  </section>
+
+  <!-- Step 7: multiplicative, a million each -->
+  <section class="slide figure">
+    <h3 class="figtitle">No amount is enough</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="70" y="175" width="150" height="150" rx="14" fill="#f8ece8" stroke="#e3b9ae" stroke-width="2"/>
+      <text x="145" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8321;</text>
+      <text x="145" y="285" text-anchor="middle" fill="#B7472A" font-size="54" font-weight="700" font-family="Georgia,serif">0</text>
+      <text x="272" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="300" y="175" width="150" height="150" rx="14" fill="#fdf1e3" stroke="#eccda0" stroke-width="2"/>
+      <text x="375" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8322;</text>
+      <text x="375" y="283" text-anchor="middle" fill="#E8820C" font-size="26" font-weight="700" font-family="Georgia,serif">1,000,000</text>
+      <text x="490" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="530" y="175" width="150" height="150" rx="14" fill="#fdf1e3" stroke="#eccda0" stroke-width="2"/>
+      <text x="605" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8323;</text>
+      <text x="605" y="283" text-anchor="middle" fill="#E8820C" font-size="26" font-weight="700" font-family="Georgia,serif">1,000,000</text>
+      <text x="705" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">=</text>
+      <text x="895" y="222" text-anchor="middle" fill="#718096" font-size="20" letter-spacing="3">OUTPUT</text>
+      <text x="895" y="305" text-anchor="middle" fill="#B7472A" font-size="88" font-weight="700" font-family="Georgia,serif">0</text>
+    </svg>
+    <figcaption>Make them enormous, a million each. Still zero. A missing input cannot be bought back.</figcaption>
+  </section>
+
+  <!-- Closing: why the tail is long -->
   <section class="slide content">
-    <div class="kicker">Add or multiply</div>
-    <h2>Perfect substitutes, or <span class="accent">Cobb&ndash;Douglas</span>?</h2>
-    <div class="cols" style="align-items:flex-start;">
-      <div>
-        <h3>Additive: F&#8321; + F&#8322; + F&#8323;</h3>
-        <ul>
-          <li>The inputs are perfect substitutes.</li>
-          <li>Lose one input and output falls by just that much.</li>
-          <li>Buy it back with more of another input, and you are whole again.</li>
-        </ul>
-      </div>
-      <div>
-        <h3>Multiplicative: F&#8321; &middot; F&#8322; &middot; F&#8323;</h3>
-        <ul>
-          <li>Shockley&rsquo;s claim, a Cobb&ndash;Douglas form.</li>
-          <li>Let one input go to zero and the whole product is zero.</li>
-          <li>No amount of the others can buy a missing input back.</li>
-        </ul>
-      </div>
-    </div>
-    <div class="lead">If abilities multiply, a single weak input caps the whole researcher, and that is what makes the tail so long.</div>
+    <div class="kicker">Why the tail is so long</div>
+    <h2>A single weak input <span class="accent">caps</span> the whole researcher</h2>
+    <ul class="facts">
+      <li>If abilities multiply, your lowest input sets the ceiling, no matter how high the others go.</li>
+      <li>That is what stretches the distribution: a few people are strong on every input at once.</li>
+      <li>It also says where the leverage is, which is to raise your weakest input, not your best one.</li>
+    </ul>
+    <div class="lead">Raise the weakest input. That is the one place the whole product moves.</div>
     <div class="num"></div>
   </section>
 
