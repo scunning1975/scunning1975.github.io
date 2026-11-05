@@ -401,15 +401,15 @@ txt('Game Level 5: the setup','Measure everything in hours, including the wage (
  'Ten workers each work ten hours. The day\'s product is worth 100 hours of labor, whatever goods it consists of.',
  'The wage is a basket of necessaries. The basket also took labor to make, at the no-rent margin. Suppose it took 6 hours per worker. Where do the other 4 go?']);
 scene('Game Level 5: the day\'s product in hours','Ten workers, ten hours each; a basket of necessaries takes 6 hours to make',6,(g,k)=>split(g,k,100,60,{n:10,echo:'The same split as Example B of the corn model: wage 60, profit 40, r = 0.67. The corn is now hours.',note:'Workers work 10 hours and are paid goods that took 6. The 4 hours per worker that remain are the surplus, and with no rent at the margin it is all profit. “Profits depend on the quantity of labour requisite to provide necessaries for the labourers.” (HL p. 112)'}));
-txt('Now corn gets dearer','The margin moves out, as in the corn model',[
+txt('Now corn gets dearer (more expensive)','The margin moves out, as in the corn model',[
  'Population grows, worse land is ploughed, and the corn in the basket takes more labor to grow. Say the basket now takes 7 hours instead of 6.',
  'Nothing else changes. Same ten workers, same ten hours, same 100 hours of product, same tools.',
  'What happens to profit? Watch the bar.']);
-scene('Corn dearer: the basket takes 7 hours','Same product, same workers, same tools',5,(g,k)=>k===0?split(g,2,100,60,{n:10,echo:'Where we were: the basket took 6 hours. Now it takes 7. Watch the line move.',opener:true}):split(g,1+k,100,70,{n:10,echo:'Example A of the corn model at four parcels: wage 70, profit 30, r = 0.43.',note:'The wage rose by one hour per worker, so profit fell by exactly that. The product did not change. “If wages should rise, then … profits would necessarily fall.” (HL p. 115) Rent took nothing directly; the margin raised the labor cost of the wage.'}));
+scene('Corn dearer (more expensive): the basket takes 7 hours','Same product, same workers, same tools',5,(g,k)=>k===0?split(g,2,100,60,{n:10,echo:'Where we were: the basket took 6 hours. Now it takes 7. Watch the line move.',opener:true}):split(g,1+k,100,70,{n:10,echo:'Example A of the corn model at four parcels: wage 70, profit 30, r = 0.43.',note:'The wage rose by one hour per worker, so profit fell by exactly that. The product did not change. “If wages should rise, then … profits would necessarily fall.” (HL p. 115) Rent took nothing directly; the margin raised the labor cost of the wage.'}));
 scene('The Corn Laws repealed: the basket takes 5 hours','Cheap foreign corn, the margin moves back in',4,(g,k)=>k===0?split(g,2,100,70,{n:10,echo:'Where we were: the basket took 7 hours. Imports bring it to 5. Watch the line move.',opener:true}):split(g,1+k,100,50,{n:10,note:'Cheaper corn means fewer hours in the basket, so profit rises with no change in anything the capitalist did. That is the whole Corn Laws argument in one bar: the landlord\'s gain is the hours added to the basket, and those hours came out of profit.'}));
 txt('What the three bars taught','Game Level 5, in four sentences',[
  'Measure the product in hours and the split is arithmetic: wages are the hours in the baskets, profit is whatever is left.',
- 'Dearer corn puts more hours in the basket, so profit falls with nothing else changing. Cheaper corn does the reverse.',
+ 'Dearer (more expensive) corn puts more hours in the basket, so profit falls with nothing else changing. Cheaper corn does the reverse.',
  'The rate of profit r is profit over the wages advanced. It went 0.67, then 0.43, then 1.00, while the product stayed at 100.',
  'Rent never appeared on the screen. The margin changed the labor cost of the wage, and profit took the hit. That is the corn model again, in hours.']);
 txt('What game Level 5 buys Ricardo','Why he kept the theory despite the trouble coming',[
@@ -449,7 +449,7 @@ scene('Game Level 3: same labor, different timing','Price = w(1 + r) × [hours n
  'At r = 0 the price is the labor. Ten dollars each, ratio 1. This is the pure labor theory of value.',
  'At 10 percent, last year\'s five hours are worth 5 × 1.10 before this year\'s profit is added. B costs more than A though the labor is the same. The ratio is 1.05.',
  'At 25 percent the gap widens to 1.125. Nothing about the labor changed. Only the profit rate did.',
- 'At 50 percent B is a quarter dearer than A. HL p. 105: “the price ratio has changed while the quantities of labor embodied in the two commodities have remained unchanged.”']}));
+ 'At 50 percent B is a quarter dearer (more expensive) than A. HL p. 105: “the price ratio has changed while the quantities of labor embodied in the two commodities have remained unchanged.”']}));
 txt('Why: profit compounds on labor paid early','HL pp. 107–108, Ricardo\'s $100',[
  'A capitalist pays $100 of wages at the start of a four-year process. He could instead have run four one-year ventures at 10 percent, reinvesting each time.',
  'For the long process to be worth doing, the $100 must grow in the price the way it would have grown in the alternative.',
@@ -479,7 +479,7 @@ scene('Game Level 1: check','Beaver 3 days, deer 1 day, then 1.5× productivity 
 txt('You drive: game Level 5, on paper today','Level 5 is not in the game yet. The numbers below are the drill; the farm at ricardo-farm.pages.dev has the margin',[
  'Twelve workers, ten hours each. A basket of necessaries takes 8 hours to make.',
  'Wages in hours, profit in hours, r.',
- 'Then corn gets dearer: the basket takes 10 hours. Then the Corn Laws are repealed: the basket takes 6. Fill in all three rows.']);
+ 'Then corn gets dearer (more expensive): the basket takes 10 hours. Then the Corn Laws are repealed: the basket takes 6. Fill in all three rows.']);
 scene('Game Level 5: check','120 hours of product, basket 8 hours',5,(g,k)=>split(g,k,120,96,{n:12,note:'Wages 96, profit 24, r = 24 ÷ 96 = 0.25. Basket 10: wages 120, profit 0, r = 0. That is the stationary state. Basket 6: wages 72, profit 48, r = 0.67.'}));
 txt('Game Levels 2 and 3: tonight, or now if there is time','Same site. Level 2 is the stockings, Level 3 is the lender.',[
  'Level 2 hands you a loom that took so many hours and wears out after so many pairs. Spread it, add it up, price the stockings in hats.',
@@ -504,7 +504,7 @@ txt('What Ricardo said about utility, and what Thursday says back','HL pp. 98–
 // 12 door
 txt('What to take out the door','Three sentences',[
  'Exchange ratios are labor ratios, the loom\'s share included, and productivity raises riches while it lowers value. That is the AI song already.',
- 'Measure the product in hours and profit is what is left after the hours in the wage basket, so a dearer basket must mean a lower profit rate.',
+ 'Measure the product in hours and profit is what is left after the hours in the wage basket, so a dearer (more expensive) basket must mean a lower profit rate.',
  'Once capital differs in timing, profit compounds and prices leave labor; Ricardo called the gap small, looked for a yardstick that would not move, and never found one.']);
 txt('Where this goes next','Value without labor',[
  'Every number on these screens was labor, with r as what is left. Bentham, Say, and Senior keep the numbers and change what r is.',
