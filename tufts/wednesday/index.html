@@ -592,25 +592,24 @@
     <div class="num"></div>
   </section>
 
-  <section class="slide figure">
-    <h3 class="figtitle">Research productivity is lognormal: a long right tail</h3>
-    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:60vh;" font-family="-apple-system,Segoe UI,sans-serif">
-      <defs><marker id="lnar" markerWidth="11" markerHeight="11" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#B7472A"/></marker></defs>
-      <line x1="160" y1="470" x2="1010" y2="470" stroke="#0C2340" stroke-width="2.5"/>
-      <polygon points="1010,470 994,462 994,478" fill="#0C2340"/>
-      <line x1="160" y1="470" x2="160" y2="95" stroke="#0C2340" stroke-width="2.5"/>
-      <polygon points="160,95 152,111 168,111" fill="#0C2340"/>
-      <path d="M170,470 L210,455 L250,410 L290,320 L330,230 L370,175 L405,155 L440,170 L490,215 L560,285 L650,350 L760,405 L880,440 L1000,458 L1000,470 L170,470 Z" fill="#3E8EDE" fill-opacity="0.14"/>
-      <polyline points="170,470 210,455 250,410 290,320 330,230 370,175 405,155 440,170 490,215 560,285 650,350 760,405 880,440 1000,458" fill="none" stroke="#1C5FA8" stroke-width="3.5" stroke-linejoin="round"/>
-      <text x="580" y="506" text-anchor="middle" fill="#6b6b73" font-size="20">Research output</text>
-      <text transform="translate(126,285) rotate(-90)" text-anchor="middle" fill="#6b6b73" font-size="20">Density of researchers</text>
-      <text x="300" y="134" text-anchor="middle" fill="#6b6b73" font-size="17">most of us cluster here</text>
-      <circle cx="430" cy="165" r="6.5" fill="#0C2340"/>
-      <text x="456" y="159" text-anchor="start" fill="#0C2340" font-size="17" font-weight="700">me</text>
-      <circle cx="815" cy="424" r="6.5" fill="#B7472A"/>
-      <text x="815" y="404" text-anchor="middle" fill="#B7472A" font-size="17" font-weight="700">Einstein</text>
+  <section class="slide figure" style="align-items:stretch;justify-content:center;">
+    <h3 class="figtitle" style="text-align:left;">Research productivity is lognormal: a long right tail</h3>
+    <p style="text-align:left;margin:0 0 clamp(4px,1vh,14px);font-size:clamp(17px,1.95vw,28px);color:#2a2a30;line-height:1.4;max-width:72ch;">Shockley (1957) studied the variation in scientists&rsquo; salaries versus their productivity, and claimed it is log-normal.</p>
+    <svg viewBox="0 0 1120 520" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:50vh;margin:0 auto;" font-family="-apple-system,Segoe UI,sans-serif">
+      <line x1="160" y1="450" x2="1010" y2="450" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="1010,450 994,442 994,458" fill="#0C2340"/>
+      <line x1="160" y1="450" x2="160" y2="80" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="160,80 152,96 168,96" fill="#0C2340"/>
+      <path d="M170,450 L210,435 L250,392 L290,305 L330,218 L370,165 L405,146 L440,160 L490,203 L560,270 L650,333 L760,386 L880,420 L1000,438 L1000,450 L170,450 Z" fill="#3E8EDE" fill-opacity="0.14"/>
+      <polyline points="170,450 210,435 250,392 290,305 330,218 370,165 405,146 440,160 490,203 560,270 650,333 760,386 880,420 1000,438" fill="none" stroke="#1C5FA8" stroke-width="3.5" stroke-linejoin="round"/>
+      <text x="580" y="488" text-anchor="middle" fill="#6b6b73" font-size="20">Research output</text>
+      <text transform="translate(126,268) rotate(-90)" text-anchor="middle" fill="#6b6b73" font-size="20">Density of researchers</text>
+      <circle cx="430" cy="156" r="6.5" fill="#0C2340"/>
+      <text x="456" y="150" text-anchor="start" fill="#0C2340" font-size="18" font-weight="700">me</text>
+      <circle cx="815" cy="404" r="6.5" fill="#B7472A"/>
+      <text x="815" y="384" text-anchor="middle" fill="#B7472A" font-size="18" font-weight="700">Einstein</text>
     </svg>
-    <figcaption>Multiplicative abilities produce a long right tail: most of us cluster low, a few (Einstein) are extreme.<span class="src">Illustrative log-normal curve, not Shockley&rsquo;s data.</span></figcaption>
+    <div class="src" style="text-align:left;">An illustrative log-normal curve, not Shockley&rsquo;s data.</div>
     <div class="num"></div>
   </section>
 
@@ -951,41 +950,68 @@
     <div class="num"></div>
   </section>
 
+  <!-- ===== USING CLAUDE CODE WITH AN IDE ===== -->
+  <!-- Section title -->
+  <section class="slide divider">
+    <div class="eyebrow">Getting set up</div>
+    <div class="big" style="font-size:clamp(38px,6vw,92px);">Using Claude Code<br>with an IDE</div>
+    <div class="sub">Three ways in, then a walkthrough for the one that sits next to your files.</div>
+    <div class="num"></div>
+  </section>
+
+  <!-- Three ways -->
   <section class="slide content">
     <div class="kicker">Same agent, three places</div>
     <h2>Three ways to <span class="accent">work</span> with an agent</h2>
     <table class="tbl">
       <tr><th>The desktop app</th><td>the easiest start, and it keeps every session</td></tr>
       <tr><th>The command line</th><td>the agent in a terminal window, closest to the machine</td></tr>
-      <tr><th>An IDE</th><td>the agent next to your files, your code, and a terminal</td></tr>
+      <tr><th>An IDE, like VS Code</th><td>the agent next to your files, your code, and a terminal</td></tr>
     </table>
     <div class="lead">My sense, though, is that the AI labs, Anthropic and OpenAI, are bringing all of this functionality together, particularly in the desktop apps.</div>
     <div class="num"></div>
   </section>
 
-  <!-- ===== IDE / CONVERGENCE: three slides ===== -->
-  <!-- Slide 1: what is the IDE (image placeholder) -->
+  <!-- What is an IDE (schematic) -->
   <section class="slide content">
     <div class="kicker">The third place</div>
-    <h2>What is the <span class="accent">IDE</span>?</h2>
+    <h2>What is an <span class="accent">IDE</span>?</h2>
     <div class="cols">
       <div>
         <ul class="facts">
-          <li>An IDE, an integrated development environment, is the one window where I write code, run it, and read the output.</li>
-          <li>The files sit on the left, the editor fills the middle, a terminal runs along the bottom. VS Code and Cursor are the common ones.</li>
+          <li>An IDE, an integrated development environment, puts my files, an editor, and a terminal in one window.</li>
+          <li>What I like most is that I can see the whole folder the agent is working in, not just what it tells me.</li>
+          <li>VS Code is free, and it is full of add-ons for Stata, R, Python, LaTeX, and PDFs.</li>
         </ul>
       </div>
       <div>
-        <div style="border:2px dashed #c7d1de;border-radius:14px;background:#f7fafc;aspect-ratio:16/10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(18px,2.4vh,34px);">
-          <div style="font-family:Georgia,serif;font-size:clamp(18px,2.1vw,30px);color:#3E8EDE;font-weight:700;">[ screenshot ]</div>
-          <div style="font-size:clamp(13px,1.3vw,19px);color:#718096;margin-top:.6em;line-height:1.4;max-width:30ch;">an IDE window: files on the left, editor in the middle, terminal below</div>
-        </div>
+        <svg viewBox="0 0 560 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;" font-family="-apple-system,Segoe UI,sans-serif">
+          <rect x="8" y="8" width="544" height="364" rx="16" fill="#ffffff" stroke="#c7d1de" stroke-width="2"/>
+          <path d="M8,24 Q8,8 24,8 L536,8 Q552,8 552,24 L552,52 L8,52 Z" fill="#eef5fc"/>
+          <circle cx="34" cy="30" r="6" fill="#d7dbe2"/><circle cx="56" cy="30" r="6" fill="#d7dbe2"/><circle cx="78" cy="30" r="6" fill="#d7dbe2"/>
+          <rect x="8" y="52" width="150" height="320" fill="#f7fafc" stroke="#e3e9f0" stroke-width="1.5"/>
+          <text x="83" y="86" text-anchor="middle" fill="#1C5FA8" font-size="20" font-weight="700" font-family="Georgia,serif">Files</text>
+          <line x1="30" y1="112" x2="136" y2="112" stroke="#cfd8e3" stroke-width="5" stroke-linecap="round"/>
+          <line x1="30" y1="134" x2="120" y2="134" stroke="#dde4ec" stroke-width="5" stroke-linecap="round"/>
+          <line x1="30" y1="156" x2="128" y2="156" stroke="#dde4ec" stroke-width="5" stroke-linecap="round"/>
+          <line x1="30" y1="178" x2="112" y2="178" stroke="#dde4ec" stroke-width="5" stroke-linecap="round"/>
+          <rect x="158" y="52" width="394" height="214" fill="#ffffff"/>
+          <text x="355" y="86" text-anchor="middle" fill="#1C5FA8" font-size="20" font-weight="700" font-family="Georgia,serif">Editor</text>
+          <line x1="186" y1="118" x2="420" y2="118" stroke="#dde4ec" stroke-width="5" stroke-linecap="round"/>
+          <line x1="186" y1="140" x2="470" y2="140" stroke="#dde4ec" stroke-width="5" stroke-linecap="round"/>
+          <line x1="186" y1="162" x2="388" y2="162" stroke="#dde4ec" stroke-width="5" stroke-linecap="round"/>
+          <line x1="186" y1="184" x2="440" y2="184" stroke="#dde4ec" stroke-width="5" stroke-linecap="round"/>
+          <line x1="186" y1="206" x2="360" y2="206" stroke="#dde4ec" stroke-width="5" stroke-linecap="round"/>
+          <rect x="158" y="266" width="394" height="106" fill="#0C2340"/>
+          <text x="186" y="300" text-anchor="start" fill="#bcd2ef" font-size="18" font-weight="700" font-family="Georgia,serif">Terminal</text>
+          <text x="186" y="336" text-anchor="start" fill="#7fe0b6" font-size="17" font-family="SF Mono,Menlo,monospace">$ claude</text>
+        </svg>
       </div>
     </div>
     <div class="num"></div>
   </section>
 
-  <!-- Slide 2: the convergence -->
+  <!-- Convergence -->
   <section class="slide content">
     <div class="kicker">An observation</div>
     <h2>The app and the IDE are <span class="accent">converging</span></h2>
@@ -1009,7 +1035,7 @@
     <div class="num"></div>
   </section>
 
-  <!-- Slide 3: center of gravity / who holds the pen -->
+  <!-- Who holds the pen -->
   <section class="slide content">
     <div class="kicker">The real difference</div>
     <h2>Who is holding the <span class="accent">pen</span>?</h2>
@@ -1018,6 +1044,70 @@
       <li>VS Code assumes I am editing and the model is advising. The Claude app assumes the model is doing the work and I am reviewing the diff.</li>
     </ul>
     <div class="lead">VS Code is where I work on code. The Claude app is where I supervise work on code, and my rule of verifying by reading the diff lives on that side.</div>
+    <div class="num"></div>
+  </section>
+
+  <!-- ===== WALKTHROUGH: get VS Code + Claude Code running ===== -->
+  <section class="slide figure">
+    <h3 class="figtitle">Getting VS Code: search for it</h3>
+    <img src="figures/vscode_search.png" alt="A Google search box with VS Code download autocomplete suggestions">
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">The real one is from code.visualstudio.com</h3>
+    <img src="figures/vscode_results.png" alt="Google results for VS Code download, with the code.visualstudio.com link at the top">
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Download the version for your computer</h3>
+    <img src="figures/vscode_download.png" alt="The Download Visual Studio Code page with Windows, macOS, and Linux options">
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Open a terminal: Terminal, then New Terminal</h3>
+    <img src="figures/vscode_new_terminal.png" alt="VS Code with the Terminal menu open and New Terminal highlighted">
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Type <code>claude --dangerously-skip-permissions</code></h3>
+    <img src="figures/vscode_type_claude.png" alt="The VS Code terminal with the claude command typed in">
+    <figcaption>The flag lets the agent run and edit without stopping for approval. It is fast, but it drops the safety check, so add guardrails like hooks before you use it.</figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Claude Code starts; my first prompt gets it up to speed</h3>
+    <img src="figures/vscode_claude_started.png" alt="Claude Code running in the VS Code terminal, greeting Scott and ready for a first prompt">
+    <figcaption>&ldquo;Read the files in this folder and tell me what this project is about.&rdquo;</figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Away from the laptop</div>
+    <h2>I can also steer it from my <span class="accent">phone</span>, with Dispatch</h2>
+    <div class="cols">
+      <div style="flex:0 0 36%;text-align:center;">
+        <img src="figures/dispatch_menu.jpg" alt="The Claude phone app menu, with Dispatch in the list" style="max-height:52vh;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.18);">
+      </div>
+      <div>
+        <ul class="facts">
+          <li>Dispatch is in the menu of the Claude phone app.</li>
+          <li>It sends my messages to the agent working on my computer.</li>
+          <li>So I can start or redirect work when I am away from the laptop.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">From the phone: &ldquo;Rerun all the analysis, and show me the figures&rdquo;</h3>
+    <img src="figures/dispatch_phone.png" alt="A Dispatch conversation on the phone, sending a message to the agent to rerun the analysis" style="max-height:62vh;">
+    <figcaption>Earlier messages blurred.</figcaption>
     <div class="num"></div>
   </section>
 
