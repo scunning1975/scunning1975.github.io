@@ -592,22 +592,63 @@
     <div class="num"></div>
   </section>
 
+  <!-- Lognormal build, step 1: the curve -->
   <section class="slide figure" style="align-items:stretch;justify-content:center;">
     <h3 class="figtitle" style="text-align:left;">Research productivity is lognormal: a long right tail</h3>
-    <p style="text-align:left;margin:0 0 clamp(4px,1vh,14px);font-size:clamp(17px,1.95vw,28px);color:#2a2a30;line-height:1.4;max-width:72ch;">Shockley (1957) studied the variation in scientists&rsquo; salaries versus their productivity, and claimed it is log-normal.</p>
-    <svg viewBox="0 0 1120 520" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:50vh;margin:0 auto;" font-family="-apple-system,Segoe UI,sans-serif">
-      <line x1="160" y1="450" x2="1010" y2="450" stroke="#0C2340" stroke-width="2.5"/>
-      <polygon points="1010,450 994,442 994,458" fill="#0C2340"/>
-      <line x1="160" y1="450" x2="160" y2="80" stroke="#0C2340" stroke-width="2.5"/>
-      <polygon points="160,80 152,96 168,96" fill="#0C2340"/>
-      <path d="M170,450 L210,435 L250,392 L290,305 L330,218 L370,165 L405,146 L440,160 L490,203 L560,270 L650,333 L760,386 L880,420 L1000,438 L1000,450 L170,450 Z" fill="#3E8EDE" fill-opacity="0.14"/>
-      <polyline points="170,450 210,435 250,392 290,305 330,218 370,165 405,146 440,160 490,203 560,270 650,333 760,386 880,420 1000,438" fill="none" stroke="#1C5FA8" stroke-width="3.5" stroke-linejoin="round"/>
-      <text x="580" y="488" text-anchor="middle" fill="#6b6b73" font-size="20">Research output</text>
-      <text transform="translate(126,268) rotate(-90)" text-anchor="middle" fill="#6b6b73" font-size="20">Density of researchers</text>
-      <circle cx="430" cy="156" r="6.5" fill="#0C2340"/>
-      <text x="456" y="150" text-anchor="start" fill="#0C2340" font-size="18" font-weight="700">me</text>
-      <circle cx="815" cy="404" r="6.5" fill="#B7472A"/>
-      <text x="815" y="384" text-anchor="middle" fill="#B7472A" font-size="18" font-weight="700">Einstein</text>
+    <p style="text-align:left;margin:0 0 clamp(4px,1vh,12px);font-size:clamp(16px,1.8vw,26px);color:#2a2a30;line-height:1.4;max-width:78ch;">In 1957, William Shockley wrote &ldquo;On the Statistics of Individual Variations of Productivity in Research Laboratories.&rdquo; He argued that research productivity is log-normal: most of us sit in a big hump, and a few sit far out in a long right tail.</p>
+    <svg viewBox="0 0 1120 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:46vh;margin:0 auto;" font-family="-apple-system,Segoe UI,sans-serif">
+      <line x1="160" y1="430" x2="1010" y2="430" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="1010,430 994,422 994,438" fill="#0C2340"/>
+      <line x1="160" y1="430" x2="160" y2="70" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="160,70 152,86 168,86" fill="#0C2340"/>
+      <path d="M170,430 L210,416 L250,374 L290,290 L330,206 L370,156 L405,138 L440,152 L490,194 L560,258 L650,318 L760,368 L880,400 L1000,418 L1000,430 L170,430 Z" fill="#3E8EDE" fill-opacity="0.14"/>
+      <polyline points="170,430 210,416 250,374 290,290 330,206 370,156 405,138 440,152 490,194 560,258 650,318 760,368 880,400 1000,418" fill="none" stroke="#1C5FA8" stroke-width="3.5" stroke-linejoin="round"/>
+      <text x="580" y="468" text-anchor="middle" fill="#6b6b73" font-size="20">Research output</text>
+      <text transform="translate(126,250) rotate(-90)" text-anchor="middle" fill="#6b6b73" font-size="20">Number of researchers</text>
+    </svg>
+    <div class="src" style="text-align:left;">An illustrative log-normal curve, not Shockley&rsquo;s data.</div>
+    <div class="num"></div>
+  </section>
+
+  <!-- Lognormal build, step 2: Scott in the hump -->
+  <section class="slide figure" style="align-items:stretch;justify-content:center;">
+    <h3 class="figtitle" style="text-align:left;">Research productivity is lognormal: a long right tail</h3>
+    <p style="text-align:left;margin:0 0 clamp(4px,1vh,12px);font-size:clamp(16px,1.8vw,26px);color:#2a2a30;line-height:1.4;max-width:78ch;">In 1957, William Shockley wrote &ldquo;On the Statistics of Individual Variations of Productivity in Research Laboratories.&rdquo; He argued that research productivity is log-normal: most of us sit in a big hump, and a few sit far out in a long right tail.</p>
+    <svg viewBox="0 0 1120 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:46vh;margin:0 auto;" font-family="-apple-system,Segoe UI,sans-serif">
+      <defs><marker id="arrS2" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#2D3748"/></marker></defs>
+      <line x1="160" y1="430" x2="1010" y2="430" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="1010,430 994,422 994,438" fill="#0C2340"/>
+      <line x1="160" y1="430" x2="160" y2="70" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="160,70 152,86 168,86" fill="#0C2340"/>
+      <path d="M170,430 L210,416 L250,374 L290,290 L330,206 L370,156 L405,138 L440,152 L490,194 L560,258 L650,318 L760,368 L880,400 L1000,418 L1000,430 L170,430 Z" fill="#3E8EDE" fill-opacity="0.14"/>
+      <polyline points="170,430 210,416 250,374 290,290 330,206 370,156 405,138 440,152 490,194 560,258 650,318 760,368 880,400 1000,418" fill="none" stroke="#1C5FA8" stroke-width="3.5" stroke-linejoin="round"/>
+      <text x="580" y="468" text-anchor="middle" fill="#6b6b73" font-size="20">Research output</text>
+      <text transform="translate(126,250) rotate(-90)" text-anchor="middle" fill="#6b6b73" font-size="20">Number of researchers</text>
+      <line x1="520" y1="118" x2="430" y2="142" stroke="#2D3748" stroke-width="2.5" marker-end="url(#arrS2)"/>
+      <text x="530" y="114" text-anchor="start" fill="#2D3748" font-size="20" font-weight="700">Scott</text>
+    </svg>
+    <div class="src" style="text-align:left;">An illustrative log-normal curve, not Shockley&rsquo;s data.</div>
+    <div class="num"></div>
+  </section>
+
+  <!-- Lognormal build, step 3: Einstein in the tail -->
+  <section class="slide figure" style="align-items:stretch;justify-content:center;">
+    <h3 class="figtitle" style="text-align:left;">Research productivity is lognormal: a long right tail</h3>
+    <p style="text-align:left;margin:0 0 clamp(4px,1vh,12px);font-size:clamp(16px,1.8vw,26px);color:#2a2a30;line-height:1.4;max-width:78ch;">In 1957, William Shockley wrote &ldquo;On the Statistics of Individual Variations of Productivity in Research Laboratories.&rdquo; He argued that research productivity is log-normal: most of us sit in a big hump, and a few sit far out in a long right tail.</p>
+    <svg viewBox="0 0 1120 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:46vh;margin:0 auto;" font-family="-apple-system,Segoe UI,sans-serif">
+      <defs><marker id="arrS3" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#2D3748"/></marker></defs>
+      <line x1="160" y1="430" x2="1010" y2="430" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="1010,430 994,422 994,438" fill="#0C2340"/>
+      <line x1="160" y1="430" x2="160" y2="70" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="160,70 152,86 168,86" fill="#0C2340"/>
+      <path d="M170,430 L210,416 L250,374 L290,290 L330,206 L370,156 L405,138 L440,152 L490,194 L560,258 L650,318 L760,368 L880,400 L1000,418 L1000,430 L170,430 Z" fill="#3E8EDE" fill-opacity="0.14"/>
+      <polyline points="170,430 210,416 250,374 290,290 330,206 370,156 405,138 440,152 490,194 560,258 650,318 760,368 880,400 1000,418" fill="none" stroke="#1C5FA8" stroke-width="3.5" stroke-linejoin="round"/>
+      <text x="580" y="468" text-anchor="middle" fill="#6b6b73" font-size="20">Research output</text>
+      <text transform="translate(126,250) rotate(-90)" text-anchor="middle" fill="#6b6b73" font-size="20">Number of researchers</text>
+      <line x1="520" y1="118" x2="430" y2="142" stroke="#2D3748" stroke-width="2.5" marker-end="url(#arrS3)"/>
+      <text x="530" y="114" text-anchor="start" fill="#2D3748" font-size="20" font-weight="700">Scott</text>
+      <line x1="815" y1="316" x2="815" y2="376" stroke="#2D3748" stroke-width="2.5" marker-end="url(#arrS3)"/>
+      <text x="815" y="306" text-anchor="middle" fill="#2D3748" font-size="20" font-weight="700">Einstein</text>
     </svg>
     <div class="src" style="text-align:left;">An illustrative log-normal curve, not Shockley&rsquo;s data.</div>
     <div class="num"></div>
@@ -795,29 +836,44 @@
 
   <section class="slide content">
     <div class="kicker">Shockley (1957)</div>
-    <h2>Eight abilities, and intelligence is <span class="accent">not one of them</span></h2>
+    <h2>The productivity equation <span class="accent">multiplies</span> eight abilities</h2>
+    <div style="text-align:center;font-family:Georgia,serif;font-size:clamp(20px,2.7vw,40px);color:#2D3748;margin:clamp(2px,.8vh,10px) 0 clamp(14px,2.4vh,30px);">P = F&#8321; &#215; F&#8322; &#215; F&#8323; &#215; F&#8324; &#215; F&#8325; &#215; F&#8326; &#215; F&#8327; &#215; F&#8328;</div>
     <div class="eight">
       <div class="it"><b>F&#8321;</b><span>Think of a good problem</span></div>
-      <div class="it"><b>F&#8322;</b><span>Work on it</span></div>
-      <div class="it"><b>F&#8323;</b><span>Recognize a worthwhile result</span></div>
-      <div class="it"><b>F&#8324;</b><span>Decide when to stop and write up</span></div>
       <div class="it"><b>F&#8325;</b><span>Write adequately</span></div>
+      <div class="it"><b>F&#8322;</b><span>Work on it</span></div>
       <div class="it"><b>F&#8326;</b><span>Profit constructively from criticism</span></div>
-      <div class="it"><b>F&#8327;</b><span>Determination to submit to a journal</span></div>
-      <div class="it"><b>F&#8328;</b><span>Persistence in revising after review</span></div>
+      <div class="it"><b>F&#8323;</b><span>Recognize a worthwhile result</span></div>
+      <div class="it"><b>F&#8327;</b><span>Determination to submit the paper to a journal</span></div>
+      <div class="it"><b>F&#8324;</b><span>Decide when to stop and write up the results</span></div>
+      <div class="it"><b>F&#8328;</b><span>Persistence in making changes after journal action</span></div>
     </div>
-    <div class="foot"><span class="lede">My view:</span> the eight are still the inputs. AI is a way to augment them, not a ninth input that replaces a missing one.</div>
+    <div class="cite">Shockley called it &ldquo;a partial listing, not in order of importance.&rdquo; Shockley (1957), <em>Proceedings of the IRE</em>.</div>
     <div class="num"></div>
   </section>
 
   <section class="slide content">
-    <div class="kicker">What we train</div>
-    <h2>Train the inputs that stay <span class="accent">yours</span></h2>
+    <div class="kicker">My view</div>
+    <h2>The eight are still the inputs; AI is a way to <span class="accent">augment</span> them</h2>
     <ul class="facts">
-      <li>If Shockley&rsquo;s eight are the real inputs, those are what training should build.</li>
-      <li>Taste, thinking of good problems, becomes the highest-leverage skill, in economics and in industry alike.</li>
-      <li>Data acquisition is now trivial; whole careers were built on public data. The scarce step is conceptualizing the problem first.</li>
+      <li>In my opinion, Shockley&rsquo;s eight are still the inputs to meaningful research.</li>
+      <li>So the useful question is how AI can help with each of them.</li>
+      <li>People are starting to ask what is left if AI can do all eight, but despite what I will show you today, we are not there yet.</li>
+      <li>Until then, I live as if these eight are the things I control.</li>
     </ul>
+    <div style="margin-top:clamp(14px,2.4vh,30px);">
+      <div style="font-family:Georgia,serif;font-size:clamp(14px,1.4vw,20px);color:var(--accent);font-weight:700;margin:0 0 .5em .2em;">My focus today</div>
+      <div style="display:flex;gap:clamp(7px,.9vw,15px);">
+        <div style="flex:1;border:2px solid #3E8EDE;background:#eef5fc;border-radius:10px;padding:clamp(7px,1.1vh,15px) 4px;text-align:center;"><div style="font-family:Georgia,serif;font-size:clamp(15px,1.6vw,23px);color:#1C5FA8;font-weight:700;">F&#8321;</div><div style="font-size:clamp(10px,.95vw,14px);color:#4A5568;margin-top:.3em;">problem</div></div>
+        <div style="flex:1;border:2px solid #3E8EDE;background:#eef5fc;border-radius:10px;padding:clamp(7px,1.1vh,15px) 4px;text-align:center;"><div style="font-family:Georgia,serif;font-size:clamp(15px,1.6vw,23px);color:#1C5FA8;font-weight:700;">F&#8322;</div><div style="font-size:clamp(10px,.95vw,14px);color:#4A5568;margin-top:.3em;">work on it</div></div>
+        <div style="flex:1;border:2px solid #3E8EDE;background:#eef5fc;border-radius:10px;padding:clamp(7px,1.1vh,15px) 4px;text-align:center;"><div style="font-family:Georgia,serif;font-size:clamp(15px,1.6vw,23px);color:#1C5FA8;font-weight:700;">F&#8323;</div><div style="font-size:clamp(10px,.95vw,14px);color:#4A5568;margin-top:.3em;">recognize</div></div>
+        <div style="flex:1;border:1.5px solid #d7dbe2;background:#f7fafc;border-radius:10px;padding:clamp(7px,1.1vh,15px) 4px;text-align:center;"><div style="font-family:Georgia,serif;font-size:clamp(15px,1.6vw,23px);color:#aab0ba;font-weight:700;">F&#8324;</div><div style="font-size:clamp(10px,.95vw,14px);margin-top:.3em;">&nbsp;</div></div>
+        <div style="flex:1;border:1.5px solid #d7dbe2;background:#f7fafc;border-radius:10px;padding:clamp(7px,1.1vh,15px) 4px;text-align:center;"><div style="font-family:Georgia,serif;font-size:clamp(15px,1.6vw,23px);color:#aab0ba;font-weight:700;">F&#8325;</div><div style="font-size:clamp(10px,.95vw,14px);margin-top:.3em;">&nbsp;</div></div>
+        <div style="flex:1;border:1.5px solid #d7dbe2;background:#f7fafc;border-radius:10px;padding:clamp(7px,1.1vh,15px) 4px;text-align:center;"><div style="font-family:Georgia,serif;font-size:clamp(15px,1.6vw,23px);color:#aab0ba;font-weight:700;">F&#8326;</div><div style="font-size:clamp(10px,.95vw,14px);margin-top:.3em;">&nbsp;</div></div>
+        <div style="flex:1;border:1.5px solid #d7dbe2;background:#f7fafc;border-radius:10px;padding:clamp(7px,1.1vh,15px) 4px;text-align:center;"><div style="font-family:Georgia,serif;font-size:clamp(15px,1.6vw,23px);color:#aab0ba;font-weight:700;">F&#8327;</div><div style="font-size:clamp(10px,.95vw,14px);margin-top:.3em;">&nbsp;</div></div>
+        <div style="flex:1;border:1.5px solid #d7dbe2;background:#f7fafc;border-radius:10px;padding:clamp(7px,1.1vh,15px) 4px;text-align:center;"><div style="font-family:Georgia,serif;font-size:clamp(15px,1.6vw,23px);color:#aab0ba;font-weight:700;">F&#8328;</div><div style="font-size:clamp(10px,.95vw,14px);margin-top:.3em;">&nbsp;</div></div>
+      </div>
+    </div>
     <div class="num"></div>
   </section>
 
