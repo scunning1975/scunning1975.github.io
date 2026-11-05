@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ricardo: What Sets the Price?</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--cream:#FBFAF7;--green:#154734;--gold:#FFB81C;--golddeep:#C98F00;--ink:#1A1A1A;--warm:#6B7280;--brick:#9B2C2C;--pale:#D8D4CB;--earth:#8C7B6B;--mist:#EDE9DE}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--cream)}
+  body{cursor:pointer;user-select:none;-webkit-user-select:none}
+  #stage{position:fixed;inset:0;width:100vw;height:100vh;display:block}
+  svg text{font-family:"Fira Sans",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
+  svg text:not([fill]){fill:var(--ink)}
+  svg rect.bar{transition:x .6s cubic-bezier(.2,.8,.2,1),width .6s cubic-bezier(.2,.8,.2,1),y .6s cubic-bezier(.2,.8,.2,1),height .6s cubic-bezier(.2,.8,.2,1),opacity .4s}
+  .fade{transition:opacity .45s ease}
+  #help{position:fixed;left:16px;bottom:12px;font:13px "Fira Sans",sans-serif;color:var(--pale)}
+</style>
+</head>
+<body>
+<svg id="stage" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="1600" height="900" fill="#FBFAF7"/>
+  <text id="title" x="80" y="92" font-size="50" font-weight="700" fill="#154734" class="fade"></text>
+  <rect x="80" y="114" width="146" height="3" fill="#FFB81C"/>
+  <text id="sub" x="80" y="150" font-size="24" fill="#6B7280" class="fade"></text>
+  <g id="body"></g>
+  <text id="counter" x="1565" y="882" font-size="18" fill="#D8D4CB" text-anchor="end"></text>
+</svg>
+<div id="help">→ or click: next · ← or shift-click: back · End fills the scene · N next scene · F full screen · R restart</div>
+<script>
+(() => {
+const NS='http://www.w3.org/2000/svg';
+const C={green:'#154734',gold:'#FFB81C',golddeep:'#C98F00',ink:'#1A1A1A',warm:'#6B7280',brick:'#9B2C2C',pale:'#D8D4CB',earth:'#8C7B6B',mist:'#EDE9DE',cream:'#FBFAF7'};
+const $=id=>document.getElementById(id);
+const el=(tag,attrs,parent,text)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;(parent||$('body')).appendChild(e);return e;};
+const T=(g,x,y,s,a)=>el('text',Object.assign({x,y,'font-size':24,fill:C.ink},a||{}),g,s);
+const fmt=(v,d)=>v.toFixed(d==null?2:d);
+const pct=r=>Math.round(r*100)+'%';
+
+// ---------------- text helpers ----------------
+function note(g,text,y){const words=text.split(' ');let line='',lines=[];
+  for(const wd of words){if((line+' '+wd).length>120){lines.push(line);line=wd;}else line=line?line+' '+wd:wd;}
+  lines.push(line);lines.forEach((l,i)=>el('text',{x:80,y:(y||805)+i*30,'font-size':23,fill:C.ink},g,l));}
+function bullets(g,lines,y0,size,nshow){const fs=size||33,lh=Math.round(fs*1.3),gap=Math.round(fs*1.1),maxc=86;
+  const wrapped=lines.map(l=>{const words=l.split(' ');let line='',rows=[];for(const wd of words){if((line+' '+wd).length>maxc){rows.push(line);line=wd;}else line=line?line+' '+wd:wd;}rows.push(line);return rows;});
+  const nrows=wrapped.reduce((a,r)=>a+r.length,0);const H=nrows*lh+(wrapped.length-1)*gap;
+  let y=y0||Math.max(200,200+(640-H)/2)+fs; // vertically center the block in y=200..840
+  wrapped.forEach((rows,i)=>{const op=(nshow!=null&&i>=nshow)?0:1;el('text',{x:90,y:y,'font-size':fs,fill:C.gold,'font-weight':700,opacity:op},g,'•');
+    rows.forEach((r,k)=>el('text',{x:130,y:y+k*lh,'font-size':fs,fill:C.ink,opacity:op,class:'fade'},g,r));y+=rows.length*lh+gap;});}
+// animated rect with memory across scenes
+let bars={};const drawn={};
+function abar(g,key,x,y,w,h,fill,o){o=o||{};const rc=el('rect',Object.assign({class:'bar',fill,stroke:'#fff','stroke-width':1.5},o.attrs||{}),g);
+  const prev=bars[key];if(prev){rc.setAttribute('x',prev.x);rc.setAttribute('y',prev.y);rc.setAttribute('width',prev.w);rc.setAttribute('height',prev.h);}
+  else{rc.setAttribute('x',x);rc.setAttribute('y',y+h/2);rc.setAttribute('width',w);rc.setAttribute('height',0);}
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{rc.setAttribute('x',x);rc.setAttribute('y',y);rc.setAttribute('width',w);rc.setAttribute('height',h);}));
+  bars[key]={x,y,w,h};drawn[key]=1;
+  if(o.label!=null){const t=el('text',{x:x+w/2,y:y+h/2+(o.fs||22)/3,'font-size':o.fs||22,'font-weight':700,'text-anchor':'middle',fill:o.lc||'#fff',class:'fade',opacity:prev?1:0},g,o.label);if(!prev)setTimeout(()=>t.setAttribute('opacity',1),350);}
+  return rc;}
+function sweep(){for(const k in bars)if(!drawn[k])delete bars[k];for(const k in drawn)delete drawn[k];}
+
+// ---------------- generic staged table ----------------
+function tbl(g,o){ // {x,y,heads,rows,colW,show,fresh,fs,rowH,color(i,j),bold(i,j)}
+  const fs=o.fs||22,rowH=o.rowH||48;let cx=o.x;const xs=[];
+  for(let j=0;j<o.heads.length;j++){xs.push(cx+o.colW[j]/2);cx+=o.colW[j];}
+  o.heads.forEach((h,j)=>{const on=!o.show||o.show[j];const lines=String(h).split('\n');lines.forEach((ln,q)=>el('text',{x:xs[j],y:o.y-(lines.length-1-q)*20,'font-size':17,'text-anchor':'middle',fill:on?C.warm:C.pale},g,ln));});
+  el('line',{x1:o.x,y1:o.y+12,x2:cx,y2:o.y+12,stroke:C.pale,'stroke-width':2},g);
+  o.rows.forEach((row,i)=>{const y=o.y+rowH*(i+1)+10;
+    if(o.hl&&o.hl.includes(i))el('rect',{x:o.x-8,y:y-32,width:cx-o.x+16,height:rowH,fill:'#FFF3CF',rx:6},g);
+    row.forEach((v,j)=>{if(o.show&&!o.show[j])return;const fresh=o.fresh===j;
+      const t=el('text',{x:xs[j],y,'font-size':fs,'text-anchor':'middle',fill:(o.color&&o.color(i,j))||C.ink,'font-weight':(o.bold&&o.bold(i,j))?700:400,class:'fade',opacity:fresh?0:1},g,v);
+      if(fresh)setTimeout(()=>t.setAttribute('opacity',1),30);});});
+  return {right:cx,bottom:o.y+rowH*(o.rows.length+1)+10};}
+
+// ---------------- model 1: hunters ----------------
+function hunt(g,k,bv,dr,factor,o){ // bv beaver days, dr deer days, factor = productivity change in deer hunting at stage 2
+  const unit=300,X=420;const deer=k>=2?dr/factor:dr;
+  const row=(key,y,name,days,fill)=>{T(g,110,y+40,name,{'font-size':28,'font-weight':500});
+    abar(g,key,X,y,days*unit-6,60,fill,{label:(+days.toFixed(2))+(days===1?' day':' days'),lc:'#fff'});};
+  row('bv',230,'One beaver',bv,C.earth);row('dr',330,'One deer',deer,C.gold);
+  if(k>=1){const ratio=bv/deer;T(g,110,500,'1 beaver  =  '+(+ratio.toFixed(2))+' deer',{'font-size':48,'font-weight':700,fill:C.green});
+    T(g,110,548,'The exchange ratio is the ratio of the labor it takes to get each one.',{fill:C.warm});}
+  if(k>=2){T(g,110,630,(o&&o.cause)||'The hunters learn to mask their scent. No new tool, no one else\'s labor: a skill.',{'font-size':26});T(g,110,672,'Deer hunting gets '+factor+'× as productive. A deer now takes '+(+deer.toFixed(2))+(deer===1?' day.':' days.'),{'font-size':26,fill:C.green,'font-weight':500});}
+  if(k>=3)note(g,o&&o.note||'Hunters are richer: '+factor+'× the deer for the same work. And each deer is worth less, because less labor is in it. Riches rose, value fell. “Every diminution must lower it.” (HL p. 99)',735);
+  sweep();}
+
+// ---------------- model 1b: the stockings stack ----------------
+function stack(g,k,layers){const X=200,W=260,B=680,px=44;let y=B,sum=0;
+  layers.forEach((L,i)=>{if(i>k)return;const h=L.h*px;y-=h;sum+=L.h;abar(g,'st'+i,X,y,W,h,L.c,{label:L.h+' h',fs:20,lc:L.dark?C.ink:'#fff'});
+    T(g,X+W+24,y+h/2+8,L.name,{'font-size':24,fill:i===k?C.ink:C.warm,'font-weight':i===k?500:400});});
+  el('line',{x1:X-20,y1:B,x2:X+W+20,y2:B,stroke:C.ink,'stroke-width':2},g);
+  T(g,X+W/2,B+34,'one pair of stockings',{'text-anchor':'middle',fill:C.warm,'font-size':20});
+  T(g,1000,300,'labor embodied so far',{fill:C.warm,'font-size':20});T(g,1000,370,sum+' hours',{'font-size':54,'font-weight':700,fill:C.green});
+  if(k>=layers.length-1){T(g,1000,450,'The stockings exchange for anything else',{'font-size':24});T(g,1000,486,'that took '+sum+' hours, the loom\'s share included.',{'font-size':24});
+    note(g,'“The aggregate sum of these various kinds of labour determines the quantity of other things for which these stockings will exchange.” A loom is “so much partly produced cloth.” (HL p. 102)',770);}
+  sweep();}
+
+// ---------------- model 2: the day's product in hours ----------------
+function split(g,k,L,Lw,o){const X=110,W=1380,Y=300,H=130,px=W/L;const Lp=L-Lw;
+  T(g,X,Y-22,'the day\'s product: '+o.n+' workers × '+(L/o.n)+' hours  =  '+L+' hours of value',{fill:C.warm,'font-size':22});
+  el('rect',{x:X,y:Y,width:W,height:H,fill:'none',stroke:C.ink,'stroke-width':2},g);
+  if(k>=1){abar(g,'w',X,Y,Lw*px,H,C.earth,{label:'wages '+Lw,fs:30});
+    T(g,X,Y+H+40,'the necessaries of '+o.n+' workers took '+Lw+' hours to make: '+o.n+' baskets × '+(Lw/o.n)+' hours each',{'font-size':22});}
+  if(k>=2){abar(g,'p',X+Lw*px,Y,Lp*px,H,C.green,{label:'profit '+Lp,fs:30});
+    T(g,X,Y+H+78,'what is left after the necessaries are replaced goes to the capitalist: '+Lp+' hours',{'font-size':22});}
+  if(k>=3){T(g,X,560,'r  =  '+Lp+' ÷ '+Lw+'  =  '+fmt(Lp/Lw),{'font-size':40,'font-weight':700,fill:C.green});
+    T(g,X,600,'r is the rate of profit: profit divided by the wages the capitalist advanced. He laid out '+Lw+' hours of goods and got back '+L+'. The same r as the corn model.',{'font-size':21,fill:C.ink});}
+  if(o.echo&&(k>=4||o.opener))T(g,X,o.opener?580:640,o.echo,{fill:C.warm,'font-size':22});
+  if(k>=(o.echo?5:4)&&o.note)note(g,o.note,735);
+  sweep();}
+
+// ---------------- model 3: time-dated labor, two goods ----------------
+function timing(g,k,A,Bn,Bl,rs,o){ // steps 0-3 build the picture at rs[0]; later steps change r
+  const INTRO=4;const ri=k<INTRO?0:Math.min(k-INTRO,rs.length-1);const r=rs[ri],w=o.w||1,X=110,unit=22,LINE=X+520;
+  const yr=(x,y,h,fill,key,lab)=>abar(g,key,x,y,h*unit,56,fill,{label:lab,fs:20});
+  T(g,X,235,'last year',{fill:C.warm,'font-size':20});T(g,X+560,235,'this year',{fill:C.warm,'font-size':20});
+  el('line',{x1:LINE,y1:220,x2:LINE,y2:420,stroke:C.pale,'stroke-width':2,'stroke-dasharray':'6 5'},g);
+  T(g,X+820,275,'Good A',{'font-size':26,'font-weight':500});yr(X+560,250,A,C.earth,'A0',A+' hours');
+  if(k>=1){T(g,X+820,355,'Good B',{'font-size':26,'font-weight':500});yr(LINE-12-Bl*unit,330,Bl,C.gold,'B1',Bl+' hours');yr(X+560,330,Bn,C.earth,'B0',Bn+' hours');}
+  if(k>=2)T(g,X,470,'r = '+pct(r),{'font-size':44,'font-weight':700,fill:C.green});
+  const pA=w*(1+r)*A, pB=w*(1+r)*(Bn+Bl*(1+r));
+  const f=(1+r).toFixed(2);
+  const rows=[['A',A,`${w} × ${f} × ${A}`,fmt(pA)],['B',Bn+Bl,`${w} × ${f} × (${Bn} + ${Bl} × ${f})`,fmt(pB)]];
+  if(k>=2)tbl(g,{x:X+300,y:470,heads:['good','labor (hours)','price = w(1+r) × [now + last year × (1+r)]','price'],colW:[90,150,620,140],rows:k>=3?rows:rows.slice(0,1),fs:24,rowH:52,color:(i,j)=>j===3?C.green:C.ink,bold:(i,j)=>j===3});
+  if(k>=INTRO){T(g,X+300,650,'price of B ÷ price of A  =  '+fmt(pB/pA),{'font-size':34,'font-weight':700,fill:ri===0?C.green:C.brick});
+    T(g,X+300,690,'labor in B ÷ labor in A  =  '+fmt((Bn+Bl)/A),{'font-size':24,fill:C.warm});}
+  const intro=['Good A: ten hours of labor, all of it this year.','Good B: the same ten hours, but five of them were done last year, on a tool that is used up now.','Start with no charge for waiting: r = 0. Price A.','Price B the same way. Last year\'s hours get multiplied by (1 + r) once more, which at r = 0 changes nothing.'];
+  if(k<INTRO)note(g,intro[k],745);else if(o.notes&&o.notes[ri])note(g,o.notes[ri],745);
+  sweep();}
+
+// ---------------- compounding stair ----------------
+function stair(g,k){const vals=[100,110,121,133.10,146.41],adds=['','+ 10','+ 11','+ 12.10','+ 13.31'],labs=['wage paid, year 1','end of year 1','end of year 2','end of year 3','end of year 4: sold'];
+  const X=140,B=700,px=3.4,bw=200,gap=70;
+  vals.forEach((v,i)=>{if(i>k)return;const h=v*px,x=X+i*(bw+gap);abar(g,'sr'+i,x,B-h,bw,h,i===0?C.earth:C.green,{label:'$'+fmt(v),fs:26});
+    T(g,x+bw/2,B+32,labs[i],{'text-anchor':'middle','font-size':18,fill:C.warm});if(i>0)T(g,x+bw/2,B-h-14,adds[i],{'text-anchor':'middle','font-size':22,fill:C.golddeep,'font-weight':700});});
+  if(k>=4)note(g,'$100 of wages paid four years before the sale must be worth $146.41 in the price: $100 to repay the wage and $46.41 of profit for having $100 tied up for four years at 10 percent. Two years tied up would add only $21. (HL pp. 107–108)',765);
+  sweep();}
+
+// ---------------- Figure 5.7: x and y as time-dated labor ----------------
+function fig57(g,k){const X=200,unit=0.85,bw=130,gap=60,B0=390,B1=700;
+  const yrs=['4 years ago','3 years ago','2 years ago','last year','this year'];
+  yrs.forEach((s,i)=>T(g,X+i*(bw+gap)+bw/2,738,s,{'text-anchor':'middle','font-size':18,fill:C.warm}));
+  const good=(key,base,labs,name,fill)=>{T(g,X-120,base-40,name,{'font-size':30,'font-weight':700,fill:C.green});
+    labs.forEach((h,i)=>{if(h==null)return;abar(g,key+i,X+i*(bw+gap),base-h*unit,bw,h*unit,fill,{label:h,fs:22});});};
+  good('x',B0,[75,75,75,75,100],'x',C.earth);
+  if(k>=1)good('y',B1,[null,null,50,50,300],'y',C.gold);
+  T(g,1130,300,'x: 400 hours over five years',{'font-size':24});T(g,1130,336,'100 now, 75 in each of four past years',{'font-size':20,fill:C.warm});
+  if(k>=1){T(g,1130,560,'y: 400 hours over three years',{'font-size':24});T(g,1130,596,'300 now, 50 in each of two past years',{'font-size':20,fill:C.warm});
+    note(g,'Same labor in each, 400 hours per 100 units. The difference is only when the labor was done. x has more past labor and a longer wait, which Ricardo would call more fixed capital, more durable capital, or slower turnover. HL p. 106: all three are the same thing. (Figure 5.7, p. 109)',775);}
+  sweep();}
+
+// ---------------- Tables 5.1 and 5.2 ----------------
+function table5(g,k,o){const show=[true,true,k>=1,k>=2,k>=3,k>=4];
+  const heads=['','A\nlabor cost\n(now × w)','B\nmachinery\n(past labor, compounded)','C\nprofit\nr × (A + B)','D\ntotal\nA + B + C','E\nprice per unit\nD ÷ 100'];
+  const t=tbl(g,{x:120,y:300,heads,rows:o.rows,colW:[120,220,300,240,240,240],show,fresh:k,fs:28,rowH:70,color:(i,j)=>j===5?C.green:C.ink,bold:(i,j)=>j===5});
+  T(g,120,230,'wage w = $'+o.w+'   ·   profit rate r = '+o.r+'   ·   400 hours in each good',{'font-size':24,fill:C.warm});
+  if(k>=4){T(g,120,560,'price of x ÷ price of y  =  '+o.ratio,{'font-size':40,'font-weight':700,fill:C.green});if(o.extra)T(g,120,610,o.extra,{'font-size':24,fill:C.brick});}
+  if(k>=4&&o.note)note(g,o.note,735);}
+
+// ---------------- the two songs (hidden YouTube players; sound starts on your arrow key) ----------------
+const SONGS={A:'jnylB5ylyw4',B:'eQJ9IWoclhk'};const players={};let ytErr=false;
+(function(){const host=document.createElement('div');host.style.cssText='position:fixed;left:-9999px;top:0;width:320px;height:180px';host.innerHTML='<div id="ytA"></div><div id="ytB"></div>';document.body.appendChild(host);
+  const tag=document.createElement('script');tag.src='https://www.youtube.com/iframe_api';document.head.appendChild(tag);
+  window.onYouTubeIframeAPIReady=()=>{for(const L in SONGS)players[L]=new YT.Player('yt'+L,{videoId:SONGS[L],playerVars:{controls:0,rel:0,playsinline:1},events:{onError:()=>{ytErr=true;}}});};})();
+const song=(L)=>{for(const k in players){try{if(k===L)players[k].playVideo();else players[k].pauseVideo();}catch(e){}}};
+const songsOff=()=>{for(const k in players){try{players[k].pauseVideo();}catch(e){}}};
+
+// ---------------- scenes ----------------
+const S=[];
+const txt=(title,sub,lines,extra)=>S.push({title,sub,stages:lines.length,draw:(g,k)=>{bullets(g,lines,null,null,k+1);if(extra)extra(g);}});
+const scene=(title,sub,n,draw)=>S.push({title,sub,stages:n,draw});
+
+// 0 title (full-bleed green cover; header left blank)
+S.push({title:'',sub:'',draw:g=>{
+  el('rect',{x:0,y:0,width:1600,height:900,fill:C.green},g);
+  el('rect',{x:120,y:268,width:110,height:8,fill:C.gold},g);
+  T(g,120,380,'What Sets the Price?',{'font-size':92,'font-weight':700,fill:C.cream});
+  T(g,120,452,'Ricardo\'s labor theory of value, and the game that goes with it',{'font-size':44,fill:C.gold});
+  T(g,120,575,'Scott Cunningham  ·  History of Economic Thought  ·  Baylor University',{'font-size':36,fill:C.cream});
+  T(g,120,625,'Week of October 27, 2026  ·  ECO 4343/5343',{'font-size':30,fill:C.cream,opacity:0.62});
+  T(g,120,705,'Last time: Ricardo on value, Levels 1–3 and 5 of Who Gets Paid',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,745,'Thursday: Bentham, Say, and Senior answer back',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,785,'Thursday, November 5: finish Ricardo, then Bentham, Say, and Senior',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,845,'who-gets-paid.pages.dev',{'font-size':32,'font-weight':700,fill:C.gold});
+}});
+// 0b the listening test
+S.push({title:'Before anything: two songs',sub:'Same shelf. Phones out.',stages:4,draw:(g,k)=>{
+  if(k===1)song('A');else if(k===2)song('B');else songsOff();
+  const st=k===1?'Song A is playing':(k===2?'Song B is playing':(k===3?'Now look at your phone.':'Scan the code. Then I press play.'));
+  el('rect',{x:90,y:200,width:820,height:70,rx:8,fill:k===1||k===2?C.green:C.mist},g);T(g,120,246,st,{'font-size':34,'font-weight':700,fill:k===1||k===2?C.gold:C.green});
+  if(ytErr)T(g,90,300,'(embed blocked here: play from results.html instead)',{'font-size':20,fill:C.brick});
+  el('image',{x:1060,y:200,width:420,height:420,href:'data:image/png;base64,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'},g);
+  T(g,1270,660,'scan, or type the address below',{'font-size':20,'text-anchor':'middle',fill:C.warm});
+  if(k<3){T(g,90,360,'Two songs, start to finish. Just listen.',{'font-size':32});T(g,90,420,'On your phone you can replay either one.',{'font-size':26,fill:C.warm});}
+  else{T(g,90,360,'Three short questions, one at a time. Answer honestly; nothing is graded.',{'font-size':30});T(g,90,420,'Answer once. The screen tallies live. When the answers are in, we turn the page.',{'font-size':26,fill:C.warm});}
+  T(g,90,760,'On a laptop, type:',{'font-size':24,fill:C.warm});T(g,330,760,'who-gets-paid.pages.dev/vote',{'font-size':34,'font-weight':700,fill:C.golddeep});
+}});
+// 0c the room's answers, live inside the deck
+let LIVE=null,liveTimer=null,liveIdx=-1,phase2=false;
+const PAIR={A:'The Lemon Twigs, “My Golden Years” (2024)',B:'The Velvet Sundown, “Dust on the Wind” (2025)',ai:'B'};
+async function liveFetch(){try{const r=await fetch('/api/vote?pair=folk',{cache:'no-store'});LIVE=await r.json();}catch(e){LIVE=null;}}
+async function openPhase2(){phase2=true;let code='';try{code=localStorage.getItem('wgp.code')||'';}catch(e){}
+  try{let r=await fetch('/api/phase',{method:'POST',headers:{'content-type':'application/json','x-class-code':code},body:JSON.stringify({pair:'folk',phase:2})});
+    if(r.status===401){code=prompt('Class code:')||'';try{localStorage.setItem('wgp.code',code);}catch(e){}await fetch('/api/phase',{method:'POST',headers:{'content-type':'application/json','x-class-code':code},body:JSON.stringify({pair:'folk',phase:2})});}}catch(e){}}
+S.push({title:'What the room said',sub:'Live. Next arrow: the reveal on this screen, and question 4 on every phone.',stages:2,draw:(g,st)=>{
+  liveIdx=i;if(!liveTimer){liveFetch().then(()=>{if(i===liveIdx)show(i,k);});liveTimer=setInterval(async()=>{await liveFetch();if(i===liveIdx)show(i,k);},4000);}
+  if(st===1&&!phase2)openPhase2();
+  const t=LIVE;
+  if(!t){T(g,90,300,location.protocol==='file:'?'Open the deck from who-gets-paid.pages.dev to see the room\'s answers here.':'Waiting for answers…',{'font-size':28,fill:C.warm});return;}
+  const bar=(x,y,w,lab,v,n,fill)=>{T(g,x,y+26,lab,{'font-size':22});el('rect',{x:x+170,y:y,width:w,height:36,fill:C.mist,rx:4},g);el('rect',{x:x+170,y:y,width:n?w*v/n:0,height:36,fill,rx:4},g);T(g,x+170+w+14,y+27,String(v),{'font-size':24,'font-weight':700});};
+  const block=(x,y,head,rows)=>{T(g,x,y,head,{'font-size':24,'font-weight':500,fill:C.green});rows.forEach((r,j)=>bar(x,y+20+j*48,380,r[0],r[1],r[2],r[3]));};
+  T(g,90,215,t.n+' answered',{'font-size':22,fill:C.warm});
+  block(90,270,'Which did you like better?',[['Song A',t.prefer.A,t.n,C.green],['Song B',t.prefer.B,t.n,C.gold]]);
+  block(90,420,'Would add it to a playlist',[['Song A',t.pl.A,t.n,C.green],['Song B',t.pl.B,t.n,C.gold]]);
+  block(90,570,'Song A was made by…',[['a human',t.who.A.human,t.n,C.earth],['AI',t.who.A.ai,t.n,C.brick]]);
+  block(90,720,'Song B was made by…',[['a human',t.who.B.human,t.n,C.earth],['AI',t.who.B.ai,t.n,C.brick]]);
+  if(st>=1){el('rect',{x:800,y:200,width:720,height:170,rx:10,fill:'#FFF8E6',stroke:C.gold,'stroke-width':2},g);
+    T(g,830,250,'Song A',{'font-size':30,'font-weight':700,fill:C.green});T(g,960,250,PAIR.A,{'font-size':24});T(g,960,282,'a human band',{'font-size':22,fill:C.green});
+    T(g,830,330,'Song B',{'font-size':30,'font-weight':700,fill:C.brick});T(g,960,330,PAIR.B,{'font-size':24});T(g,960,362,'an AI persona; the music is generated',{'font-size':22,fill:C.brick});
+    T(g,800,430,(t.n2||0)+' answered question 4',{'font-size':22,fill:C.warm});
+    block(800,480,'Now that they know: would add to a playlist',[['Song A',t.pl2.A,t.n2,C.green],['Song B',t.pl2.B,t.n2,C.gold]]);
+    block(800,630,'Changed an answer',[['changed',t.changed,t.n2,C.brick]]);
+    T(g,800,760,'Same song. Same three minutes.',{'font-size':24,'font-weight':500,fill:C.green});T(g,800,794,'What changed was a fact about who made it.',{'font-size':24,'font-weight':500,fill:C.green});}
+}});
+// 0d reveal detail
+S.push({title:'The songwriters',sub:'Who they were',draw:g=>{
+  const row=(y,L,t1,t2,who,col)=>{T(g,90,y,'Song '+L,{'font-size':44,'font-weight':700,fill:col});T(g,300,y,t1,{'font-size':34,'font-weight':500});T(g,300,y+44,t2,{'font-size':26,fill:C.warm});T(g,300,y+84,who,{'font-size':26,fill:col});};
+  row(300,'A','The Lemon Twigs, “My Golden Years” (2024)','Two brothers from Long Island. Wrote it, played every instrument, recorded it in their own studio.','A human band.',C.green);
+  row(520,'B','The Velvet Sundown, “Dust on the Wind” (2025)','No members, no shows, no interviews. About a million monthly Spotify listeners before the bio said so.','An AI persona. The music is generated.',C.brick);
+  T(g,90,720,'Question 4 is on your phone: now that you know, would you still add each one to a playlist?',{'font-size':30});
+  T(g,90,770,'The screen will show how many of you changed an answer, and which way.',{'font-size':30,'font-weight':500,fill:C.green});
+  T(g,90,830,'You are in good company. Deezer and Ipsos, November 2025, 9,000 listeners in 8 countries: 97 percent could not pick the human track.',{'font-size':21,fill:C.warm});
+}});
+// 0d talk, no vocabulary
+txt('Say what you think. No economics words yet.','Four questions. Answer any one of them out loud.',[
+ 'Did knowing change what you would pay? If so, what exactly did you learn that changed the price in your head?',
+ 'Who did the work on Song B? Name everyone you can think of, including the people who are not in the room.',
+ 'If you could have a thousand songs as good as B by tomorrow for nothing, what is one of them worth? And is anybody richer?',
+ 'Song B is three minutes you enjoyed. Is that enough to say it has value, or does something else have to be true?']);
+// 0e who you agreed with
+S.push({title:'Who you just agreed with',sub:'Nobody is being told they are wrong. These are the two camps, and you have already picked one.',draw:g=>{
+  const col=(x,head,c,lines)=>{T(g,x,250,head,{'font-size':34,'font-weight':700,fill:c});el('rect',{x:x,y:266,width:120,height:3,fill:C.gold},g);let y=325;lines.forEach(l=>{T(g,x,y,l,{'font-size':25});y+=46;});};
+  col(90,'If you said…',C.warm,['“It is worth less now that I know.”','“Someone did the work and it was not the machine.”','“A thousand for nothing means each is worth nothing.”','“The real cost is the million songs it learned from.”','“It stole from the artists it learned from.”']);
+  col(830,'…you were with',C.green,['David Ricardo, 1817.','Value is the labor embodied, the loom included.','More of a thing for less labor: richer, but each worth less.','Enjoying it is necessary. It is not what sets the price.','One step past Ricardo: Thompson, Hodgskin, Marx. In November.']);
+  el('line',{x1:800,y1:230,x2:800,y2:570,stroke:C.pale,'stroke-width':2},g);
+  const col2=(x,head,c,lines)=>{T(g,x,640,head,{'font-size':34,'font-weight':700,fill:c});el('rect',{x:x,y:656,width:120,height:3,fill:C.gold},g);let y=712;lines.forEach(l=>{T(g,x,y,l,{'font-size':25});y+=46;});};
+  col2(90,'If you said…',C.warm,['“I liked it. That is what it is worth.”','“The model did the work; its makers earned it.”','“Who cares how it was made.”']);
+  col2(830,'…you were with',C.brick,['Jean-Baptiste Say and Nassau Senior, Thursday.','Value is utility; the model is a productive agency.','Its owner abstained to build it, and profit is his pay.']);
+}});
+// 0e2 the model you already have: two markets, price settling
+scene('The model you already have','Left, a product. Right, the labor that makes it. Price settles where two curves cross.',4,(g,st)=>{
+  const panel=(x0,title,xl,yl,eqLab,showEq,stepPrice,extra)=>{const L=x0,R=x0+640,T0=230,B=690;
+    el('line',{x1:L,y1:T0,x2:L,y2:B,stroke:C.ink,'stroke-width':2},g);el('line',{x1:L,y1:B,x2:R,y2:B,stroke:C.ink,'stroke-width':2},g);
+    T(g,L+8,T0-10,yl,{'font-size':18,fill:C.warm});T(g,R,B+28,xl,{'font-size':18,fill:C.warm,'text-anchor':'end'});
+    T(g,L,T0-40,title,{'font-size':26,'font-weight':700,fill:C.green});
+    const D=(q)=>B-(400-0.55*q)*(B-T0)/420,Sv=(q)=>B-(60+0.55*q)*(B-T0)/420; // simple linear curves on a 0..600 q axis
+    const X=(q)=>L+q*(R-L)/620;
+    el('line',{x1:X(20),y1:D(20),x2:X(600),y2:D(600),stroke:C.brick,'stroke-width':4},g);el('line',{x1:X(20),y1:Sv(20),x2:X(600),y2:Sv(600),stroke:C.green,'stroke-width':4},g);
+    T(g,X(600)+8,D(600)+6,extra.dl,{'font-size':20,fill:C.brick,'font-weight':700});T(g,X(600)+8,Sv(600)+6,extra.sl,{'font-size':20,fill:C.green,'font-weight':700});
+    const qe=(400-60)/1.1,pe=D(qe);
+    if(stepPrice!=null){const ph=B-stepPrice*(B-T0)/420;const qd=(400-stepPrice)/0.55,qs=(stepPrice-60)/0.55;
+      el('line',{x1:L,y1:ph,x2:R,y2:ph,stroke:C.golddeep,'stroke-width':3,'stroke-dasharray':'8 6'},g);
+      el('line',{x1:X(qd),y1:ph-14,x2:X(qs),y2:ph-14,stroke:C.golddeep,'stroke-width':3},g);T(g,(X(qd)+X(qs))/2,ph-24,extra.gap,{'font-size':18,fill:C.golddeep,'text-anchor':'middle','font-weight':700});
+      T(g,L+10,ph-8,'price too high',{'font-size':18,fill:C.golddeep});}
+    if(showEq){el('circle',{cx:X(qe),cy:pe,r:9,fill:C.gold,stroke:C.ink,'stroke-width':2},g);el('line',{x1:L,y1:pe,x2:X(qe),y2:pe,stroke:C.pale,'stroke-width':2,'stroke-dasharray':'5 5'},g);el('line',{x1:X(qe),y1:pe,x2:X(qe),y2:B,stroke:C.pale,'stroke-width':2,'stroke-dasharray':'5 5'},g);
+      T(g,L+30,B-24,eqLab,{'font-size':22,'font-weight':700,fill:C.ink});}
+  };
+  panel(90,'A product: songs',  'quantity','price',st>=2?'P* = marginal benefit = marginal cost':'',st>=2,st===1?300:null,{dl:'D',sl:'S',gap:'unsold'});
+  const box=(head,rows,tail)=>{el('rect',{x:840,y:230,width:680,height:330,rx:10,fill:'#F3F0E6'},g);T(g,870,275,head,{'font-size':24,'font-weight':700,fill:C.green});rows.forEach((r,j)=>T(g,870,322+j*40,r,{'font-size':22}));tail.forEach((t,j)=>T(g,870,522+j*28,t,{'font-size':19,fill:C.warm}));};
+  if(st===1)box('Where the demand curve comes from',['max U(x₁, x₂)   subject to   p₁x₁ + p₂x₂ = m','ℒ = U(x₁, x₂) + λ (m − p₁x₁ − p₂x₂)','∂ℒ/∂x₁ = 0  ⇒  MU₁ = λ p₁   (and the same for x₂)','solve: x₁(p₁, p₂, m), the Marshallian demand curve','hold utility fixed instead of income: the Hicksian one'],['An objective, a constraint, a multiplier, calculus.','Bentham\'s utility, made into a curve.']);
+  if(st===2)box('Where the supply curve comes from',['min wL + rK   subject to   f(L, K) = q','ℒ = wL + rK + μ (q − f(L, K))','∂ℒ/∂L = 0  ⇒  w = μ · MP_L   (and the same for K)','solve: the cost function C(w, r, q)','its slope in q is marginal cost: the supply curve'],['Same machine, run the other way. This is the first','month of our master\'s program.']);
+  if(st>=3)panel(840,'The labor that makes it','hours','wage','w* = VMP = reservation wage',true,null,{dl:'D = VMP',sl:'S',gap:''});
+  const foot=['Every point on D is what one more unit is worth to a buyer: marginal benefit, the heir of utility.','Every point on S is what one more unit costs to make: marginal cost. Price settles where they meet.','Same picture for labor: the firm\'s demand is the value of the marginal product, the worker\'s supply is the least they would take.','For a long time nobody needed more than this. Price is where marginal benefit meets marginal cost, and the matter was closed.'];
+  note(g,st===3?'Same picture for labor: the value of the marginal product meets the reservation wage. For a long time nobody needed more than this, and the matter was closed.':foot[st===2?1:0],790);
+});
+// 0e3 why AI reopened it
+scene('Why AI reopened a closed question','Three kinds of people who never needed each other, now in the same room',4,(g,st)=>{
+  const col=(x,head,c,lines)=>{T(g,x,260,head,{'font-size':30,'font-weight':700,fill:c});el('rect',{x:x,y:276,width:120,height:3,fill:C.gold},g);let y=330;lines.forEach(l=>{const words=l.split(' ');let line='',ls=[];for(const wd of words){if((line+' '+wd).length>34){ls.push(line);line=wd;}else line=line?line+' '+wd:wd;}ls.push(line);ls.forEach(t=>{T(g,x,y,t,{'font-size':22});y+=32;});y+=14;});};
+  if(st>=0)col(90,'Ethics',C.brick,['“It is wrong to make a song out of a million people\'s songs without asking.”','Repugnance first, argument second.','Deezer–Ipsos: 65 percent say copyrighted work should not be used to train.']);
+  if(st>=1)col(590,'Jobs',C.golddeep,['“It will take my work.”','The Luddites, 1811–1816: Nottingham stocking-frame knitters breaking the machines.','Parliament made frame-breaking a capital crime in 1812; men were hanged at York in 1813.','The stockings again.']);
+  if(st>=2)col(1090,'Value',C.green,['“If nobody labored on it, is it worth anything?”','Ricardo says what is in it. Bentham says what you feel about it.','This is the oldest question in the course, and the one the model above never had to answer.']);
+  el('line',{x1:560,y1:240,x2:560,y2:700,stroke:C.pale,'stroke-width':2},g);el('line',{x1:1060,y1:240,x2:1060,y2:700,stroke:C.pale,'stroke-width':2},g);
+  if(st>=3){T(g,90,775,'These three have rarely needed each other. A song written by a model puts them at one table.',{'font-size':27,'font-weight':500,fill:C.green});
+  T(g,90,815,'So: Ricardo\'s theory of value, then the idea of utility, and a game to make you do both by hand.',{'font-size':25});}
+});
+// 0f the framing device: GDP as the compromise
+scene('You already live inside the compromise','GDP keeps the production camp\'s frame and fills it with the utility camp\'s content',4,(g,st)=>{
+  T(g,90,240,'“The annual labour of every nation is the fund which originally supplies it with all the necessaries',{'font-size':25,fill:C.ink});
+  T(g,90,276,'and conveniencies of life which it annually consumes.”  Smith, Wealth of Nations, first sentence.',{'font-size':25,fill:C.ink});
+  T(g,90,316,'Wealth is the produce. The produce is labor\'s. That is the whole classical frame, Smith to Ricardo to Marx.',{'font-size':25,fill:C.warm});
+  const col=(x,head,c,lines)=>{T(g,x,400,head,{'font-size':30,'font-weight':700,fill:c});el('rect',{x:x,y:416,width:120,height:3,fill:C.gold},g);let y=466;lines.forEach(l=>{T(g,x,y,l,{'font-size':23});y+=40;});};
+  if(st>=1)col(90,'GDP keeps from the production side',C.green,['Wealth is what is produced in a year.','Not gold, not happiness.','The unit is a quantity of output: cars, haircuts, songs.','Keynes measured it in “wage-units,” hours of labor,','for exactly Ricardo\'s reason.']);
+  if(st>=2)col(830,'GDP gives to the utility side',C.brick,['The weights are market prices, and prices carry demand.','Services count: Say\'s immaterial products','beat Smith\'s “unproductive labor.”','No surplus. Wages, profit, and rent are income shares,','none of them a deduction from what labor made.']);
+  if(st>=2)el('line',{x1:800,y1:390,x2:800,y2:660,stroke:C.pale,'stroke-width':2},g);
+  if(st>=3){T(g,90,720,'So GDP is a compromise, and it is a compromise in favor of abandoning the labor theory of value.',{'font-size':28,'font-weight':500,fill:C.green});
+  T(g,90,762,'It kept the classical question, how much did we make, and dropped the classical answer, labor, except in Keynes\'s yardstick.',{'font-size':25});
+  T(g,90,804,'Today is the answer it dropped. Thursday is the answer it kept.',{'font-size':25,fill:C.warm});}
+});
+// 0g two rivers: the timeline, three readings
+scene('Two rivers out of Smith','One reading says they merged. Our authors say one of them was abandoned.',3,(g,k)=>{
+  const X=yr=>330+(yr-1776)*10.5;const YP=330,YU=580;
+  // lanes
+  el('line',{x1:X(1776)+40,y1:YP,x2:X(1875),y2:YP,stroke:C.green,'stroke-width':5},g);
+  el('line',{x1:X(1776)+40,y1:YU,x2:X(1875),y2:YU,stroke:C.brick,'stroke-width':5},g);
+  el('line',{x1:X(1776),y1:455,x2:X(1776)+40,y2:YP,stroke:C.green,'stroke-width':5},g);el('line',{x1:X(1776),y1:455,x2:X(1776)+40,y2:YU,stroke:C.brick,'stroke-width':5},g);
+  T(g,X(1776)-24,462,'Smith 1776',{'font-size':26,'font-weight':700,fill:C.ink,'text-anchor':'end'});el('circle',{cx:X(1776),cy:455,r:12,fill:C.gold,stroke:C.ink,'stroke-width':2},g);
+  T(g,X(1776)-24,490,'both vantage points in one man',{'font-size':17,fill:C.warm,'text-anchor':'end'});
+  T(g,X(1776)+60,YP-100,'PRODUCTION: wealth is the produce, the produce is labor\'s',{'font-size':20,fill:C.green,'font-weight':700});
+  T(g,X(1776)+60,YU+104,'EXCHANGE: value is what a thing is worth to the buyer',{'font-size':20,fill:C.brick,'font-weight':700});
+  const node=(yr,y,name,sub,c,above,dx)=>{dx=dx||0;el('circle',{cx:X(yr),cy:y,r:10,fill:c},g);T(g,X(yr)+dx,above?y-30:y+40,name,{'font-size':22,'font-weight':500,'text-anchor':dx?'start':'middle'});T(g,X(yr)+dx,above?y-54:y+64,sub,{'font-size':16,fill:C.warm,'text-anchor':dx?'start':'middle'});};
+  node(1817,YP,'Ricardo 1817','labor embodied, the loom included',C.green,false);
+  node(1827,YP,'Thompson, Hodgskin, 1820s','capital is a social relation',C.green,true);
+  node(1867,YP,'Marx 1867','surplus value',C.green,false);
+  node(1780,YU,'Bentham 1780','pleasure and pain',C.brick,true,22);
+  node(1803,YU,'Say 1803','utility; productive agencies',C.brick,false);
+  node(1836,YU,'Senior 1836','abstinence',C.brick,true);
+  node(1871,YU,'Jevons, Menger, Walras 1871','marginal utility',C.brick,false);
+  T(g,X(1875)-70,YU-20,'neoclassical economics →',{'font-size':20,'font-weight':700,fill:C.brick});
+  if(k>=1){ // reading 1: a merger
+    el('path',{d:`M ${X(1875)} ${YP} C ${X(1875)+90} ${YP}, ${X(1875)+90} 455, ${X(1875)+150} 455`,fill:'none',stroke:C.pale,'stroke-width':4,'stroke-dasharray':'10 8'},g);
+    el('path',{d:`M ${X(1875)} ${YU} C ${X(1875)+90} ${YU}, ${X(1875)+90} 455, ${X(1875)+150} 455`,fill:'none',stroke:C.pale,'stroke-width':4,'stroke-dasharray':'10 8'},g);
+    T(g,X(1875)+160,462,'GDP',{'font-size':26,'font-weight':700,fill:C.warm});
+    T(g,90,752,'One reading: the rivers merged. GDP counts the produce and weights it with prices. A compromise.',{'font-size':26,fill:C.warm});
+  }
+  if(k>=2){ // reading 2: HL
+    el('line',{x1:X(1875)-30,y1:YP-30,x2:X(1875)+30,y2:YP+30,stroke:C.brick,'stroke-width':6},g);el('line',{x1:X(1875)-30,y1:YP+30,x2:X(1875)+30,y2:YP-30,stroke:C.brick,'stroke-width':6},g);
+    T(g,X(1875)+50,YP+8,'abandoned',{'font-size':24,'font-weight':700,fill:C.brick});
+    T(g,90,796,'Hunt and Lautzenheiser: no merger. The labor theory was abandoned, “and hence its class conflict conclusions” (p. 127).',{'font-size':26,fill:C.ink});
+    T(g,90,836,'Once value is utility, ownership is a premise, not a question. That is what was lost, and it is why we read them.',{'font-size':24,fill:C.green,'font-weight':500});
+  }
+});
+// 0h callbacks
+S.push({title:'You have heard all of this before',sub:'Callbacks. Each line is a week you already had.',draw:g=>{
+  const rows=[
+   ['Smith, week 3','“In that original state of things, which precedes both the appropriation of land and the accumulation of stock, the whole produce of labour belongs to the labourer.” WN I.viii'],
+   ['Smith, week 3','“Civil government, so far as it is instituted for the security of property, is in reality instituted for the defence of the rich against the poor.” WN V.i'],
+   ['Malthus week','“When Smith examined capitalism from the vantage point of production, he was led to a class conflict view … from the vantage point of exchange, … a social harmony view.” HL p. 79'],
+   ['Ricardo, last week','“To determine the laws which regulate this distribution is the principal problem in Political Economy.” Preface, 1817, HL p. 92'],
+   ['Ricardo, last week','Rent is a deduction from what labor made, not a cost that sets price. The marginal parcel pays none. HL pp. 96, 101'],
+   ['Ricardo, today','“Possessing utility, commodities derive their exchangeable value from two sources: from their scarcity, and from the quantity of labour required to obtain them.” HL p. 98'],
+   ['This week','Bentham, Say, and Senior “contributed to the abandonment of the labor theory of value—and hence its class conflict conclusions.” HL p. 127'],
+  ];
+  let y=225;rows.forEach(([w,q],j)=>{el('rect',{x:80,y:y-28,width:1440,height:80,fill:j%2?'none':'#F3F0E6',rx:6},g);T(g,100,y+8,w,{'font-size':20,'font-weight':700,fill:C.green});
+    const words=q.split(' ');let line='',ls=[];for(const wd of words){if((line+' '+wd).length>112){ls.push(line);line=wd;}else line=line?line+' '+wd:wd;}ls.push(line);
+    ls.forEach((l,i)=>T(g,330,y+(i*29)-(ls.length>1?6:0)+2,l,{'font-size':21}));y+=90;});
+}});
+// 1 objectives
+txt('Today: three things you will be able to do','History of Economic Thought · Ricardo, day 4',[
+ '1. Turn a list of labor inputs into prices and exchange ratios, and say what happens to value and to riches when productivity rises.',
+ '2. Express a day\'s product, wages, and profit in hours of labor, and show why a rise in wages must lower profit.',
+ '3. Show with numbers when prices stop being proportional to labor, and why Ricardo could not fix it.',
+ 'And one argument you will be able to make: which camp you were in when you voted on the song, what that camp has to assume, and what it gives up. That is the one question this course keeps asking, harmony or conflict, and it is the essay on Tuesday.',
+ 'The three things are Levels 1, 2, 3, and 5 of Who Gets Paid. I drive each once; you play Level 1 now and the rest tonight.']);
+// 2 where we left off
+txt('Where we left off: Malthus\'s objection','HL p. 98',[
+ 'The corn model had one good. Profit was corn left over after corn wages, so a rise in wages lowered profit by arithmetic.',
+ 'Malthus: “profits depend upon the prices of commodities, and upon the cause which determines these prices, namely the supply compared with the demand.” With many goods, a wage rise might raise some prices and lower others. Then nothing follows about profit.',
+ 'Ricardo agreed he needed a theory of what sets prices. The Principles is that theory, and the three models today are its three parts.']);
+// 3 what is being explained
+txt('What the theory is about, and what it sets aside','HL pp. 98–99',[
+ '“Possessing utility, commodities derive their exchangeable value from two sources: from their scarcity, and from the quantity of labour required to obtain them.”',
+ 'Scarcity prices “rare statues and pictures, scarce books and coins, [and] wines of a peculiar quality.” Their value “varies with the varying wealth and inclinations of those who are desirous to possess them.” Ricardo sets them aside: they do not affect wages, profit, or growth.',
+ 'The theory is about goods that can be multiplied by applying more labor. Utility is necessary for value. It does not regulate it. Hold that sentence for Thursday.']);
+// 4 model 1 setup
+txt('Game Level 1: the hunters','Smith\'s hunters, which Ricardo kept for a capitalist economy too (HL p. 100)',[
+ 'A nation of hunters. No capital, no land rent, no wages. Just labor and two goods.',
+ 'A beaver takes two days to catch. A deer takes one. Nobody will give a beaver for less than two deer, because he could spend the two days catching two deer himself.',
+ 'The question for the next five minutes: what happens to the exchange ratio, to riches, and to value, when one of the two trades gets more productive?']);
+scene('Game Level 1: beaver and deer','Exchange ratios from labor embodied',4,(g,k)=>hunt(g,k,2,1,2));
+// 4b richer and worth less, side by side
+scene('Richer, and worth less, at the same time','Ten days of one hunter\'s life, before and after the skill',3,(g,st)=>{
+  const heads=['','before','after'];const rows=[['days per beaver','2','2'],['days per deer','1','½'],['ten days of hunting buys','5 beaver, or 10 deer','5 beaver, or 20 deer'],['one beaver exchanges for','2 deer','4 deer'],['value of a deer, in days of labor','1 day','½ day'],['who owns the catch','the hunter','the hunter']];
+  tbl(g,{x:120,y:250,heads,rows,colW:[460,420,420],fs:26,rowH:58,color:(i,j)=>(j===2&&(i===1||i===2||i===3||i===4))?(i===4?C.brick:C.green):C.ink,bold:(i,j)=>j===2&&i>=1&&i<=4});
+  if(st>=1){T(g,120,690,'Richer means: the same day of life buys more useful things. Smith\'s “necessaries and conveniencies.”',{'font-size':25});
+    T(g,120,730,'Worth less means: fewer days of anyone\'s labor are in a deer, so it commands less in exchange.',{'font-size':25});}
+  if(st>=2){T(g,120,790,'And no surplus anywhere. Nobody is owed anything. “The whole produce of labour belongs to the labourer.”',{'font-size':25,'font-weight':500,fill:C.green});
+    T(g,120,830,'Hold on to that. Every level from here adds one person with a claim on the catch.',{'font-size':25,fill:C.warm});}
+});
+// 5 stockings
+txt('Game Level 2: most goods take many kinds of labor','HL p. 102, Ricardo\'s stockings',[
+ 'Stockings are not caught in a day. Someone grew the cotton, someone shipped it, someone spun it and wove it, someone built the loom, someone sold them.',
+ 'Ricardo\'s rule: add it all up, the loom\'s share included. A machine is past labor, used up a little at a time.',
+ 'We will stack the hours. The numbers are mine; the list is Ricardo\'s.']);
+scene('Game Level 2: the stockings','Illustrative hours; the list of labors is Ricardo\'s (HL p. 102)',6,(g,k)=>stack(g,k,[
+ {name:'growing the cotton',h:3,c:C.earth},{name:'shipping it (the ship\'s share)',h:1,c:C.warm},{name:'spinning',h:2,c:C.gold,dark:true},{name:'weaving',h:2,c:C.golddeep},{name:'the loom and the building, used up a little',h:1,c:C.green},{name:'the retail dealer',h:1,c:C.brick}]));
+// 6 objections
+txt('Objection 1: labor is not all the same','HL p. 100',[
+ 'A surgeon\'s hour and a ditch-digger\'s hour earn different wages. How do you add them up?',
+ 'Ricardo: the scale of skills, “when once formed, is liable to little variation.”',
+ 'So for how prices change over time, the skill scale drops out: it is the same at both dates.',
+ 'Marx later finished the thought: skilled labor is simple labor plus the hours spent acquiring the skill.']);
+txt('Objection 2: land and machines are productive too','HL pp. 101–102',[
+ 'A loom weaves. A river turns the wheel. Don\'t they add value?',
+ 'Ricardo: a machine is past labor. A loom is “so much partly produced cloth.”',
+ 'Nature helps, “but as they perform their work gratuitously … the assistance which they afford us adds nothing to value in exchange.”',
+ 'So rent is not a cost that sets price. It is a way of dividing what labor made.',
+ 'That is why the corn model needed the no-rent margin.']);
+// 7 model 2 setup
+txt('Game Level 5: the setup','Measure everything in hours, including the wage (HL p. 112)',[
+ 'Maurice Dobb, the Cambridge economist who edited Ricardo\'s collected works with Sraffa, on what Ricardo did next:',
+ 'Ricardo “was substituting Labour for Corn as the quantity in terms of which product, wages and surplus were alike expressed.” (HL p. 112)',
+ 'Ten workers each work ten hours. The day\'s product is worth 100 hours of labor, whatever goods it consists of.',
+ 'The wage is a basket of necessaries. The basket also took labor to make, at the no-rent margin. Suppose it took 6 hours per worker. Where do the other 4 go?']);
+scene('Game Level 5: the day\'s product in hours','Ten workers, ten hours each; a basket of necessaries takes 6 hours to make',6,(g,k)=>split(g,k,100,60,{n:10,echo:'The same split as Example B of the corn model: wage 60, profit 40, r = 0.67. The corn is now hours.',note:'Workers work 10 hours and are paid goods that took 6. The 4 hours per worker that remain are the surplus, and with no rent at the margin it is all profit. “Profits depend on the quantity of labour requisite to provide necessaries for the labourers.” (HL p. 112)'}));
+txt('Now corn gets dearer','The margin moves out, as in the corn model',[
+ 'Population grows, worse land is ploughed, and the corn in the basket takes more labor to grow. Say the basket now takes 7 hours instead of 6.',
+ 'Nothing else changes. Same ten workers, same ten hours, same 100 hours of product, same tools.',
+ 'What happens to profit? Watch the bar.']);
+scene('Corn dearer: the basket takes 7 hours','Same product, same workers, same tools',5,(g,k)=>k===0?split(g,2,100,60,{n:10,echo:'Where we were: the basket took 6 hours. Now it takes 7. Watch the line move.',opener:true}):split(g,1+k,100,70,{n:10,echo:'Example A of the corn model at four parcels: wage 70, profit 30, r = 0.43.',note:'The wage rose by one hour per worker, so profit fell by exactly that. The product did not change. “If wages should rise, then … profits would necessarily fall.” (HL p. 115) Rent took nothing directly; the margin raised the labor cost of the wage.'}));
+scene('The Corn Laws repealed: the basket takes 5 hours','Cheap foreign corn, the margin moves back in',4,(g,k)=>k===0?split(g,2,100,70,{n:10,echo:'Where we were: the basket took 7 hours. Imports bring it to 5. Watch the line move.',opener:true}):split(g,1+k,100,50,{n:10,note:'Cheaper corn means fewer hours in the basket, so profit rises with no change in anything the capitalist did. That is the whole Corn Laws argument in one bar: the landlord\'s gain is the hours added to the basket, and those hours came out of profit.'}));
+txt('What the three bars taught','Game Level 5, in four sentences',[
+ 'Measure the product in hours and the split is arithmetic: wages are the hours in the baskets, profit is whatever is left.',
+ 'Dearer corn puts more hours in the basket, so profit falls with nothing else changing. Cheaper corn does the reverse.',
+ 'The rate of profit r is profit over the wages advanced. It went 0.67, then 0.43, then 1.00, while the product stayed at 100.',
+ 'Rent never appeared on the screen. The margin changed the labor cost of the wage, and profit took the hit. That is the corn model again, in hours.']);
+txt('What game Level 5 buys Ricardo','Why he kept the theory despite the trouble coming',[
+ '“Can any point be more clearly established than that profits must fall with a rise in wages?” (HL p. 121) In hours it is arithmetic: the product is fixed, so one share can rise only if the other falls.',
+ 'HL: “at any level of output, the capitalists and the laborers are antagonistically competing for the produce of labor.” (p. 112) That sentence is the conflict answer to the course\'s one question, stated as a model.',
+ 'But the argument only holds if the product is really 100 hours no matter how it is priced. Malthus said it is not. Level 3 is where Ricardo finds out Malthus had a point.']);
+// 8 model 3 setup
+txt('Doesn\'t the market set the price?','Ricardo\'s shrug, and what is behind it (HL pp. 98, 103)',[
+ 'Malthus, to Ricardo: profits depend on prices, and prices depend on “the supply compared with the demand.” So why talk about labor at all?',
+ 'Ricardo keeps Smith\'s two prices. The market price is what a thing sells for today. The natural price is what it costs to make, at the going wage and the going profit.',
+ 'Supply and demand move the market price. When it sits above the natural price, profits there are high, capital rushes in, and the price comes back down. Below, the reverse.',
+ 'So supply and demand are the mechanism that drags the market price to the natural price. They do not decide what the natural price is.',
+ 'Ricardo, Principles, ch. 30: “It is the cost of production which must ultimately regulate the price of commodities, and not, as has been often said, the proportion between the supply and demand.”',
+ 'Everything on the next slides is about that natural price. The question is whether it is really just labor.']);
+scene('Where the price equation comes from','The natural price, built one piece at a time (HL pp. 103–104, 107)',6,(g,k)=>{
+  const rows=[
+   ['1','Natural price = what it cost to make + the going profit on the money tied up.','HL p. 103'],
+   ['2','Competition makes the rate of profit r the same in every trade. Nobody accepts less on their capital than their neighbor gets.','HL p. 93, the restless desire'],
+   ['3','Labor paid this year: the capitalist advances w per hour and must earn r on it once.','w × hours now × (1 + r)'],
+   ['4','Labor paid last year: the same wage, advanced a year earlier, must earn r twice.','w × hours last year × (1 + r) × (1 + r)'],
+   ['5','Add them, and factor out one (1 + r).','Price = w(1 + r) × [now + last year × (1 + r)]'],
+   ['6','Set r = 0 and the price is w × total hours: the labor theory exactly. Everything that is not labor in a price is r.','the crack is already visible'],
+  ];
+  let y=250;rows.forEach((r,i)=>{if(i>k)return;const on=i===k;
+    el('rect',{x:80,y:y-34,width:1440,height:92,rx:8,fill:on?'#FFF8E6':'none',stroke:on?C.gold:'none','stroke-width':2},g);
+    T(g,100,y+4,r[0],{'font-size':30,'font-weight':700,fill:C.green});
+    const words=r[1].split(' ');let line='',ls=[];for(const wd of words){if((line+' '+wd).length>66){ls.push(line);line=wd;}else line=line?line+' '+wd:wd;}ls.push(line);
+    ls.forEach((l,j)=>T(g,150,y+(ls.length>1?-12:4)+j*30,l,{'font-size':23}));
+    T(g,1010,y+4,r[2],{'font-size':i>=2&&i<=4?21:19,'font-weight':i>=2&&i<=4?700:400,fill:i>=2&&i<=4?C.green:C.warm});
+    y+=98;});
+});
+txt('Game Level 3: the setup','Smith\'s worry, which Ricardo took seriously (HL pp. 103–105)',[
+ 'Two goods, ten hours of labor in each. Good A: all ten hours this year. Good B: five hours this year, five hours last year, on a tool that was made then and used up now.',
+ 'The capitalist who paid last year\'s five hours has had money tied up for a year. Competition gives every capitalist the same rate of profit on money tied up, for as long as it is tied up.',
+ 'So last year\'s hours earn profit twice. We compute both prices at several profit rates and compare the price ratio to the labor ratio, which is 1 to 1.']);
+scene('Game Level 3: same labor, different timing','Price = w(1 + r) × [hours now + hours last year × (1 + r)], with w = $1',8,(g,k)=>timing(g,k,10,5,5,[0,0.10,0.25,0.50],{w:1,notes:[
+ 'At r = 0 the price is the labor. Ten dollars each, ratio 1. This is the pure labor theory of value.',
+ 'At 10 percent, last year\'s five hours are worth 5 × 1.10 before this year\'s profit is added. B costs more than A though the labor is the same. The ratio is 1.05.',
+ 'At 25 percent the gap widens to 1.125. Nothing about the labor changed. Only the profit rate did.',
+ 'At 50 percent B is a quarter dearer than A. HL p. 105: “the price ratio has changed while the quantities of labor embodied in the two commodities have remained unchanged.”']}));
+txt('Why: profit compounds on labor paid early','HL pp. 107–108, Ricardo\'s $100',[
+ 'A capitalist pays $100 of wages at the start of a four-year process. He could instead have run four one-year ventures at 10 percent, reinvesting each time.',
+ 'For the long process to be worth doing, the $100 must grow in the price the way it would have grown in the alternative.',
+ 'Watch the stair.']);
+scene('Why: profit compounds on labor paid early','$100 of wages tied up for four years at 10 percent',5,(g,k)=>stair(g,k));
+txt('Ricardo\'s three cases are one case','HL pp. 105–106',[
+ 'Ricardo listed three reasons prices leave labor: different proportions of fixed to circulating capital; different durability of machines; different speed at which capital comes back.',
+ 'HL: all three are “merely different ways of looking at the same phenomenon.” Either more past labor relative to present labor, or a longer time between the labor and the sale.',
+ 'Which is what Level 3 had. Now the book\'s version, with Ricardo\'s own scale of numbers.']);
+scene('The book\'s version: two goods, 400 hours each','Figure 5.7, HL p. 109',2,(g,k)=>fig57(g,k));
+scene('Table 5.1: wage $1, profit rate 50 percent','HL p. 110',5,(g,k)=>table5(g,k,{w:'1.00',r:'50%',rows:[['x','100.00','914.08','507.04','1,521.12','15.21'],['y','300.00','187.50','243.75','731.25','7.31']],ratio:'15.21 ÷ 7.31 = 2.08',note:'Same labor, 400 hours each, and x costs more than twice what y costs. All of the gap is column B: past labor compounded at 50 percent for up to four years. The labor ratio is 1. The price ratio is 2.08.'}));
+scene('Table 5.2: wage $2, profit rate 10 percent','HL p. 111. The wage doubled, so the profit rate fell.',5,(g,k)=>table5(g,k,{w:'2.00',r:'10%',rows:[['x','200.00','765.78','96.58','1,062.36','10.62'],['y','600.00','231.00','83.10','914.10','9.14']],ratio:'10.62 ÷ 9.14 = 1.16',extra:'The price of x fell, from $15.21 to $10.62, when the wage doubled.',note:'Labor unchanged. The wage doubled, profit fell to 10 percent, and the ratio went from 2.08 to 1.16. Smith said a wage rise raises all prices. The capital-heavy good got cheaper. “It is the difference in profits that causes prices not to be proportional to labor embodied.” (HL p. 109)'}));
+// 9 observations
+txt('Three things the tables show','HL pp. 109, 112',[
+ 'A wage change moves relative prices with no change in labor. Malthus was right that much.',
+ 'A wage rise does not raise all prices. The good with more capital per worker gets cheaper, because the profit it carried was larger. With output and technique fixed, a wage rise comes only out of the profit rate. That is Level 5 surviving inside Level 3.',
+ 'Two rules. The process with more capital per present worker always has the higher price relative to its labor. The higher the profit rate, the bigger the deviation. At r = 0 every price is its labor.']);
+txt('The measure he could not find','HL pp. 113–114',[
+ 'Ricardo thought the deviations “quite small” and that in the aggregate they cancel: goods with more capital than average go one way when wages rise, goods with less go the other.',
+ 'A good made with “precisely the same combinations of fixed and circulating capital as all other things … would be a perfect measure of value.” Its price would not move when the wage moved. He wanted it as the yardstick for the product in Level 5.',
+ 'He never found one and “tentatively and provisionally took gold to be this measure, knowing that in reality it was not.” (p. 114) To compute any good\'s deviation you need r first, and r was what the theory was supposed to deliver. That circle is the problem he could not solve.']);
+// 10 you drive
+txt('You drive: play game Level 1','who-gets-paid.pages.dev · class code on the board · or on paper with the numbers below',[
+ 'The game gives you your own beaver and deer. Work each step on paper, type the answer, and the page checks it. When the numbers are done, Ricardo asks you to explain them. He will not pass you until you can, and he will not tell you.',
+ 'No phone: a deer takes one day, a beaver three. Ratio? Then deer hunting becomes half again as productive. New ratio? Richer? Did a deer\'s value rise or fall?']);
+scene('Game Level 1: check','Beaver 3 days, deer 1 day, then 1.5× productivity in deer',4,(g,k)=>hunt(g,k,3,1,1.5,{note:'1 beaver = 3 deer, then 4.5. Hunters are richer by half. Each deer is worth two thirds of what it was. Riches up, value down.'}));
+txt('You drive: game Level 5, on paper today','Level 5 is not in the game yet. The numbers below are the drill; the farm at ricardo-farm.pages.dev has the margin',[
+ 'Twelve workers, ten hours each. A basket of necessaries takes 8 hours to make.',
+ 'Wages in hours, profit in hours, r.',
+ 'Then corn gets dearer: the basket takes 10 hours. Then the Corn Laws are repealed: the basket takes 6. Fill in all three rows.']);
+scene('Game Level 5: check','120 hours of product, basket 8 hours',5,(g,k)=>split(g,k,120,96,{n:12,note:'Wages 96, profit 24, r = 24 ÷ 96 = 0.25. Basket 10: wages 120, profit 0, r = 0. That is the stationary state. Basket 6: wages 72, profit 48, r = 0.67.'}));
+txt('Game Levels 2 and 3: tonight, or now if there is time','Same site. Level 2 is the stockings, Level 3 is the lender.',[
+ 'Level 2 hands you a loom that took so many hours and wears out after so many pairs. Spread it, add it up, price the stockings in hats.',
+ 'Level 3 hands you a lender. Two goods, the same hours, one of them paid a year early. Price both at r = 0 and at the r the game gives you, then raise the wage.',
+ 'No phone: A is 8 hours now; B is 4 now and 4 last year; w = $1. Prices and ratio at r = 0 and 25 percent. If r falls to 10 percent, which good gets relatively cheaper?']);
+scene('Game Level 3: check','A: 8 now. B: 4 now + 4 last year.',7,(g,k)=>timing(g,k,8,4,4,[0,0.25,0.10],{w:1,notes:[
+ 'r = 0: $8 each, ratio 1.',
+ 'r = 25%: A = 1.25 × 8 = $10. B = 1.25 × (4 + 4 × 1.25) = 1.25 × 9 = $11.25. Ratio 1.125.',
+ 'r = 10%: A = $8.80, B = 1.10 × (4 + 4.40) = $9.24. Ratio 1.05. The good with the early labor, B, got relatively cheaper when r fell.']}));
+// 11 the song: opinion first, then the thinkers
+txt('Song B again, now with Ricardo\'s tools','What you said at 11:05, said in his vocabulary',[
+ 'Two questions you answered cold this morning. Who should be paid for Song B, and for what? And was the sentence somebody typed to make it labor?',
+ 'Level 1: what does a second copy cost? Nothing. So what happens to the value of each, however much you liked it? Riches up, value down.',
+ 'Level 2: where is the loom? A model trained on a million songs is so much partly produced song. Whose past labor is in it, and were they paid?',
+ 'Level 3: who had money tied up, for how long, and what does competition say they must earn on it? That is the owner\'s claim, and it is real inside Ricardo too.',
+ 'Thursday, three economists say Ricardo has this backwards. Write down your guess at what they say before you leave. We check it against Bentham, Say, and Senior.']);
+// 12 utility bridge
+txt('What Ricardo said about utility, and what Thursday says back','HL pp. 98–99; ch. 6',[
+ 'Ricardo: utility is necessary for value and does not regulate it. For reproducible goods, labor does. Demand decides which goods get made, not what they exchange for.',
+ 'HL p. 99: the labor theory is about “the social aspects of commodity production and exchange,” the utility theory about “the individual aspects of exchange only.”',
+ 'Thursday: Say reads Ricardo and writes “This is an error.” Senior says goods would exchange in the same proportions if nature supplied them with no labor at all. Same question, opposite answer, and Model 2 is what is at stake: if value is not labor, there is no surplus for anyone to have taken.']);
+// 12 door
+txt('What to take out the door','Three sentences',[
+ 'Exchange ratios are labor ratios, the loom\'s share included, and productivity raises riches while it lowers value. That is the AI song already.',
+ 'Measure the product in hours and profit is what is left after the hours in the wage basket, so a dearer basket must mean a lower profit rate.',
+ 'Once capital differs in timing, profit compounds and prices leave labor; Ricardo called the gap small, looked for a yardstick that would not move, and never found one.']);
+txt('Where this goes next','Value without labor',[
+ 'Every number on these screens was labor, with r as what is left. Bentham, Say, and Senior keep the numbers and change what r is.',
+ 'Say: the 30 is capital\'s contribution, not a deduction. Senior: the (1 + r) is the price of abstinence, not a residual.',
+ 'The game is at who-gets-paid.pages.dev. Levels 1 to 3 are the drills on these screens.']);
+
+// ---------------- engine ----------------
+let i=0,k=0;
+const stagesOf=n=>S[n].stages||1;
+function show(si,sk){
+  i=Math.max(0,Math.min(S.length-1,si));
+  const s=S[i];k=Math.max(0,Math.min(stagesOf(i)-1,sk||0));
+  $('title').textContent=s.title;$('sub').textContent=s.sub||'';
+  const g=$('body');while(g.firstChild)g.removeChild(g.firstChild);
+  if(!s.stages)bars={};
+  if(i!==1)songsOff();
+  if(i!==liveIdx&&liveTimer){clearInterval(liveTimer);liveTimer=null;}
+  s.draw(g,k);
+  $('counter').textContent=(i+1)+' / '+S.length+(stagesOf(i)>1?'   ·   step '+(k+1)+' of '+stagesOf(i)+(k<stagesOf(i)-1?'  →':''):'');
+  try{localStorage.setItem('rlv.i',i);localStorage.setItem('rlv.k',k);}catch(e){}
+}
+const next=()=>{if(k<stagesOf(i)-1)show(i,k+1);else show(i+1,0);};
+const prev=()=>{if(k>0)show(i,k-1);else if(i>0)show(i-1,stagesOf(i-1)-1);};
+document.body.addEventListener('click',e=>{if(e.shiftKey)prev();else next();});
+window.addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown','Enter'].includes(e.key)){e.preventDefault();next();}else if(['ArrowLeft','ArrowUp','PageUp','Backspace','p','P'].includes(e.key)){e.preventDefault();prev();}else if(e.key==='End'||e.key==='.'){show(i,stagesOf(i)-1);}else if(e.key==='n'||e.key==='N'){show(i+1,0);}else if(e.key==='r'||e.key==='R'){show(0,0);}else if(e.key==='f'||e.key==='F'){const d=document.documentElement;if(document.fullscreenElement||document.webkitFullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document);}else{(d.requestFullscreen||d.webkitRequestFullscreen).call(d);}}});
+let si=0,sk=0;try{si=+localStorage.getItem('rlv.i')||0;sk=+localStorage.getItem('rlv.k')||0;}catch(e){}
+const Q=new URLSearchParams(location.search);if(Q.has('s')){si=(+Q.get('s')||1)-1;sk=Q.has('k')?(+Q.get('k')||1)-1:99;}
+show(si,sk);
+})();
+</script>
+</body>
+</html>

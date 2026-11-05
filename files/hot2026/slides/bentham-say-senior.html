@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bentham, Say, Senior: Value Without Labor</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--cream:#FBFAF7;--green:#154734;--gold:#FFB81C;--golddeep:#C98F00;--ink:#1A1A1A;--warm:#6B7280;--brick:#9B2C2C;--pale:#D8D4CB;--earth:#8C7B6B;--mist:#EDE9DE}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--cream)}
+  body{cursor:pointer;user-select:none;-webkit-user-select:none}
+  #stage{position:fixed;inset:0;width:100vw;height:100vh;display:block}
+  svg text{font-family:"Fira Sans",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
+  svg text:not([fill]){fill:var(--ink)}
+  svg rect.bar{transition:x .6s cubic-bezier(.2,.8,.2,1),width .6s cubic-bezier(.2,.8,.2,1),y .6s cubic-bezier(.2,.8,.2,1),height .6s cubic-bezier(.2,.8,.2,1),opacity .4s}
+  .fade{transition:opacity .45s ease}
+  #help{position:fixed;left:16px;bottom:12px;font:13px "Fira Sans",sans-serif;color:var(--pale)}
+</style>
+</head>
+<body>
+<svg id="stage" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="1600" height="900" fill="#FBFAF7"/>
+  <text id="title" x="80" y="92" font-size="50" font-weight="700" fill="#154734" class="fade"></text>
+  <rect x="80" y="114" width="146" height="3" fill="#FFB81C"/>
+  <text id="sub" x="80" y="150" font-size="24" fill="#6B7280" class="fade"></text>
+  <g id="body"></g>
+  <text id="counter" x="1565" y="882" font-size="18" fill="#D8D4CB" text-anchor="end"></text>
+</svg>
+<div id="help">→ or click: next · ← or shift-click: back · End fills the scene · N next scene · F full screen · R restart</div>
+<script>
+(() => {
+const NS='http://www.w3.org/2000/svg';
+const C={green:'#154734',gold:'#FFB81C',golddeep:'#C98F00',ink:'#1A1A1A',warm:'#6B7280',brick:'#9B2C2C',pale:'#D8D4CB',earth:'#8C7B6B',mist:'#EDE9DE',cream:'#FBFAF7'};
+const $=id=>document.getElementById(id);
+const el=(tag,attrs,parent,text)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;(parent||$('body')).appendChild(e);return e;};
+const T=(g,x,y,s,a)=>el('text',Object.assign({x,y,'font-size':24,fill:C.ink},a||{}),g,s);
+const fmt=(v,d)=>v.toFixed(d==null?2:d);
+const pct=r=>Math.round(r*100)+'%';
+
+// ---------------- text helpers ----------------
+function note(g,text,y){const words=text.split(' ');let line='',lines=[];
+  for(const wd of words){if((line+' '+wd).length>120){lines.push(line);line=wd;}else line=line?line+' '+wd:wd;}
+  lines.push(line);lines.forEach((l,i)=>el('text',{x:80,y:(y||805)+i*30,'font-size':23,fill:C.ink},g,l));}
+function bullets(g,lines,y0,size,nshow){const fs=size||33,lh=Math.round(fs*1.3),gap=Math.round(fs*1.1),maxc=86;
+  const wrapped=lines.map(l=>{const words=l.split(' ');let line='',rows=[];for(const wd of words){if((line+' '+wd).length>maxc){rows.push(line);line=wd;}else line=line?line+' '+wd:wd;}rows.push(line);return rows;});
+  const nrows=wrapped.reduce((a,r)=>a+r.length,0);const H=nrows*lh+(wrapped.length-1)*gap;
+  let y=y0||Math.max(200,200+(640-H)/2)+fs; // vertically center the block in y=200..840
+  wrapped.forEach((rows,i)=>{const op=(nshow!=null&&i>=nshow)?0:1;el('text',{x:90,y:y,'font-size':fs,fill:C.gold,'font-weight':700,opacity:op},g,'•');
+    rows.forEach((r,k)=>el('text',{x:130,y:y+k*lh,'font-size':fs,fill:C.ink,opacity:op,class:'fade'},g,r));y+=rows.length*lh+gap;});}
+// animated rect with memory across scenes
+let bars={};const drawn={};
+function abar(g,key,x,y,w,h,fill,o){o=o||{};const rc=el('rect',Object.assign({class:'bar',fill,stroke:'#fff','stroke-width':1.5},o.attrs||{}),g);
+  const prev=bars[key];if(prev){rc.setAttribute('x',prev.x);rc.setAttribute('y',prev.y);rc.setAttribute('width',prev.w);rc.setAttribute('height',prev.h);}
+  else{rc.setAttribute('x',x);rc.setAttribute('y',y+h/2);rc.setAttribute('width',w);rc.setAttribute('height',0);}
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{rc.setAttribute('x',x);rc.setAttribute('y',y);rc.setAttribute('width',w);rc.setAttribute('height',h);}));
+  bars[key]={x,y,w,h};drawn[key]=1;
+  if(o.label!=null){const t=el('text',{x:x+w/2,y:y+h/2+(o.fs||22)/3,'font-size':o.fs||22,'font-weight':700,'text-anchor':'middle',fill:o.lc||'#fff',class:'fade',opacity:prev?1:0},g,o.label);if(!prev)setTimeout(()=>t.setAttribute('opacity',1),350);}
+  return rc;}
+function sweep(){for(const k in bars)if(!drawn[k])delete bars[k];for(const k in drawn)delete drawn[k];}
+
+// ---------------- generic staged table ----------------
+function tbl(g,o){ // {x,y,heads,rows,colW,show,fresh,fs,rowH,color(i,j),bold(i,j)}
+  const fs=o.fs||22,rowH=o.rowH||48;let cx=o.x;const xs=[];
+  for(let j=0;j<o.heads.length;j++){xs.push(cx+o.colW[j]/2);cx+=o.colW[j];}
+  o.heads.forEach((h,j)=>{const on=!o.show||o.show[j];const lines=String(h).split('\n');lines.forEach((ln,q)=>el('text',{x:xs[j],y:o.y-(lines.length-1-q)*20,'font-size':17,'text-anchor':'middle',fill:on?C.warm:C.pale},g,ln));});
+  el('line',{x1:o.x,y1:o.y+12,x2:cx,y2:o.y+12,stroke:C.pale,'stroke-width':2},g);
+  o.rows.forEach((row,i)=>{const y=o.y+rowH*(i+1)+10;
+    if(o.hl&&o.hl.includes(i))el('rect',{x:o.x-8,y:y-32,width:cx-o.x+16,height:rowH,fill:'#FFF3CF',rx:6},g);
+    row.forEach((v,j)=>{if(o.show&&!o.show[j])return;const fresh=o.fresh===j;
+      const t=el('text',{x:xs[j],y,'font-size':fs,'text-anchor':'middle',fill:(o.color&&o.color(i,j))||C.ink,'font-weight':(o.bold&&o.bold(i,j))?700:400,class:'fade',opacity:fresh?0:1},g,v);
+      if(fresh)setTimeout(()=>t.setAttribute('opacity',1),30);});});
+  return {right:cx,bottom:o.y+rowH*(o.rows.length+1)+10};}
+
+// ---------------- model 1: hunters ----------------
+function hunt(g,k,bv,dr,factor,o){ // bv beaver days, dr deer days, factor = productivity change in deer hunting at stage 2
+  const unit=300,X=420;const deer=k>=2?dr/factor:dr;
+  const row=(key,y,name,days,fill)=>{T(g,110,y+40,name,{'font-size':28,'font-weight':500});
+    abar(g,key,X,y,days*unit-6,60,fill,{label:(+days.toFixed(2))+(days===1?' day':' days'),lc:'#fff'});};
+  row('bv',230,'One beaver',bv,C.earth);row('dr',330,'One deer',deer,C.gold);
+  if(k>=1){const ratio=bv/deer;T(g,110,500,'1 beaver  =  '+(+ratio.toFixed(2))+' deer',{'font-size':48,'font-weight':700,fill:C.green});
+    T(g,110,548,'The exchange ratio is the ratio of the labor it takes to get each one.',{fill:C.warm});}
+  if(k>=2){T(g,110,630,(o&&o.cause)||'The hunters learn to mask their scent. No new tool, no one else\'s labor: a skill.',{'font-size':26});T(g,110,672,'Deer hunting gets '+factor+'× as productive. A deer now takes '+(+deer.toFixed(2))+(deer===1?' day.':' days.'),{'font-size':26,fill:C.green,'font-weight':500});}
+  if(k>=3)note(g,o&&o.note||'Hunters are richer: '+factor+'× the deer for the same work. And each deer is worth less, because less labor is in it. Riches rose, value fell. “Every diminution must lower it.” (HL p. 99)',735);
+  sweep();}
+
+// ---------------- model 1b: the stockings stack ----------------
+function stack(g,k,layers){const X=200,W=260,B=680,px=44;let y=B,sum=0;
+  layers.forEach((L,i)=>{if(i>k)return;const h=L.h*px;y-=h;sum+=L.h;abar(g,'st'+i,X,y,W,h,L.c,{label:L.h+' h',fs:20,lc:L.dark?C.ink:'#fff'});
+    T(g,X+W+24,y+h/2+8,L.name,{'font-size':24,fill:i===k?C.ink:C.warm,'font-weight':i===k?500:400});});
+  el('line',{x1:X-20,y1:B,x2:X+W+20,y2:B,stroke:C.ink,'stroke-width':2},g);
+  T(g,X+W/2,B+34,'one pair of stockings',{'text-anchor':'middle',fill:C.warm,'font-size':20});
+  T(g,1000,300,'labor embodied so far',{fill:C.warm,'font-size':20});T(g,1000,370,sum+' hours',{'font-size':54,'font-weight':700,fill:C.green});
+  if(k>=layers.length-1){T(g,1000,450,'The stockings exchange for anything else',{'font-size':24});T(g,1000,486,'that took '+sum+' hours, the loom\'s share included.',{'font-size':24});
+    note(g,'“The aggregate sum of these various kinds of labour determines the quantity of other things for which these stockings will exchange.” A loom is “so much partly produced cloth.” (HL p. 102)',770);}
+  sweep();}
+
+// ---------------- model 2: the day's product in hours ----------------
+function split(g,k,L,Lw,o){const X=110,W=1380,Y=300,H=130,px=W/L;const Lp=L-Lw;
+  T(g,X,Y-22,'the day\'s product: '+o.n+' workers × '+(L/o.n)+' hours  =  '+L+' hours of value',{fill:C.warm,'font-size':22});
+  el('rect',{x:X,y:Y,width:W,height:H,fill:'none',stroke:C.ink,'stroke-width':2},g);
+  if(k>=1){abar(g,'w',X,Y,Lw*px,H,C.earth,{label:'wages '+Lw,fs:30});
+    T(g,X,Y+H+40,'the necessaries of '+o.n+' workers took '+Lw+' hours to make: '+o.n+' baskets × '+(Lw/o.n)+' hours each',{'font-size':22});}
+  if(k>=2){abar(g,'p',X+Lw*px,Y,Lp*px,H,C.green,{label:'profit '+Lp,fs:30});
+    T(g,X,Y+H+78,'what is left after the necessaries are replaced goes to the capitalist: '+Lp+' hours',{'font-size':22});}
+  if(k>=3){T(g,X,560,'r  =  '+Lp+' ÷ '+Lw+'  =  '+fmt(Lp/Lw),{'font-size':40,'font-weight':700,fill:C.green});
+    T(g,X,600,'r is the rate of profit: profit divided by the wages the capitalist advanced. He laid out '+Lw+' hours of goods and got back '+L+'. The same r as the corn model.',{'font-size':21,fill:C.ink});}
+  if(o.echo&&(k>=4||o.opener))T(g,X,o.opener?580:640,o.echo,{fill:C.warm,'font-size':22});
+  if(k>=(o.echo?5:4)&&o.note)note(g,o.note,735);
+  sweep();}
+
+// ---------------- model 3: time-dated labor, two goods ----------------
+function timing(g,k,A,Bn,Bl,rs,o){ // steps 0-3 build the picture at rs[0]; later steps change r
+  const INTRO=4;const ri=k<INTRO?0:Math.min(k-INTRO,rs.length-1);const r=rs[ri],w=o.w||1,X=110,unit=22,LINE=X+520;
+  const yr=(x,y,h,fill,key,lab)=>abar(g,key,x,y,h*unit,56,fill,{label:lab,fs:20});
+  T(g,X,235,'last year',{fill:C.warm,'font-size':20});T(g,X+560,235,'this year',{fill:C.warm,'font-size':20});
+  el('line',{x1:LINE,y1:220,x2:LINE,y2:420,stroke:C.pale,'stroke-width':2,'stroke-dasharray':'6 5'},g);
+  T(g,X+820,275,'Good A',{'font-size':26,'font-weight':500});yr(X+560,250,A,C.earth,'A0',A+' hours');
+  if(k>=1){T(g,X+820,355,'Good B',{'font-size':26,'font-weight':500});yr(LINE-12-Bl*unit,330,Bl,C.gold,'B1',Bl+' hours');yr(X+560,330,Bn,C.earth,'B0',Bn+' hours');}
+  if(k>=2)T(g,X,470,'r = '+pct(r),{'font-size':44,'font-weight':700,fill:C.green});
+  const pA=w*(1+r)*A, pB=w*(1+r)*(Bn+Bl*(1+r));
+  const f=(1+r).toFixed(2);
+  const rows=[['A',A,`${w} × ${f} × ${A}`,fmt(pA)],['B',Bn+Bl,`${w} × ${f} × (${Bn} + ${Bl} × ${f})`,fmt(pB)]];
+  if(k>=2)tbl(g,{x:X+300,y:470,heads:['good','labor (hours)','price = w(1+r) × [now + last year × (1+r)]','price'],colW:[90,150,620,140],rows:k>=3?rows:rows.slice(0,1),fs:24,rowH:52,color:(i,j)=>j===3?C.green:C.ink,bold:(i,j)=>j===3});
+  if(k>=INTRO){T(g,X+300,650,'price of B ÷ price of A  =  '+fmt(pB/pA),{'font-size':34,'font-weight':700,fill:ri===0?C.green:C.brick});
+    T(g,X+300,690,'labor in B ÷ labor in A  =  '+fmt((Bn+Bl)/A),{'font-size':24,fill:C.warm});}
+  const intro=['Good A: ten hours of labor, all of it this year.','Good B: the same ten hours, but five of them were done last year, on a tool that is used up now.','Start with no charge for waiting: r = 0. Price A.','Price B the same way. Last year\'s hours get multiplied by (1 + r) once more, which at r = 0 changes nothing.'];
+  if(k<INTRO)note(g,intro[k],745);else if(o.notes&&o.notes[ri])note(g,o.notes[ri],745);
+  sweep();}
+
+// ---------------- compounding stair ----------------
+function stair(g,k){const vals=[100,110,121,133.10,146.41],adds=['','+ 10','+ 11','+ 12.10','+ 13.31'],labs=['wage paid, year 1','end of year 1','end of year 2','end of year 3','end of year 4: sold'];
+  const X=140,B=700,px=3.4,bw=200,gap=70;
+  vals.forEach((v,i)=>{if(i>k)return;const h=v*px,x=X+i*(bw+gap);abar(g,'sr'+i,x,B-h,bw,h,i===0?C.earth:C.green,{label:'$'+fmt(v),fs:26});
+    T(g,x+bw/2,B+32,labs[i],{'text-anchor':'middle','font-size':18,fill:C.warm});if(i>0)T(g,x+bw/2,B-h-14,adds[i],{'text-anchor':'middle','font-size':22,fill:C.golddeep,'font-weight':700});});
+  if(k>=4)note(g,'$100 of wages paid four years before the sale must be worth $146.41 in the price: $100 to repay the wage and $46.41 of profit for having $100 tied up for four years at 10 percent. Two years tied up would add only $21. (HL pp. 107–108)',765);
+  sweep();}
+
+// ---------------- Figure 5.7: x and y as time-dated labor ----------------
+function fig57(g,k){const X=200,unit=0.85,bw=130,gap=60,B0=390,B1=700;
+  const yrs=['4 years ago','3 years ago','2 years ago','last year','this year'];
+  yrs.forEach((s,i)=>T(g,X+i*(bw+gap)+bw/2,738,s,{'text-anchor':'middle','font-size':18,fill:C.warm}));
+  const good=(key,base,labs,name,fill)=>{T(g,X-120,base-40,name,{'font-size':30,'font-weight':700,fill:C.green});
+    labs.forEach((h,i)=>{if(h==null)return;abar(g,key+i,X+i*(bw+gap),base-h*unit,bw,h*unit,fill,{label:h,fs:22});});};
+  good('x',B0,[75,75,75,75,100],'x',C.earth);
+  if(k>=1)good('y',B1,[null,null,50,50,300],'y',C.gold);
+  T(g,1130,300,'x: 400 hours over five years',{'font-size':24});T(g,1130,336,'100 now, 75 in each of four past years',{'font-size':20,fill:C.warm});
+  if(k>=1){T(g,1130,560,'y: 400 hours over three years',{'font-size':24});T(g,1130,596,'300 now, 50 in each of two past years',{'font-size':20,fill:C.warm});
+    note(g,'Same labor in each, 400 hours per 100 units. The difference is only when the labor was done. x has more past labor and a longer wait, which Ricardo would call more fixed capital, more durable capital, or slower turnover. HL p. 106: all three are the same thing. (Figure 5.7, p. 109)',775);}
+  sweep();}
+
+// ---------------- Tables 5.1 and 5.2 ----------------
+function table5(g,k,o){const show=[true,true,k>=1,k>=2,k>=3,k>=4];
+  const heads=['','A\nlabor cost\n(now × w)','B\nmachinery\n(past labor, compounded)','C\nprofit\nr × (A + B)','D\ntotal\nA + B + C','E\nprice per unit\nD ÷ 100'];
+  const t=tbl(g,{x:120,y:300,heads,rows:o.rows,colW:[120,220,300,240,240,240],show,fresh:k,fs:28,rowH:70,color:(i,j)=>j===5?C.green:C.ink,bold:(i,j)=>j===5});
+  T(g,120,230,'wage w = $'+o.w+'   ·   profit rate r = '+o.r+'   ·   400 hours in each good',{'font-size':24,fill:C.warm});
+  if(k>=4){T(g,120,560,'price of x ÷ price of y  =  '+o.ratio,{'font-size':40,'font-weight':700,fill:C.green});if(o.extra)T(g,120,610,o.extra,{'font-size':24,fill:C.brick});}
+  if(k>=4&&o.note)note(g,o.note,735);}
+
+
+// ---------------- scenes ----------------
+const S=[];
+const txt=(title,sub,lines,extra)=>S.push({title,sub,stages:lines.length,draw:(g,k)=>{bullets(g,lines,null,null,k+1);if(extra)extra(g);}});
+const scene=(title,sub,n,draw)=>S.push({title,sub,stages:n,draw});
+
+// 1 cover
+S.push({title:'',sub:'',draw:g=>{
+  el('rect',{x:0,y:0,width:1600,height:900,fill:C.green},g);
+  el('rect',{x:120,y:268,width:110,height:8,fill:C.gold},g);
+  T(g,120,380,'Value Without Labor',{'font-size':92,'font-weight':700,fill:C.cream});
+  T(g,120,452,'Bentham, Say, and Senior answer Ricardo',{'font-size':44,fill:C.gold});
+  T(g,120,575,'Scott Cunningham  ·  History of Economic Thought  ·  Baylor University',{'font-size':36,fill:C.cream});
+  T(g,120,625,'Thursday, November 5, 2026  ·  ECO 4343/5343  ·  Hunt & Lautzenheiser ch. 6',{'font-size':30,fill:C.cream,opacity:0.62});
+  T(g,120,705,'Last time: Ricardo said value is labor, and profit and rent are deductions from it',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,745,'Today: three writers who make the deduction disappear',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,785,'Exam 2 is behind you. Today the other side gets its turn',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,845,'who-gets-paid.pages.dev',{'font-size':32,'font-weight':700,fill:C.gold});
+}});
+
+// 2 where Tuesday ended
+txt('Where Ricardo ended','HL ch. 5',[
+ 'Goods exchange in proportion to the labor embodied in them, the loom\'s share included.',
+ 'Measure the product in hours and profit is what is left after the hours in the wage basket.',
+ 'So profit and rent are deductions from what labor made, and a dearer basket means a lower profit rate.',
+ 'Utility is necessary for value and does not regulate it (HL p. 98). That sentence is where today begins.']);
+
+// 3 three moves
+txt('Today: three moves that make the conflict disappear','HL p. 127: the chapter is the hinge of the course',[
+ 'Move 1: value is utility, not labor. If labor did not make the value, there is no surplus that labor made.',
+ 'Move 2: owning is a sacrifice, like working. Then profit is earned the way wages are earned.',
+ 'Move 3: every income contains some rent. Then the three classes blur into one set of owners of advantages.',
+ 'HL p. 127: the three writers “each contributed to the abandonment of the labor theory of value—and hence its class conflict conclusions.”']);
+
+// 4 five habits
+scene('Five habits of a market society, read as human nature','HL pp. 125–129',6,(g,k)=>{
+  const rows=[['Specialized producers who meet only in markets','Atomistic individualism: the isolated self against impersonal forces (Hobbes)'],
+   ['Producers who cannot live without the market','The market is universally beneficial; capitalism is natural and eternal'],
+   ['Motives weighed as gains and losses','Egoistic utilitarianism: all motives are pleasure sought and pain avoided'],
+   ['Industry financed out of profits','Profits must be justified as a sacrifice, since someone bore the cost of accumulation'],
+   ['Competition forces cost control','Calculating rationalism: the person as accountant of pleasures and pains']];
+  tbl(g,{x:90,y:220,heads:['What capitalism did','What the utility writers took as universal'],rows:rows.slice(0,Math.min(k,5)),colW:[600,820],fs:24,rowH:72});
+  if(k>=5)note(g,'Each feature is “the particular result of the capitalist mode of production” seen as “general human conditions, existing in all societies, in all places and times.” (HL p. 125)',760);
+});
+
+// 5 Bentham masters
+scene('Bentham: two sovereign masters','An Introduction to the Principles of Morals and Legislation, 1780',4,(g,k)=>{
+  if(k>=0)note(g,'“Nature has placed mankind under the governance of two sovereign masters, pain and pleasure. It is for them alone to point out what we ought to do, as well as to determine what we shall do.” (HL p. 130)',250);
+  if(k>=1)bullets(g,['Utility is whatever tends to produce pleasure or prevent pain, and pain is only negative pleasure.','He wanted a science of happiness “with the same numerical exactitude as the science of physics” (p. 130): utils you can add, like inches.'],360,30,k);
+  if(k>=3){T(g,90,610,'The seven circumstances that fix the value of a pleasure (p. 130)',{'font-size':26,'font-weight':500,fill:C.green});
+    ['intensity','duration','certainty','propinquity','fecundity','purity','extent'].forEach((w,j)=>{el('rect',{x:90+j*205,y:640,width:190,height:60,rx:6,fill:C.mist},g);T(g,185+j*205,679,w,{'text-anchor':'middle','font-size':24,fill:C.green});});}
+  sweep();});
+
+// 5b happiness, utility, preference
+txt('Happiness, utility, preference','Three words that get used as one',[
+ 'Bentham: happiness is the thing itself, a quantity of pleasure minus pain. Utility is the property of an object that produces it (p. 130). The number is the point.',
+ 'Today: utility is a number that stands in for a ranking of bundles of goods. Ordinal. It says 2 is above 1 and nothing else. The number is a placeholder.',
+ 'Bentham never said “cardinal.” The word came a century later, when economists needed a name for what he had and they were giving up.',
+ 'A sacrifice can leave you less happy and still be what you chose. Bentham must call it a pleasure in disguise, as Hobbes called pity (p. 126). Preference theory only records the choice.',
+ 'Watch what that does to Senior: abstinence has to hurt for profit to be earned (p. 147). A mere preference for later over now earns nothing.',
+ 'The test: change the numbers without changing the order. If nothing you can say has changed, the utility was ordinal. If something has, it was cardinal.']);
+
+// 5c two rulers
+scene('Two rulers','Bentham\'s utils add. Ordinal utils do not.',5,(g,k)=>{
+  const X0=120,U=80;
+  // top: Bentham
+  if(k>=0){T(g,X0,215,'Bentham: a ruler of utils, with a zero and a unit',{'font-size':26,'font-weight':500,fill:C.green});
+    el('line',{x1:X0,y1:330,x2:X0+17*U,y2:330,stroke:C.ink,'stroke-width':2},g);
+    for(let j=0;j<=17;j++){el('line',{x1:X0+j*U,y1:330,x2:X0+j*U,y2:j%5?322:316,stroke:C.ink,'stroke-width':1.5},g);if(j%5===0)T(g,X0+j*U,356,String(j),{'text-anchor':'middle','font-size':18,fill:C.warm});}
+  }
+  if(k>=1){el('rect',{x:X0,y:262,width:3*U,height:56,fill:C.earth},g);T(g,X0+1.5*U,298,'Ann: 3',{'text-anchor':'middle','font-size':22,fill:C.cream});
+    el('rect',{x:X0+3*U,y:262,width:5*U,height:56,fill:C.green},g);T(g,X0+5.5*U,298,'Bob: 5',{'text-anchor':'middle','font-size':22,fill:C.cream});
+    T(g,X0+8.3*U,298,'= 8 utils of happiness, in two breasts',{'font-size':22,fill:C.ink});}
+  if(k>=2)note(g,'Double the ruler and Ann has 6, Bob 10, the pair 16: twice the happiness. Move a unit from Bob to Ann and the sum can rise. That is the 50,000-times argument (p. 133).',400);
+  // bottom: ordinal
+  if(k>=3){T(g,X0,485,'Ordinal: three bundles in a row, and the numbers are only labels',{'font-size':26,'font-weight':500,fill:C.green});
+    const xs=[X0+2*U,X0+5*U,X0+13*U],lab=['bundle A','bundle B','bundle C'],n1=['1','2','3'],n2=['1','4','9'];
+    el('line',{x1:X0,y1:600,x2:X0+17*U,y2:600,stroke:C.ink,'stroke-width':2},g);
+    xs.forEach((x,j)=>{el('circle',{cx:x,cy:600,r:9,fill:C.earth},g);T(g,x,636,lab[j],{'text-anchor':'middle','font-size':20,fill:C.warm});
+      T(g,x,575,n1[j],{'text-anchor':'middle','font-size':26,fill:C.ink});
+      if(k>=4)T(g,x,545,n2[j],{'text-anchor':'middle','font-size':26,fill:C.brick});});
+    T(g,X0+6.6*U,575,'C > B > A, and nothing else.',{'font-size':21,fill:C.ink});
+    el('text',{x:X0+15.3*U,y:585,'font-size':44,fill:C.brick},g,'+');el('line',{x1:X0+15.0*U,y1:590,x2:X0+15.9*U,y2:548,stroke:C.brick,'stroke-width':4},g);}
+  if(k>=4)note(g,'Relabel 1, 2, 3 as 1, 4, 9. Same order, so nothing an ordinal theory can say has changed. On Bentham\'s ruler the gap from B to C just grew from 1 to 5: the pleasure changed. Senior takes the sum away (p. 145); Jevons, Pareto, and Hicks finish the job.',720);
+  sweep();});
+
+// 5d voting
+scene('Voting is ordinal, until it adds','Five voters rank three candidates. Nobody changes a ranking.',4,(g,k)=>{
+  const rows=[['3 voters','A > B > C','A 9, B 6, C 3','A 15, B 6, C 3'],['2 voters','B > C > A','B 6, C 4, A 2','B 10, C 4, A 2'],['total','','A 11, B 12, C 7','A 17, B 16, C 7'],['winner','A beats B 3–2, A beats C 3–2','B','A']];
+  const heads=['','ranking','Borda / Heisman: 3, 2, 1','points 5, 2, 1'];
+  tbl(g,{x:90,y:215,heads,rows:rows.slice(0,Math.min(k+1,4)),colW:[180,420,420,400],fs:24,rowH:70,bold:(i,j)=>i===3,color:(i,j)=>i===3&&j>=2?C.brick:null});
+  if(k>=1)note(g,'Condorcet asks only pairwise questions and never adds: A wins every head-to-head. Instant runoff eliminates and never adds: C goes out first, then A beats B.',560);
+  if(k>=2)note(g,'Borda turns ranks into points and adds them. The Heisman uses 3, 2, 1. That is a ruler with equal gaps, assumed rather than observed.',630);
+  if(k>=3)note(g,'Change the gaps and the winner changes with no voter changing a mind. Every rule that adds across people is Bentham\'s ruler in disguise; every rule that refuses to add can fail to pick anyone (Condorcet\'s cycle; Arrow 1951 proves it is not fixable). Senior\'s “no comparison” has a price, and this is it.',690);
+  sweep();});
+
+// 6 labor is pain
+txt('Bentham: labor is pain, and value is use','HL p. 131',[
+ '“In every human breast, self-regarding interest is predominant over all other interests put together.”',
+ '“Love of labour is a contradiction in terms.” Work is only aversion; you do it for the pleasure it buys.',
+ '“All value is founded on utility.... Where there is no use, there cannot be any value.”',
+ 'Compare Ricardo: for him a better tool lowers value while it raises riches. For Bentham more utility raises value and the owner\'s wealth together.']);
+
+// 7 almost the margin
+scene('Bentham almost finds the margin: water and diamonds','HL pp. 131–132',4,(g,k)=>{
+  const X=110,B=600,bw=130,gap=40,vals=[10,8,6,4,2,0];
+  vals.forEach((v,j)=>{if(k<1)return;abar(g,'u'+j,X+j*(bw+gap),B-v*32,bw,Math.max(v*32,3),j===5?C.pale:C.earth,{label:v?v:'0',fs:22});T(g,X+j*(bw+gap)+bw/2,B+30,'unit '+(j+1),{'text-anchor':'middle','font-size':18,fill:C.warm});});
+  if(k>=1)T(g,X,250,'value of one more unit of water, to one household',{'font-size':24,fill:C.warm});
+  if(k>=2){el('line',{x1:X+5*(bw+gap)-20,y1:230,x2:X+5*(bw+gap)-20,y2:620,stroke:C.brick,'stroke-width':2,'stroke-dasharray':'6 5'},g);T(g,X+5*(bw+gap)-10,250,'“the whole quantity required”',{'font-size':22,fill:C.brick});}
+  if(k>=0)note(g,'Smith, he says, never made use value and exchange value clear: water is sold in London, and diamonds are enjoyed. “If the whole quantity required is available, the surplus has no kind of value. It would be the same in the case of wine, grain, and everything else.” (HL pp. 131–132)',690);
+  if(k>=3)T(g,X,800,'HL p. 131: he “came very close to explicitly developing the principle of marginal utility.” Jevons and Menger finish the sentence in chapter 10.',{'font-size':22,fill:C.green});
+  sweep();});
+
+// 8 reformer
+txt('Bentham the reformer: two arguments the market side still fights','HL pp. 132–134',[
+ 'By 1801 he had turned: “I have not ... any horror, sentimental or anarchical, of the hand of government.”',
+ 'Argument 1: saving may not become investment. Money “put into a chest and kept there” cuts spending, prices, profits, and jobs. That is Malthus\'s glut, and later Keynes.',
+ 'Argument 2: a pound is worth less to a rich man. The richest man\'s pleasure is not 50,000 times the laborer\'s: “even twice, a liberal one.” So moving money down raises total happiness.',
+ 'HL p. 134: the same psychology that makes everyone an egoist makes the legislator one too. Ask whom the legislator gains more by serving.']);
+
+// 9 Say
+scene('Say: “This is an error”','A Treatise on Political Economy; HL pp. 134–137',5,(g,k)=>{
+  const rows=[['What makes value','labor embodied, tools as past labor','utility; price is its index (p. 135)'],
+   ['Who produces','labor, transforming nature','labor, capital, and land, “coequally” (p. 135)'],
+   ['Profit is','a deduction from what labor made','pay for frugality, a title to property (p. 136)'],
+   ['Distribution','subsistence and productivity set it','each agency paid for the utility it adds (p. 136)']];
+  tbl(g,{x:90,y:230,heads:['','Ricardo','Say'],rows:rows.slice(0,Math.min(k,4)),colW:[260,560,600],fs:24,rowH:84});
+  if(k>=4)note(g,'“To the labour of man alone he ascribes the power of producing values. This is an error.” (HL p. 134). Once owning capital is a sacrifice like working, “rich and poor ... are not opposed to each other, and ... all rivalships are mere folly.” (p. 137)',740);
+});
+
+// 10 Say's law
+scene('Say\'s Law: produce opens a vent for produce','HL pp. 137–138',5,(g,k)=>{
+  const X=140,B=560;
+  const bar=(key,x,h,fill,lab)=>{abar(g,key,x,B-h,220,h,fill,{label:lab,fs:22});};
+  if(k>=0){T(g,X,240,'cloth',{'font-size':28,'font-weight':500});T(g,X+420,240,'corn',{'font-size':28,'font-weight':500});}
+  const glut=k<2;bar('c',X,glut?300:200,C.earth,glut?'unsold':'sold');bar('k',X+420,glut?100:200,C.gold,glut?'short':'sold');
+  if(k>=1&&k<2)T(g,X+700,320,'prices fall here, rise there',{'font-size':24,fill:C.brick});
+  if(k>=2)T(g,X+700,320,'capital moves from cloth to corn until both pay alike',{'font-size':24,fill:C.green});
+  bullets(g,['No one produces except to exchange, and money is only the medium, so “a supply creates a demand of the same magnitude.” True of each producer, so true of the sum.','An overstock of some goods only means others were not produced enough; migration of capital fixes it. Gluts are partial and temporary, never general.','Malthus, Bentham, Marx, and Keynes all reject it. What it leaves out: money that leaves circulation.'],640,24,Math.max(0,k-1));
+  sweep();});
+
+// 11 Senior turns
+txt('Senior turns, 1830','HL pp. 138–141',[
+ 'Before 1830 he was sympathetic to the poor and did not accept that subsistence wages were inevitable.',
+ 'Then came “the fires and insurrections which terrified the south of England in the frightful autumn of 1830.”',
+ 'The wages fund: capitalists hold a “fund for the maintenance of labourers,” so wages rise only if productivity rises or workers are fewer.',
+ 'A worker “paid, not according to his value, but his wants ... ceases to be a free man.” He drafted the 1834 Poor Law: relief below the lowest wage, and stigmatized.',
+ 'Hobsbawm on the result: “an engine of degradation and oppression more than a means of material relief.” (p. 141)']);
+
+// 12 method
+txt('Senior\'s method: not Happiness, but Wealth','HL pp. 141–143',[
+ 'The first clear positive/normative split: strip the ethics, keep “a very few general propositions,” deduce.',
+ '“The subject treated by the Political Economist ... is not Happiness, but Wealth ... his conclusions ... do not authorize him in adding a single syllable of advice.” (p. 142)',
+ 'HL\'s objection: which few propositions matter depends on the problem you care about, and that choice is a value.',
+ 'The giveaway: the economist states principles “which it is fatal to neglect.” Fatal for whom? The man who wrote the Poor Law knew.']);
+
+// 13 four propositions
+scene('The four propositions','HL pp. 143–144',5,(g,k)=>{
+  const rows=[['1','“every man desires to obtain additional Wealth with as little sacrifice as possible”','utility maximization, prices, no gluts'],
+   ['2','population is limited only by moral or physical evil, or by fear of want','Malthus kept, and the poor laws blamed'],
+   ['3','labor and capital “indefinitely increased” by reinvesting products','accumulation, and abstinence'],
+   ['4','more labor on a given district of land yields “a less proportionate return”','rent, redefined']];
+  tbl(g,{x:90,y:230,heads:['','Senior\'s premise','What he builds on it'],rows:rows.slice(0,Math.min(k,4)),colW:[70,900,450],fs:23,rowH:90});
+  if(k>=4)note(g,'HL p. 143: each premise carries a moral. We take them in turn.',720);
+});
+
+// 14 Senior on value
+txt('Senior on value: as if nature supplied everything','HL pp. 144–146',[
+ 'Wealth is “the power, direct or indirect, of producing pleasure,” so maximizing wealth is maximizing utility.',
+ 'Against Bentham: “no person feels his whole wants to be adequately supplied,” and wants differ by character. No satiation, no comparing persons, no case for redistribution.',
+ 'Against Ricardo: if nature supplied all goods without labor, “in precisely the same quantities,” they would exchange in “[no] other than their present proportions.”',
+ 'Ricardo had answered in advance (ch. 5, p. 98): scarce, non-reproducible goods are the exception. Senior says they are “the bulk of wealth.”',
+ 'A general glut would require “general satiety,” which proposition 1 forbids. So crises cannot exist. Say at least admitted distress.']);
+
+// 15 abstinence
+txt('Abstinence: profit is pay for pain','HL pp. 146–148, 150–151',[
+ 'Thompson and Hodgskin (ch. 7) had said: labor is a real human cost, owning capital is only a legal relation, so wages are earned and profits are not.',
+ 'Senior\'s answer needs a cost of owning. “To this conduct we have already given the name of Abstinence.”',
+ '“To abstain from the enjoyment which is in our power, or to seek distant rather than immediate results, are among the most painful exertions of the human will.”',
+ 'So profit stands on the same footing as wages, and the nation\'s prosperity rests on the abstinence of its capitalists.',
+ 'HL\'s reply: most capital is inherited, and Senior himself says capitalists “go on producing and amassing and leave the task of expending to their heirs.” Where is the pain?']);
+
+// 16 every income is rent
+scene('Every income is partly rent, so there are no classes','HL pp. 148–149',6,(g,k)=>{
+  const X=110,Y=240,w=420,h=150;
+  const box=(j,lab,sub,fill)=>{el('rect',{x:X+j*(w+40),y:Y,width:w,height:h,rx:10,fill:fill},g);T(g,X+j*(w+40)+24,Y+62,lab,{'font-size':34,'font-weight':700,fill:C.cream});T(g,X+j*(w+40)+24,Y+108,sub,{'font-size':22,fill:C.cream});};
+  box(0,'RENT','“offered by nature or accident”',C.earth);
+  if(k>=1)box(1,'WAGES','“the reward of labour”',C.green);
+  if(k>=2)box(2,'PROFIT','“that of abstinence”',C.golddeep);
+  if(k>=3){el('rect',{x:X,y:Y+h+30,width:3*w+80,height:60,rx:10,fill:C.mist},g);T(g,X+24,Y+h+70,'“At a distance these divisions appear clearly marked, but when we look into the details, we find them so intermingled....” (p. 149)',{'font-size':23,fill:C.brick});}
+  bullets(g,['Rent is redefined as “an advantage derived from the use of a natural agent not universally accessible.” Any advantage: talent, inherited capital, a better machine.','Then a worker\'s wage and a capitalist\'s profit each contain rent, and directing capital is itself labor, so profit shades into wages.','Class differences are “largely illusory.” Doctrines of class conflict are “the political economy of the poor” (p. 150). And the landlord? His interest and the public\'s “coincide” (p. 148). Ricardo p. 96 said the opposite.'],520,24,Math.max(0,k-2));
+});
+
+// 17 Song B
+scene('Song B again: three ledgers for one AI song','Game Level 6, when it opens',5,(g,k)=>{
+  const rows=[['Who made it?','a million songwriters, and engineers','labor, capital, and nature, coequally','whoever abstained to build the model'],
+   ['What is it worth?','its hours: now nearly zero a song','its utility; the price is the index','its utility; labor\'s absence is nothing'],
+   ['Who should be paid?','those whose labor is in it','each agency, for the utility it added','the abstainer, and the advantage\'s owner'],
+   ['Is prompting labor?','minutes of it; the value is elsewhere','industry that made utility, so yes','labor, plus a rent for talent']];
+  tbl(g,{x:70,y:220,heads:['','Ricardo','Say','Senior'],rows:rows.slice(0,Math.min(k,4)),colW:[240,420,420,420],fs:22,rowH:100});
+  if(k>=4)note(g,'Your answers from the Ricardo day, “it stole from the artists” included, each sit in one of these columns. Level 6 asks you to pick a column and defend it.',720);
+});
+
+// 18 scorecard
+scene('Scorecard: harmony or conflict','The question every week answers',6,(g,k)=>{
+  const rows=[['value is','labor embodied','utility','utility','utility'],
+   ['profit is','a deduction','(silent)','pay for frugality','pay for abstinence'],
+   ['rent is','a deduction, against everyone','(silent)','pay for a natural agent','an advantage, in every income'],
+   ['general gluts','impossible','possible: hoarding','impossible: Say\'s law','impossible: no satiety'],
+   ['the market','conceals a conflict','harmony, with repair','harmony','harmony']];
+  tbl(g,{x:90,y:220,heads:['','Ricardo','Bentham','Say','Senior'],rows:rows.slice(0,Math.min(k,5)),colW:[220,300,300,300,300],fs:23,rowH:76});
+  if(k>=5)note(g,'HL p. 150 concede one point: by 1850 the rent/profit line had blurred. What critics keep is the line between income from working and income from owning. Chapter 7 and Marx start there.',720);
+});
+
+// 19 exam
+txt('What to take out the door','Three sentences, one per writer',[
+ 'Bentham: value is utility, utility is a quantity of pleasure you can add across people, and labor is pain. The market can hoard and can be improved.',
+ 'Say: labor, capital, and land coequally make utility and are each paid their contribution, so profit is earned the way wages are. Supply creates its own demand.',
+ 'Senior: nobody is ever satisfied, so no comparing persons and no general glut; profit is pay for abstinence; every income is partly rent, so classes blur.',
+ 'Next: Thompson and Hodgskin (HL ch. 7) put the line between working and owning back. The game is at who-gets-paid.pages.dev.']);
+
+// ---------------- engine ----------------
+let i=0,k=0;
+const stagesOf=n=>S[n].stages||1;
+function show(si,sk){
+  i=Math.max(0,Math.min(S.length-1,si));
+  const s=S[i];k=Math.max(0,Math.min(stagesOf(i)-1,sk||0));
+  $('title').textContent=s.title;$('sub').textContent=s.sub||'';
+  const g=$('body');while(g.firstChild)g.removeChild(g.firstChild);
+  if(!s.stages)bars={};
+  s.draw(g,k);
+  $('counter').textContent=(i+1)+' / '+S.length+(stagesOf(i)>1?'   ·   step '+(k+1)+' of '+stagesOf(i)+(k<stagesOf(i)-1?'  →':''):'');
+  try{localStorage.setItem('bss.i',i);localStorage.setItem('bss.k',k);}catch(e){}
+}
+const next=()=>{if(k<stagesOf(i)-1)show(i,k+1);else show(i+1,0);};
+const prev=()=>{if(k>0)show(i,k-1);else if(i>0)show(i-1,stagesOf(i-1)-1);};
+document.body.addEventListener('click',e=>{if(e.shiftKey)prev();else next();});
+window.addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown','Enter'].includes(e.key)){e.preventDefault();next();}else if(['ArrowLeft','ArrowUp','PageUp','Backspace','p','P'].includes(e.key)){e.preventDefault();prev();}else if(e.key==='End'||e.key==='.'){show(i,stagesOf(i)-1);}else if(e.key==='n'||e.key==='N'){show(i+1,0);}else if(e.key==='r'||e.key==='R'){show(0,0);}else if(e.key==='f'||e.key==='F'){const d=document.documentElement;if(document.fullscreenElement||document.webkitFullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document);}else{(d.requestFullscreen||d.webkitRequestFullscreen).call(d);}}});
+let si=0,sk=0;try{si=+localStorage.getItem('bss.i')||0;sk=+localStorage.getItem('bss.k')||0;}catch(e){}
+const Q=new URLSearchParams(location.search);if(Q.has('s')){si=(+Q.get('s')||1)-1;sk=Q.has('k')?(+Q.get('k')||1)-1:99;}
+show(si,sk);
+})();
+</script>
+</body>
+</html>
