@@ -176,22 +176,32 @@ S.push({title:'',sub:'',draw:g=>{
 }});
 
 // 2 review
-txt('What we did: Ricardo in six sentences','Levels 1, 2, and 5 of the game, and the corn model',[
+txt('What we did: value is labor','Levels 1 and 2 of the game',[
  'Goods exchange in proportion to the labor embodied in them, as with the hunters.',
  'A tool is past labor, so the loom\'s share belongs in the price of the stockings.',
+ 'Utility is necessary for value and does not regulate it (HL p. 98).']);
+
+txt('What we did: profit is what is left','Level 5 and the corn model',[
  'Measure the day\'s product in hours, and profit is what is left after the hours in the wage basket.',
  'A dearer (more expensive) basket lowers the rate of profit with no change in the product.',
- 'Profit and rent are therefore deductions from what labor made.',
- 'Utility is necessary for value and does not regulate it (HL p. 98).']);
+ 'Profit and rent are therefore deductions from what labor made.']);
 
 // 2b why the deduction mattered
 txt('Why “deductions from what labor made” mattered to Ricardo','“To determine the laws which regulate this distribution, is the principal problem in Political Economy” (Preface, 1817)',[
  'The day\'s product is a fixed number of hours, so wages, profit, and rent are shares of one thing.',
  'A dearer (more expensive) basket raises the wage share and lowers profit with nothing else changing.',
- 'The Corn Laws kept corn dear, so they moved income from capitalists to landlords through the wage.',
- 'That is why the landlord\'s interest is “always opposed to the interest of every other class” (HL p. 96).',
+ 'The Corn Laws kept corn dear, so they moved income from capitalists to landlords through the wage.']);
+
+txt('Why it mattered: the conflict is arithmetic','HL p. 96',[
+ 'That is why the landlord\'s interest is “always opposed to the interest of every other class.”',
  'The conflict is not a judgment added at the end but the arithmetic of a residual.',
  'The alternative, which arrives today, is that profit is capital\'s own contribution, so nothing is deducted from anyone.']);
+
+txt('The surplus and who gets it are two questions','Counting in hours keeps them apart',[
+ 'Measured in hours, the surplus is the product minus the basket, and technique and the margin fix its size.',
+ 'Who gets the surplus is a separate question, and the Corn Laws answered it in the landlords\' favor through the wage.',
+ 'Dearer corn is also a real cost, since worse land means more hours for the same basket, so the surplus itself shrinks.',
+ 'A price rise that is passed into wages is a transfer, and the real cost is the hours used up, which is the same distinction as the cost of inflation.']);
 
 // 2c two subtractions
 scene('Two subtractions: Ricardo\'s profit and today\'s','Profit = TR − TC = pq − FC − VC looks like a residual too, and the difference is in p and in the cost list',6,(g,k)=>{
@@ -274,14 +284,16 @@ txt('Happiness, utility, preference','Three words that get used as one',[
  'For Bentham, happiness is the thing itself, a quantity of pleasure minus pain.',
  'Utility is the property of an object that produces that happiness (p. 130).',
  'For us, utility is a number that stands in for a ranking of bundles of goods.',
- 'An ordinal number says 2 is above 1 and nothing else.',
- 'Bentham never said “cardinal,” a word coined a century later for what he had and economists were giving up.']);
+ 'An ordinal number says 2 is above 1 and nothing else.']);
 
-txt('Sacrifice, and the test','Where the hedonic reading carries weight',[
+txt('Sacrifice, and what it does to Senior','Where the hedonic reading carries weight',[
  'A sacrifice can leave you less happy and still be what you chose.',
  'Bentham must call it a pleasure in disguise, as Hobbes called pity (p. 126).',
  'Preference theory only records the choice.',
- 'For Senior, abstinence has to hurt before profit is earned (p. 147), and a mere preference for later over now earns nothing.',
+ 'For Senior, abstinence has to hurt before profit is earned (p. 147), and a mere preference for later over now earns nothing.']);
+
+txt('Cardinal, a word Bentham never used','The test for which kind of number you have',[
+ 'The word was coined a century later for what Bentham had and economists were giving up.',
  'The test is to change the numbers without changing the order and ask whether anything you can say has changed.']);
 
 // 5c two rulers
@@ -336,11 +348,13 @@ scene('Bentham almost finds the margin: water and diamonds','HL pp. 131–132',4
   sweep();});
 
 // 8 reformer
-txt('Bentham the reformer: two arguments the market side still fights','HL pp. 132–134',[
+txt('Bentham the reformer: saving may not become investment','HL pp. 132–133',[
  'By 1801 he had turned: “I have not ... any horror, sentimental or anarchical, of the hand of government.”',
  'Argument 1: saving may not become investment.',
- 'Money “put into a chest and kept there” cuts spending, prices, profits, and jobs, which is Malthus\'s glut and later Keynes.',
- 'Argument 2: a pound is worth less to a rich man, whose pleasure is not 50,000 times the laborer\'s but at most “twice, a liberal one.”',
+ 'Money “put into a chest and kept there” cuts spending, prices, profits, and jobs, which is Malthus\'s glut and later Keynes.']);
+
+txt('Bentham the reformer: a pound is worth less to a rich man','HL pp. 133–134',[
+ 'Argument 2: the richest man\'s pleasure is not 50,000 times the laborer\'s but at most “twice, a liberal one.”',
  'So moving money down raises total happiness.',
  'HL p. 134: the same psychology that makes everyone an egoist makes the legislator one too, so ask whom he gains more by serving.']);
 
@@ -366,10 +380,12 @@ scene('Say\'s Law: produce opens a vent for produce','HL pp. 137–138',5,(g,k)=
   sweep();});
 
 // 11 Senior turns
-txt('Senior turns, 1830','HL pp. 138–141',[
+txt('Senior turns, 1830','HL pp. 138–139',[
  'Before 1830 he was sympathetic to the poor and did not accept that subsistence wages were inevitable.',
  'Then came “the fires and insurrections which terrified the south of England in the frightful autumn of 1830.”',
- 'The wages fund: capitalists hold a “fund for the maintenance of labourers,” so wages rise only if productivity rises or workers are fewer.',
+ 'The wages fund: capitalists hold a “fund for the maintenance of labourers,” so wages rise only if productivity rises or workers are fewer.']);
+
+txt('Senior writes the Poor Law, 1834','HL pp. 140–141',[
  'A worker “paid, not according to his value, but his wants ... ceases to be a free man.”',
  'He drafted the 1834 Poor Law: relief below the lowest wage, and stigmatized.',
  'Hobsbawm on the result: “an engine of degradation and oppression more than a means of material relief.” (p. 141)']);
@@ -392,21 +408,27 @@ scene('The four propositions','HL pp. 143–144',5,(g,k)=>{
 });
 
 // 14 Senior on value
-txt('Senior on value: as if nature supplied everything','HL pp. 144–146',[
+txt('Senior on value: against Bentham','HL pp. 144–145',[
  'Wealth is “the power, direct or indirect, of producing pleasure,” so maximizing wealth is maximizing utility.',
  'Against Bentham: “no person feels his whole wants to be adequately supplied,” and wants differ by character.',
- 'So there is no satiation, no comparing persons, and no case for redistribution.',
+ 'So there is no satiation, no comparing persons, and no case for redistribution.']);
+
+txt('Senior on value: as if nature supplied everything','HL pp. 145–146',[
  'Against Ricardo: if nature supplied all goods without labor, “in precisely the same quantities,” they would exchange in “[no] other than their present proportions.”',
  'Ricardo had answered in advance (ch. 5, p. 98) that scarce, non-reproducible goods are the exception, and Senior says they are “the bulk of wealth.”',
  'A general glut would require “general satiety,” which proposition 1 forbids, so crises cannot exist, where Say at least admitted distress.']);
 
 // 15 abstinence
-txt('Abstinence: profit is pay for pain','HL pp. 146–148, 150–151',[
+txt('Abstinence: profit is pay for pain','HL pp. 146–148',[
  'Thompson and Hodgskin (ch. 7) had said: labor is a real human cost, owning capital is only a legal relation, so wages are earned and profits are not.',
  'Senior\'s answer needs a cost of owning: “To this conduct we have already given the name of Abstinence.”',
  '“To abstain from the enjoyment which is in our power, or to seek distant rather than immediate results, are among the most painful exertions of the human will.”',
- 'So profit stands on the same footing as wages, and the nation\'s prosperity rests on the abstinence of its capitalists.',
- 'HL\'s reply: most capital is inherited, and Senior himself says capitalists “go on producing and amassing and leave the task of expending to their heirs,” so where is the pain?']);
+ 'So profit stands on the same footing as wages, and the nation\'s prosperity rests on the abstinence of its capitalists.']);
+
+txt('Abstinence: HL\'s reply','HL pp. 150–151',[
+ 'Most capital is inherited, and its origins were almost never abstinence (ch. 9).',
+ '“Abstaining from the unproductive use of capital” only means using a factory for profit rather than for enjoyment, so the pain is defined into profit.',
+ 'Senior himself says capitalists “go on producing and amassing and leave the task of expending to their heirs,” so where is the pain?']);
 
 // 16 every income is rent
 scene('Every income is partly rent, so there are no classes','HL pp. 148–149',6,(g,k)=>{
@@ -441,12 +463,11 @@ scene('Scorecard: harmony or conflict','The question every week answers',6,(g,k)
 });
 
 // 19 exam
-txt('What to take out the door','Three sentences, one per writer',[
+txt('What to take out the door','Three sentences, one per writer  ·  who-gets-paid.pages.dev',[
  'Bentham: value is utility, a quantity of pleasure you can add across people, and the market can hoard and can be improved.',
  'Say: labor, capital, and land coequally make utility and are each paid their contribution, so profit is earned the way wages are, and supply creates its own demand.',
  'Senior: nobody is ever satisfied, so no comparing persons and no general glut; profit is pay for abstinence; every income is partly rent, so classes blur.',
- 'Next, Thompson and Hodgskin (HL ch. 7) put the line between working and owning back.',
- 'The game is at who-gets-paid.pages.dev.']);
+ 'Next, Thompson and Hodgskin (HL ch. 7) put the line between working and owning back.']);
 
 // ---------------- engine ----------------
 let i=0,k=0;
