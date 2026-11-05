@@ -214,7 +214,7 @@ txt('The surplus and who gets it are two questions','Counting in hours keeps the
 scene('Two subtractions: Ricardo\'s profit and today\'s','Profit = TR − TC = pq − FC − VC looks like a residual too, and the difference is in p and in the cost list',6,(g,k)=>{
   const rows=[['the price p','hours of labor embodied','set by supply and demand'],['what is subtracted','the wage basket, in hours','wages, materials, and the going return on capital'],['profit','the residual, r × wages advanced','what is left after capital is paid'],['when wages rise','the capitalist loses, one for one','nobody in the formula, since p can move']];
   tbl(g,{x:90,y:215,heads:['','Ricardo','today'],rows:rows.slice(0,Math.min(k+1,4)),colW:[300,520,600],fs:23,rowH:64,bold:(i,j)=>j===0});
-  if(k>=4)bullets(g,['You are right that it is about p: Ricardo\'s p is a quantity of hours, so it cannot rise to make room for everyone.','Today\'s cost line already pays capital its going return, which is Say and Senior\'s move written into the accounting.'],560,26,k>=5?2:1);
+  if(k>=4)bullets(g,['In Ricardo\'s model p is a number of hours, while for us p is the exchange price set in markets by supply and demand, which he does not model.','Today\'s cost line already pays capital its going return, which is Say and Senior\'s move written into the accounting.'],560,26,k>=5?2:1);
   if(k>=5)note(g,'Ricardo\'s r is that going return, and under competition what is left after it is zero. The dispute today is whether r is a deduction from labor\'s product or a payment for capital\'s own contribution.',760);
   sweep();});
 
