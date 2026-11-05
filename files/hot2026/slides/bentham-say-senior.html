@@ -162,7 +162,56 @@ const S=[];
 const txt=(title,sub,lines,extra)=>S.push({title,sub,stages:lines.length,draw:(g,k)=>{bullets(g,lines,null,null,k+1);if(extra)extra(g);}});
 const scene=(title,sub,n,draw)=>S.push({title,sub,stages:n,draw});
 
-// 1 cover
+// 1 opening: finishing Ricardo
+S.push({title:'',sub:'',draw:g=>{
+  el('rect',{x:0,y:0,width:1600,height:900,fill:C.green},g);
+  el('rect',{x:120,y:268,width:110,height:8,fill:C.gold},g);
+  T(g,120,380,'Finishing Ricardo',{'font-size':92,'font-weight':700,fill:C.cream});
+  T(g,120,452,'A short review, the new piece, the crack, then the other answer',{'font-size':40,fill:C.gold});
+  T(g,120,575,'Scott Cunningham  ·  History of Economic Thought  ·  Baylor University',{'font-size':36,fill:C.cream});
+  T(g,120,625,'Thursday, November 5, 2026  ·  ECO 4343/5343  ·  Hunt & Lautzenheiser chs. 5–6',{'font-size':30,fill:C.cream,opacity:0.62});
+  T(g,120,705,'The review is short on purpose',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,745,'The full Ricardo deck, with the game drills, stays posted at scunning.com/files/hot2026/slides/ricardo-value.html',{'font-size':26,fill:C.cream,opacity:0.85});
+  T(g,120,845,'who-gets-paid.pages.dev',{'font-size':32,'font-weight':700,fill:C.gold});
+}});
+
+// 2 review
+txt('What we did: Ricardo in six sentences','Levels 1, 2, and 5 of the game, and the corn model',[
+ 'Goods exchange in proportion to the labor embodied in them, as with the hunters.',
+ 'A tool is past labor, so the loom\'s share belongs in the price of the stockings.',
+ 'Measure the day\'s product in hours, and profit is what is left after the hours in the wage basket.',
+ 'A dearer basket lowers the rate of profit with no change in the product.',
+ 'Profit and rent are therefore deductions from what labor made.',
+ 'Utility is necessary for value and does not regulate it (HL p. 98).']);
+
+// 3 new: the price equation
+scene('New: where the price equation comes from','HL pp. 103–104, 107',5,(g,k)=>{
+  bullets(g,['Natural price is what it cost to make plus the going profit on the money tied up.','Competition makes the rate of profit the same in every trade (HL p. 93).','Labor paid this year earns r once, and labor paid last year earns r twice.','Set r = 0 and the price is the labor, exactly.'],200,30,Math.min(k,4));
+  if(k>=4){el('rect',{x:120,y:680,width:1360,height:96,rx:10,fill:C.mist},g);T(g,800,742,'Price = w(1 + r) × [hours now + hours last year × (1 + r)]',{'text-anchor':'middle','font-size':40,'font-weight':700,fill:C.green});}
+  sweep();});
+
+// 4 new: timing
+scene('New: same labor, different timing','Game Level 3: A is 10 hours now; B is 5 now and 5 last year; w = $1',7,(g,k)=>{
+  const rows=[['0','10.00','10.00','1.00'],['10%','11.00','11.55','1.05'],['25%','12.50','14.06','1.125'],['50%','15.00','18.75','1.25']];
+  tbl(g,{x:200,y:215,heads:['r','price A','price B','B ÷ A'],rows:rows.slice(0,Math.min(k+1,4)),colW:[200,320,320,320],fs:28,rowH:64,hl:k>=3?[0]:[],bold:(i,j)=>j===3,color:(i,j)=>j===3&&i>0?C.brick:null});
+  if(k>=4)bullets(g,['At r = 0 the two prices are equal, which is the labor theory exactly.','Nothing about the labor changes as r rises, and the ratio leaves 1.','HL p. 105: “the price ratio has changed while the quantities of labor embodied in the two commodities have remained unchanged.”'],570,28,Math.min(k-3,3));
+  sweep();});
+
+// 5 new: the tables
+txt('New: what Ricardo\'s own tables show','Tables 5.1 and 5.2, HL pp. 109–114',[
+ 'A wage change moves relative prices with no change in the labor.',
+ 'When the wage doubled and r fell to 10 percent, the capital-heavy good got cheaper, from 2.08 to 1.16 times the other.',
+ 'Ricardo wanted a measure of value that would not move when wages moved.',
+ 'He never found one and took gold provisionally, “knowing that in reality it was not” (p. 114).']);
+
+// 6 the crack
+txt('The crack in the labor theory of value','Everything that is not labor in a price is r',[
+ 'Prices equal labor only when r = 0.',
+ 'Ricardo called the deviations small and kept the theory.',
+ 'Where r comes from is now the open question.',
+ 'The three writers today take r and make it the whole story.']);
+
+// 7 cover: value without labor
 S.push({title:'',sub:'',draw:g=>{
   el('rect',{x:0,y:0,width:1600,height:900,fill:C.green},g);
   el('rect',{x:120,y:268,width:110,height:8,fill:C.gold},g);
@@ -170,24 +219,18 @@ S.push({title:'',sub:'',draw:g=>{
   T(g,120,452,'Bentham, Say, and Senior answer Ricardo',{'font-size':44,fill:C.gold});
   T(g,120,575,'Scott Cunningham  ·  History of Economic Thought  ·  Baylor University',{'font-size':36,fill:C.cream});
   T(g,120,625,'Thursday, November 5, 2026  ·  ECO 4343/5343  ·  Hunt & Lautzenheiser ch. 6',{'font-size':30,fill:C.cream,opacity:0.62});
-  T(g,120,705,'Last time: Ricardo said value is labor, and profit and rent are deductions from it',{'font-size':28,fill:C.cream,opacity:0.85});
-  T(g,120,745,'Today: three writers who make the deduction disappear',{'font-size':28,fill:C.cream,opacity:0.85});
-  T(g,120,785,'Exam 2 is behind you. Today the other side gets its turn',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,705,'Ricardo: value is labor, and profit and rent are deductions from it',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,745,'Now: three writers who make the deduction disappear',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,785,'The crack was r, and each of them has a different story about what r is',{'font-size':28,fill:C.cream,opacity:0.85});
   T(g,120,845,'who-gets-paid.pages.dev',{'font-size':32,'font-weight':700,fill:C.gold});
 }});
 
-// 2 where Tuesday ended
-txt('Where Ricardo ended','HL ch. 5',[
- 'Goods exchange in proportion to the labor embodied in them, the loom\'s share included.',
- 'Measure the product in hours and profit is what is left after the hours in the wage basket.',
- 'So profit and rent are deductions from what labor made, and a dearer basket means a lower profit rate.',
- 'Utility is necessary for value and does not regulate it (HL p. 98). That sentence is where today begins.']);
 
 // 3 three moves
 txt('Today: three moves that make the conflict disappear','HL p. 127: the chapter is the hinge of the course',[
- 'Move 1: value is utility, not labor. If labor did not make the value, there is no surplus that labor made.',
- 'Move 2: owning is a sacrifice, like working. Then profit is earned the way wages are earned.',
- 'Move 3: every income contains some rent. Then the three classes blur into one set of owners of advantages.',
+ 'Move 1: value is utility, not labor, so there is no surplus that labor made.',
+ 'Move 2: owning is a sacrifice like working, so profit is earned the way wages are.',
+ 'Move 3: every income contains some rent, so the three classes blur into one set of owners of advantages.',
  'HL p. 127: the three writers “each contributed to the abandonment of the labor theory of value—and hence its class conflict conclusions.”']);
 
 // 4 five habits
@@ -211,12 +254,18 @@ scene('Bentham: two sovereign masters','An Introduction to the Principles of Mor
 
 // 5b happiness, utility, preference
 txt('Happiness, utility, preference','Three words that get used as one',[
- 'Bentham: happiness is the thing itself, a quantity of pleasure minus pain. Utility is the property of an object that produces it (p. 130). The number is the point.',
- 'Today: utility is a number that stands in for a ranking of bundles of goods. Ordinal. It says 2 is above 1 and nothing else. The number is a placeholder.',
- 'Bentham never said “cardinal.” The word came a century later, when economists needed a name for what he had and they were giving up.',
- 'A sacrifice can leave you less happy and still be what you chose. Bentham must call it a pleasure in disguise, as Hobbes called pity (p. 126). Preference theory only records the choice.',
- 'Watch what that does to Senior: abstinence has to hurt for profit to be earned (p. 147). A mere preference for later over now earns nothing.',
- 'The test: change the numbers without changing the order. If nothing you can say has changed, the utility was ordinal. If something has, it was cardinal.']);
+ 'For Bentham, happiness is the thing itself, a quantity of pleasure minus pain.',
+ 'Utility is the property of an object that produces that happiness (p. 130).',
+ 'For us, utility is a number that stands in for a ranking of bundles of goods.',
+ 'An ordinal number says 2 is above 1 and nothing else.',
+ 'Bentham never said “cardinal,” a word coined a century later for what he had and economists were giving up.']);
+
+txt('Sacrifice, and the test','Where the hedonic reading carries weight',[
+ 'A sacrifice can leave you less happy and still be what you chose.',
+ 'Bentham must call it a pleasure in disguise, as Hobbes called pity (p. 126).',
+ 'Preference theory only records the choice.',
+ 'For Senior, abstinence has to hurt before profit is earned (p. 147), and a mere preference for later over now earns nothing.',
+ 'The test is to change the numbers without changing the order and ask whether anything you can say has changed.']);
 
 // 5c two rulers
 scene('Two rulers','Bentham\'s utils add. Ordinal utils do not.',5,(g,k)=>{
@@ -255,9 +304,9 @@ scene('Voting is ordinal, until it adds','Five voters rank three candidates. Nob
 // 6 labor is pain
 txt('Bentham: labor is pain, and value is use','HL p. 131',[
  '“In every human breast, self-regarding interest is predominant over all other interests put together.”',
- '“Love of labour is a contradiction in terms.” Work is only aversion; you do it for the pleasure it buys.',
+ '“Love of labour is a contradiction in terms,” so work is only aversion endured for the pleasure it buys.',
  '“All value is founded on utility.... Where there is no use, there cannot be any value.”',
- 'Compare Ricardo: for him a better tool lowers value while it raises riches. For Bentham more utility raises value and the owner\'s wealth together.']);
+ 'For Ricardo a better tool lowers value while it raises riches, and for Bentham more utility raises value and the owner\'s wealth together.']);
 
 // 7 almost the margin
 scene('Bentham almost finds the margin: water and diamonds','HL pp. 131–132',4,(g,k)=>{
@@ -272,9 +321,11 @@ scene('Bentham almost finds the margin: water and diamonds','HL pp. 131–132',4
 // 8 reformer
 txt('Bentham the reformer: two arguments the market side still fights','HL pp. 132–134',[
  'By 1801 he had turned: “I have not ... any horror, sentimental or anarchical, of the hand of government.”',
- 'Argument 1: saving may not become investment. Money “put into a chest and kept there” cuts spending, prices, profits, and jobs. That is Malthus\'s glut, and later Keynes.',
- 'Argument 2: a pound is worth less to a rich man. The richest man\'s pleasure is not 50,000 times the laborer\'s: “even twice, a liberal one.” So moving money down raises total happiness.',
- 'HL p. 134: the same psychology that makes everyone an egoist makes the legislator one too. Ask whom the legislator gains more by serving.']);
+ 'Argument 1: saving may not become investment.',
+ 'Money “put into a chest and kept there” cuts spending, prices, profits, and jobs, which is Malthus\'s glut and later Keynes.',
+ 'Argument 2: a pound is worth less to a rich man, whose pleasure is not 50,000 times the laborer\'s but at most “twice, a liberal one.”',
+ 'So moving money down raises total happiness.',
+ 'HL p. 134: the same psychology that makes everyone an egoist makes the legislator one too, so ask whom he gains more by serving.']);
 
 // 9 Say
 scene('Say: “This is an error”','A Treatise on Political Economy; HL pp. 134–137',5,(g,k)=>{
@@ -302,7 +353,8 @@ txt('Senior turns, 1830','HL pp. 138–141',[
  'Before 1830 he was sympathetic to the poor and did not accept that subsistence wages were inevitable.',
  'Then came “the fires and insurrections which terrified the south of England in the frightful autumn of 1830.”',
  'The wages fund: capitalists hold a “fund for the maintenance of labourers,” so wages rise only if productivity rises or workers are fewer.',
- 'A worker “paid, not according to his value, but his wants ... ceases to be a free man.” He drafted the 1834 Poor Law: relief below the lowest wage, and stigmatized.',
+ 'A worker “paid, not according to his value, but his wants ... ceases to be a free man.”',
+ 'He drafted the 1834 Poor Law: relief below the lowest wage, and stigmatized.',
  'Hobsbawm on the result: “an engine of degradation and oppression more than a means of material relief.” (p. 141)']);
 
 // 12 method
@@ -310,7 +362,7 @@ txt('Senior\'s method: not Happiness, but Wealth','HL pp. 141–143',[
  'The first clear positive/normative split: strip the ethics, keep “a very few general propositions,” deduce.',
  '“The subject treated by the Political Economist ... is not Happiness, but Wealth ... his conclusions ... do not authorize him in adding a single syllable of advice.” (p. 142)',
  'HL\'s objection: which few propositions matter depends on the problem you care about, and that choice is a value.',
- 'The giveaway: the economist states principles “which it is fatal to neglect.” Fatal for whom? The man who wrote the Poor Law knew.']);
+ 'The giveaway is that the economist states principles “which it is fatal to neglect,” and the man who wrote the Poor Law knew for whom.']);
 
 // 13 four propositions
 scene('The four propositions','HL pp. 143–144',5,(g,k)=>{
@@ -325,18 +377,19 @@ scene('The four propositions','HL pp. 143–144',5,(g,k)=>{
 // 14 Senior on value
 txt('Senior on value: as if nature supplied everything','HL pp. 144–146',[
  'Wealth is “the power, direct or indirect, of producing pleasure,” so maximizing wealth is maximizing utility.',
- 'Against Bentham: “no person feels his whole wants to be adequately supplied,” and wants differ by character. No satiation, no comparing persons, no case for redistribution.',
+ 'Against Bentham: “no person feels his whole wants to be adequately supplied,” and wants differ by character.',
+ 'So there is no satiation, no comparing persons, and no case for redistribution.',
  'Against Ricardo: if nature supplied all goods without labor, “in precisely the same quantities,” they would exchange in “[no] other than their present proportions.”',
- 'Ricardo had answered in advance (ch. 5, p. 98): scarce, non-reproducible goods are the exception. Senior says they are “the bulk of wealth.”',
- 'A general glut would require “general satiety,” which proposition 1 forbids. So crises cannot exist. Say at least admitted distress.']);
+ 'Ricardo had answered in advance (ch. 5, p. 98) that scarce, non-reproducible goods are the exception, and Senior says they are “the bulk of wealth.”',
+ 'A general glut would require “general satiety,” which proposition 1 forbids, so crises cannot exist, where Say at least admitted distress.']);
 
 // 15 abstinence
 txt('Abstinence: profit is pay for pain','HL pp. 146–148, 150–151',[
  'Thompson and Hodgskin (ch. 7) had said: labor is a real human cost, owning capital is only a legal relation, so wages are earned and profits are not.',
- 'Senior\'s answer needs a cost of owning. “To this conduct we have already given the name of Abstinence.”',
+ 'Senior\'s answer needs a cost of owning: “To this conduct we have already given the name of Abstinence.”',
  '“To abstain from the enjoyment which is in our power, or to seek distant rather than immediate results, are among the most painful exertions of the human will.”',
  'So profit stands on the same footing as wages, and the nation\'s prosperity rests on the abstinence of its capitalists.',
- 'HL\'s reply: most capital is inherited, and Senior himself says capitalists “go on producing and amassing and leave the task of expending to their heirs.” Where is the pain?']);
+ 'HL\'s reply: most capital is inherited, and Senior himself says capitalists “go on producing and amassing and leave the task of expending to their heirs,” so where is the pain?']);
 
 // 16 every income is rent
 scene('Every income is partly rent, so there are no classes','HL pp. 148–149',6,(g,k)=>{
@@ -372,10 +425,11 @@ scene('Scorecard: harmony or conflict','The question every week answers',6,(g,k)
 
 // 19 exam
 txt('What to take out the door','Three sentences, one per writer',[
- 'Bentham: value is utility, utility is a quantity of pleasure you can add across people, and labor is pain. The market can hoard and can be improved.',
- 'Say: labor, capital, and land coequally make utility and are each paid their contribution, so profit is earned the way wages are. Supply creates its own demand.',
+ 'Bentham: value is utility, a quantity of pleasure you can add across people, and the market can hoard and can be improved.',
+ 'Say: labor, capital, and land coequally make utility and are each paid their contribution, so profit is earned the way wages are, and supply creates its own demand.',
  'Senior: nobody is ever satisfied, so no comparing persons and no general glut; profit is pay for abstinence; every income is partly rent, so classes blur.',
- 'Next: Thompson and Hodgskin (HL ch. 7) put the line between working and owning back. The game is at who-gets-paid.pages.dev.']);
+ 'Next, Thompson and Hodgskin (HL ch. 7) put the line between working and owning back.',
+ 'The game is at who-gets-paid.pages.dev.']);
 
 // ---------------- engine ----------------
 let i=0,k=0;
