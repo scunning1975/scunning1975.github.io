@@ -224,11 +224,26 @@ scene('New: where the price equation comes from','HL pp. 103–104, 107',5,(g,k)
   if(k>=4){el('rect',{x:120,y:680,width:1360,height:96,rx:10,fill:C.mist},g);T(g,800,742,'Price = w(1 + r) × [hours now + hours last year × (1 + r)]',{'text-anchor':'middle','font-size':40,'font-weight':700,fill:C.green});}
   sweep();});
 
+// 4a new: using the equation
+scene('New: using the equation, one element at a time','w = $1 throughout; A is 10 hours now, B is 5 hours now and 5 last year',7,(g,k)=>{
+  el('rect',{x:90,y:190,width:1420,height:60,rx:10,fill:C.mist},g);
+  T(g,800,231,'Price = w(1 + r) × [hours now + hours last year × (1 + r)]',{'text-anchor':'middle','font-size':30,'font-weight':700,fill:C.green});
+  const heads=['good, r','w','1 + r','hours now','hours last year','last year × (1 + r)','[ now + that ]','w(1 + r) × [ ]'];
+  const all=[['A, 10%','1','1.10','10','0','0','10','11.00'],['B, 10%','1','1.10','5','5','5.50','10.50','11.55'],
+             ['A, 0','1','1.00','10','0','0','10','10.00'],['B, 0','1','1.00','5','5','5.00','10','10.00'],
+             ['A, 25%','1','1.25','10','0','0','10','12.50'],['B, 25%','1','1.25','5','5','6.25','11.25','14.06']];
+  const nrows=k<4?2:(k<5?4:6);
+  const show=heads.map((h,j)=>j<=4||j-4<=k);
+  tbl(g,{x:90,y:300,heads,rows:all.slice(0,nrows),colW:[170,100,120,150,170,220,210,280],fs:25,rowH:56,show,fresh:k>=1&&k<=3?4+k:undefined,bold:(i,j)=>j===7,color:(i,j)=>j===7?C.green:(j===5&&i%2===1?C.brick:null)});
+  if(k>=1&&k<=3)T(g,90,730,['','last year\'s hours earn r once before this year starts','add this year\'s hours to that','then the whole bracket earns r once more, and w turns hours into dollars'][k],{'font-size':24,fill:C.warm});
+  if(k>=6)note(g,'The labor theory says B ÷ A should be labor in B ÷ labor in A = 10 ÷ 10 = 1. At r = 0 it is: 10.00 ÷ 10.00. At 10 percent it is 11.55 ÷ 11.00 = 1.05, and at 25 percent 14.06 ÷ 12.50 = 1.125. The only element that changed is r, and it entered twice for B and once for A.',700);
+  sweep();});
+
 // 4 new: timing
-scene('New: same labor, different timing','Game Level 3: A is 10 hours now; B is 5 now and 5 last year; w = $1',7,(g,k)=>{
-  const rows=[['0','10.00','10.00','1.00'],['10%','11.00','11.55','1.05'],['25%','12.50','14.06','1.125'],['50%','15.00','18.75','1.25']];
-  tbl(g,{x:200,y:215,heads:['r','price A','price B','B ÷ A'],rows:rows.slice(0,Math.min(k+1,4)),colW:[200,320,320,320],fs:28,rowH:64,hl:k>=3?[0]:[],bold:(i,j)=>j===3,color:(i,j)=>j===3&&i>0?C.brick:null});
-  if(k>=4)bullets(g,['At r = 0 the two prices are equal, which is the labor theory exactly.','Nothing about the labor changes as r rises, and the ratio leaves 1.','HL p. 105: “the price ratio has changed while the quantities of labor embodied in the two commodities have remained unchanged.”'],570,28,Math.min(k-3,3));
+scene('New: the same two goods at other rates of r','Game Level 3: A is 10 hours now; B is 5 now and 5 last year; w = $1',7,(g,k)=>{
+  const rows=[['0','10.00','10.00','1.00','1.00'],['10%','11.00','11.55','1.00','1.05'],['25%','12.50','14.06','1.00','1.125'],['50%','15.00','18.75','1.00','1.25']];
+  tbl(g,{x:120,y:215,heads:['r','price A','price B','labor in B ÷ labor in A','price of B ÷ price of A\n(what one B buys, in A)'],rows:rows.slice(0,Math.min(k+1,4)),colW:[160,270,270,330,340],fs:28,rowH:64,hl:k>=3?[0]:[],bold:(i,j)=>j===4,color:(i,j)=>j===4&&i>0?C.brick:null});
+  if(k>=4)bullets(g,['At r = 0 the two price columns match the labor column, which is the labor theory exactly.','The labor column never moves, and the price ratio leaves it as soon as r is above zero.','HL p. 105: “the price ratio has changed while the quantities of labor embodied in the two commodities have remained unchanged.”'],570,28,Math.min(k-3,3));
   sweep();});
 
 // 5 new: the tables
