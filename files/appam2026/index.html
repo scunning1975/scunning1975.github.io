@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Revisiting the Revisit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F4ECDD;      /* old Beacon Hill paper */
+  --paper2:#EADFCB;
+  --ink:#2B1E17;        /* brownstone ink */
+  --muted:#6E5A4B;
+  --brick:#8E2F25;      /* Back Bay brick / cranberry */
+  --maple:#C65A1E;      /* maple orange */
+  --gold:#C9971C;       /* Common-in-October gold */
+  --oak:#7A4A26;        /* oak leaf brown */
+  --river:#2F4858;      /* Charles River slate */
+  --sage:#6B7A4F;       /* late-season green */
+  --rule:#CDBBA0;
+  --serif:"Libre Caslon Text", Georgia, serif;
+  --sans:"Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+  --mono:"JetBrains Mono", Menlo, monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#1d1511;overflow:hidden}
+body{font-family:var(--sans);color:var(--ink)}
+#viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#stage{width:1600px;height:900px;position:relative;transform-origin:center center;flex:none}
+.slide{position:absolute;inset:0;background:var(--paper);padding:70px 90px 60px;display:none;overflow:hidden}
+.slide.active{display:flex;flex-direction:column;justify-content:center}
+.slide::after{content:"";position:absolute;left:0;right:0;bottom:0;height:10px;
+  background:linear-gradient(90deg,var(--brick) 0 25%,var(--maple) 25% 50%,var(--gold) 50% 75%,var(--oak) 75% 100%)}
+h1{font-family:var(--serif);font-weight:700;font-size:62px;line-height:1.08;color:var(--brick);letter-spacing:-.5px}
+h2{font-family:var(--serif);font-weight:700;font-size:44px;line-height:1.1;color:var(--brick);margin-bottom:26px}
+.kicker{font-family:var(--sans);font-weight:700;letter-spacing:3px;text-transform:uppercase;font-size:16px;color:var(--maple);margin-bottom:14px}
+p,li{font-size:27px;line-height:1.38}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono)}
+.pagenum{position:absolute;right:40px;bottom:24px;font-size:15px;color:var(--muted);font-family:var(--mono)}
+.frag{opacity:0;transform:translateY(8px);transition:opacity .45s ease,transform .45s ease}
+.frag.on{opacity:1;transform:none}
+
+/* ---------- slide 1 ---------- */
+#s1{padding:40px 80px 150px;text-align:center}
+#s1 > *:not(.pagenum){position:relative;z-index:2}
+#s1 h1{font-size:84px;margin-top:6px}
+#s1 .sub{font-family:var(--serif);font-style:italic;font-size:34px;color:var(--oak);margin-top:10px}
+#s1 .who{display:flex;justify-content:center;align-items:baseline;gap:20px;margin:26px 0 40px}
+#s1 .who .name{font-family:var(--serif);font-size:32px}
+#s1 .who .aff{font-size:24px;color:var(--muted)}
+.story{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;text-align:left}
+.card{background:#FBF6EC;border:1px solid var(--rule);border-top:8px solid var(--c,var(--maple));padding:24px 28px 26px;border-radius:4px;box-shadow:0 6px 18px rgba(80,50,30,.08)}
+.card .yr{font-family:var(--mono);font-size:19px;color:var(--c,var(--maple));font-weight:600;margin-bottom:10px}
+.card h3{font-family:var(--serif);font-size:30px;margin-bottom:12px;line-height:1.15}
+.card p{font-size:24px;line-height:1.4}
+.card b{color:var(--brick)}
+#skyline{position:absolute!important;left:0;right:0;bottom:10px;height:105px;z-index:1!important;opacity:.16}
+#leaves{position:absolute!important;z-index:0!important}
+#leaves{position:absolute;inset:0;pointer-events:none;z-index:0}
+.leaf{position:absolute;top:-40px;width:26px;height:26px;opacity:.55;animation:fall linear infinite}
+@keyframes fall{0%{transform:translate(0,-40px) rotate(0)}50%{transform:translate(40px,480px) rotate(200deg)}100%{transform:translate(-10px,980px) rotate(400deg)}}
+
+/* ---------- slide 2 ---------- */
+#s2{padding:46px 70px 40px}
+#s2 h2{margin-bottom:14px;font-size:40px}
+.codes{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:18px}
+.code{font-family:var(--mono);font-size:21px;padding:14px 18px;border-radius:4px;background:#2B1E17;color:#F4ECDD;position:relative}
+.code .tag{position:absolute;right:12px;top:-12px;font-family:var(--sans);font-weight:700;font-size:13px;letter-spacing:2px;padding:3px 10px;border-radius:3px}
+.code.bad .tag{background:var(--brick);color:#fff}
+.code.good .tag{background:var(--sage);color:#fff}
+.code .kw{color:#E9A15F}.code .cm{color:#A8957F}
+.anim{display:grid;grid-template-columns:600px 1fr;gap:34px;align-items:start}
+.belt{background:#FBF6EC;border:1px solid var(--rule);border-radius:4px;padding:12px 14px}
+.belt-head{display:grid;grid-template-columns:62px 150px 34px 1fr;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:0 4px 8px;border-bottom:1px solid var(--rule)}
+.belt-head span:nth-child(2){color:var(--river)}.belt-head span:nth-child(4){color:var(--maple)}
+.rows{height:504px;overflow:hidden;position:relative}
+.row{display:grid;grid-template-columns:62px 150px 34px 1fr;align-items:center;height:36px;font-family:var(--mono);font-size:18px;padding:0 4px;border-bottom:1px dashed #E3D6C0}
+.row .rn{color:var(--muted);font-size:14px}
+.row .l{color:var(--river)}
+.row .arrow{color:var(--muted);text-align:center}
+.row .r{color:var(--maple);font-weight:600}
+.row.hl{background:#F6E2C8;box-shadow:inset 4px 0 0 var(--brick)}
+.row.restart{border-top:2px solid var(--maple)}
+.row .pop{color:var(--ink);font-weight:400;margin-left:8px}
+.stepn{font-family:var(--mono);font-size:15px;color:var(--muted);align-self:center;margin-right:6px}
+.row.dead .r{color:#B9A890;font-weight:400;font-style:italic}
+.row.dead .l{color:#9A8B7A;text-decoration:line-through}
+.readout{margin-top:10px;font-size:20px;min-height:58px;line-height:1.4}
+.readout b{color:var(--brick)}
+.side h3{font-family:var(--serif);font-size:26px;color:var(--river);margin-bottom:8px}
+.ribbon-wrap{position:relative;margin-top:4px}
+.ribbon-label{font-size:15px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin:10px 0 4px}
+svg text{font-family:var(--sans)}
+.fact{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.fact .box{background:#FBF6EC;border:1px solid var(--rule);border-left:6px solid var(--c);padding:16px 18px;border-radius:4px}
+.fact .big{font-family:var(--serif);font-size:32px;color:var(--c);line-height:1.1;white-space:nowrap}
+.fact .sm{font-size:18px;color:var(--muted);line-height:1.35;margin-top:8px}
+.ctrl{position:absolute;right:70px;top:52px;display:flex;gap:8px}
+.ctrl button{font-family:var(--sans);font-size:15px;font-weight:600;border:1px solid var(--rule);background:#FBF6EC;color:var(--ink);padding:6px 14px;border-radius:3px;cursor:pointer}
+.ctrl button:hover{background:var(--paper2)}
+
+/* ---------- slide 3 ---------- */
+table.est{border-collapse:collapse;width:100%;font-size:22px;margin-top:0}
+table.est th,table.est td{padding:5px 14px;text-align:right}
+table.est th:first-child,table.est td:first-child{text-align:left}
+table.est thead th{font-family:var(--sans);font-size:17px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--ink)}
+table.est td{font-family:var(--mono)}
+table.est td:first-child{font-family:var(--sans);font-weight:600}
+table.est .se td{color:var(--muted);font-size:17px;padding-top:0;padding-bottom:4px}
+table.est .panel td{font-family:var(--serif);font-style:italic;color:var(--river);text-align:left;padding-top:12px;font-size:22px;border-bottom:1px solid var(--rule)}
+#s3{padding:44px 90px 50px}
+#s3 h2{margin-bottom:16px}
+table.est .disc td:not(:first-child){color:var(--brick);font-weight:600}
+table.est .spec td{font-family:var(--sans);font-size:17px;color:var(--muted);border-top:1px solid var(--rule)}
+.note{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:18px}
+.callout{background:#FBF6EC;border:1px solid var(--rule);border-left:8px solid var(--c);padding:16px 22px;border-radius:4px}
+.callout p{font-size:21px;line-height:1.4}
+.callout b{color:var(--c)}
+
+/* ---------- slide 4 ---------- */
+.az{margin:10px 0 26px}
+.timeline{position:relative;height:150px}
+.q{font-family:var(--serif);font-size:34px;line-height:1.35;color:var(--ink)}
+.q b{color:var(--brick)}
+#s4 h2{font-size:52px;margin-bottom:34px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+.two svg{width:100%;height:auto}
+.quote{font-family:var(--serif);font-style:italic;font-size:25px;line-height:1.45;color:var(--muted);border-left:4px solid var(--gold);padding-left:18px;margin-top:22px}
+
+/* ---------- coefficient plots ---------- */
+.plotwrap{background:#FBF6EC;border:1px solid var(--rule);border-radius:4px;padding:8px 10px 2px}
+.cplot{width:100%;height:auto;display:block}
+.note3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:18px}
+.caveat{font-size:17px;color:var(--muted);margin-top:14px;text-align:center}
+.caveat b{color:var(--ink)}
+#s5{padding:44px 90px 50px}
+#s5 h2{margin-bottom:16px;font-size:40px}
+
+/* ---------- slide 4: pipeline + us vs them ---------- */
+#s4 h2{font-size:46px;margin-bottom:30px}
+.pipe{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-bottom:30px}
+.step{position:relative;background:#FBF6EC;border:1px solid var(--rule);border-top:6px solid var(--river);border-radius:4px;padding:18px 18px 20px;min-height:190px}
+.step:not(:last-child)::after{content:"→";position:absolute;right:-14px;top:52px;font-size:22px;color:var(--maple);font-weight:700}
+.step .n{font-family:var(--mono);font-size:15px;color:var(--maple);font-weight:700}
+.step b{display:block;font-family:var(--serif);font-size:28px;margin:6px 0 8px;color:var(--river)}
+.step span{font-size:21px;line-height:1.38;color:var(--ink)}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.vs .col{background:#FBF6EC;border:1px solid var(--rule);border-left:8px solid var(--c);border-radius:4px;padding:18px 26px}
+.vs .us{--c:var(--brick)} .vs .them{--c:var(--maple)}
+.who2{font-family:var(--serif);font-size:30px;font-weight:700;color:var(--c);margin-bottom:8px}
+.vs ul{list-style:none}
+.vs li{font-size:25px;line-height:1.42;padding-left:22px;position:relative;margin:4px 0}
+.vs li::before{content:"";position:absolute;left:2px;top:13px;width:9px;height:9px;background:var(--c);border-radius:50%}
+.vs b{color:var(--c)}
+.caveat2{font-size:23px;color:var(--muted);text-align:center;margin-top:26px}
+.caveat2 b{color:var(--brick)}
+/* ---------- slide 5 ---------- */
+#s5f h2{font-size:44px;margin-bottom:22px}
+#s5f .two{align-items:start}
+#s5f .quote{margin-top:6px;font-size:21px}
+.closer{margin-top:20px;font-size:30px;text-align:center;border-top:1px solid var(--rule);padding-top:20px}
+
+/* ---------- slides 7-8 ---------- */
+#s7 h2{font-size:42px;margin-bottom:22px}
+.two7{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center}
+.pt{background:#FBF6EC;border:1px solid var(--rule);border-left:8px solid var(--c);border-radius:4px;padding:13px 20px;margin-bottom:13px;font-size:22px;line-height:1.4}
+.pt b{color:var(--c)}
+.sd{width:100%;height:auto}
+.closer7{margin-top:14px;font-size:27px;text-align:center;border-top:1px solid var(--rule);padding-top:16px}
+.closer7 b{color:var(--brick)}
+#s8 h2{font-size:42px;margin-bottom:18px}
+
+.row8{display:grid;grid-template-columns:1040px 1fr;gap:20px;align-items:stretch}
+.matrix{background:#FBF6EC;border:1px solid var(--rule);border-radius:4px;padding:16px 16px 12px;display:flex;flex-direction:column}
+.mt-title{font-family:var(--serif);font-size:21px;font-weight:700;color:var(--river);margin-bottom:12px}
+#mtab{border-collapse:collapse;width:100%}
+#mtab th{font-size:15px;color:var(--muted);font-weight:700;padding:8px 6px;text-align:center}
+#mtab tr th:first-child{text-align:left}
+#mtab td{font-family:var(--mono);font-size:19px;text-align:center;padding:12px 4px;border-top:1px solid var(--rule)}
+#mtab td span{display:block;font-size:13px;color:var(--muted);font-family:var(--sans)}
+#mtab td.big{color:var(--brick);font-weight:700}
+#mtab td.small{color:#A8977F;font-style:italic}
+#mtab td.none,#mtab td.diag{color:#CDBBA0}
+.mt-note{font-size:15px;color:var(--muted);margin-top:auto;padding-top:10px;line-height:1.35}
+
+/* ---------- slides 7-11 (SUTVA arc) ---------- */
+#s8 h2,#s9 h2,#s10 h2,#s11 h2{font-size:42px;margin-bottom:22px}
+.nine{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.ncol{background:#FBF6EC;border:1px solid var(--rule);border-radius:4px;padding:24px 26px}
+.nhead{font-family:var(--serif);font-size:30px;font-weight:700;color:var(--river);margin-bottom:14px}
+.eff{padding:20px 0;border-top:1px solid var(--rule)}
+.eff .eq{display:block;font-family:var(--mono);font-size:30px;font-weight:600;color:var(--brick)}
+.eff .ex{display:block;font-size:24px;color:var(--ink);margin-top:6px;line-height:1.3}
+.formula{background:#2B1E17;color:#F4ECDD;border-radius:6px;padding:22px 26px}
+.formula .fl{font-size:20px;color:#CDBBA0;margin-bottom:12px}
+.formula .fl b{color:#E9A15F}
+.formula .fm{font-family:var(--mono);font-size:24px;display:flex;gap:12px;align-items:center;white-space:nowrap}
+.formula .fm .t{color:#E9A15F}.formula .fm .c{color:#A9C1CF}.formula .minus{color:#F4ECDD}
+.formula .fl2{display:flex;justify-content:space-between;font-size:17px;margin-top:8px;padding:0 6px}
+.formula .fl2 .t{color:#E9A15F}.formula .fl2 .c{color:#A9C1CF}
+.svgcap{font-size:16px;color:var(--muted);text-align:center;margin-top:4px}
+table.xoff{width:100%;border-collapse:collapse;font-size:22px}
+table.xoff th{font-size:15px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 12px;border-bottom:2px solid var(--ink)}
+table.xoff td{padding:9px 12px;border-bottom:1px solid var(--rule);position:relative}
+table.xoff td.eq{font-family:var(--mono);font-weight:600;color:var(--brick)}
+table.xoff td.n{font-family:var(--mono);font-weight:700;text-align:center}
+table.xoff td.v{width:190px}
+table.xoff tr{position:relative}
+.xoff .ok{color:var(--sage);font-weight:700}
+.xoff .few{color:var(--maple);font-weight:700}
+.xoff .no{color:#9A8B7A;font-weight:700}
+.xoff .strike{position:absolute;left:-1080px;right:200px;top:50%;height:3px;background:var(--brick);opacity:0;transform:none}
+.xoff .strike.on{opacity:.75}
+.xoff tr.keep td{background:transparent;transition:background .4s}
+.tk{border-left:6px solid var(--c);padding:10px 14px;margin-bottom:14px;font-size:20px;line-height:1.38;background:#fff8ee}
+.tk b{color:var(--c)}
+#s11 .matrix{justify-content:flex-start}
+
+/* ---------- slide 12 ---------- */
+#s12 h2{font-size:46px;margin-bottom:26px}
+.two12{display:grid;grid-template-columns:520px 1fr;gap:40px;align-items:start}
+.ev{background:#2B1E17;color:#F4ECDD;border-radius:6px;padding:28px 32px}
+.evhead{font-size:16px;letter-spacing:2px;text-transform:uppercase;color:#CDBBA0;font-weight:700}
+.bignum{font-family:var(--serif);font-size:96px;font-weight:700;color:#E9A15F;line-height:1;margin-top:14px}
+.evtxt{font-size:23px;line-height:1.4;margin-top:8px}
+.evtxt b{color:#E9A15F}
+.bar{position:relative;height:42px;background:#4A3A30;border-radius:4px;margin:24px 0 6px;overflow:hidden}
+.bar .fill{position:absolute;left:0;top:0;bottom:0;width:6%;background:#E9A15F}
+.bar span{position:absolute;left:8%;top:7px;font-family:var(--mono);font-size:22px;font-weight:700;color:#E9A15F}
+.evsrc{font-size:15px;color:#A8977F;margin-top:16px}
+.qhead{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--river);margin-bottom:14px}
+.q12{display:flex;gap:16px;align-items:flex-start;background:#FBF6EC;border:1px solid var(--rule);border-left:8px solid var(--c);border-radius:4px;padding:16px 20px;margin-bottom:14px;font-size:23px;line-height:1.4}
+.q12 b{color:var(--c)}
+.q12 .qn{font-family:var(--serif);font-size:34px;font-weight:700;color:var(--c);line-height:1}
+#hint{position:fixed;left:16px;bottom:12px;color:#9c8a78;font:13px var(--sans);opacity:.7}
+</style>
+</head>
+<body>
+<div id="viewport"><div id="stage">
+
+<!-- ================= SLIDE 1 ================= -->
+<section class="slide" id="s1">
+  <div id="leaves"></div>
+  <div class="kicker">APPAM 2026 · 50 States, 50 Statutes · Boston</div>
+  <h1>Revisiting the Revisit</h1>
+  <div class="sub">What measurement did to one domestic violence arrest-law study</div>
+  <div class="who"><span class="name">Scott Cunningham</span><span class="aff">Baylor University · with Yoo-Mi Chin</span></div>
+  <div class="story">
+    <div class="card frag" style="--c:var(--river)">
+      <div class="yr">2009 · JPubE</div>
+      <h3>Iyengar: mandatory arrest raises intimate partner homicide</h3>
+      <p>Supplementary Homicide Reports, state laws, 1976–2003. Mandatory arrest laws <b>increased</b> intimate partner homicides.</p>
+    </div>
+    <div class="card frag" style="--c:var(--maple)">
+      <div class="yr">2016 · our plan</div>
+      <h3>Extend it</h3>
+      <p>More years (through 2014) and an <b>updated classification</b> of every state's warrantless arrest law: discretionary, preferred, mandatory.</p>
+    </div>
+    <div class="card frag" style="--c:var(--brick)">
+      <div class="yr">2018 · the snag</div>
+      <h3>We couldn't replicate it</h3>
+      <p>With <b>Radha Iyengar's</b> generous cooperation (her code and data), we traced it to a <b>merge syntax error</b>.</p>
+    </div>
+  </div>
+  <svg id="skyline" viewBox="0 0 1600 150" preserveAspectRatio="none" aria-hidden="true">
+    <!-- Back Bay brownstones, State House dome, Old North steeple -->
+    <path fill="#5A3A2A" d="M0 150V92h60v-14h40v14h30V70l25-14 25 14v80zM180 150V84h70V62h20v22h60v66zM330 150V74l30-20 30 20v76zM400 150V88h90V66h12v22h48v62zM560 150V60h14V40h6V8h4v32h6v20h14v90zM620 150V80h70V58h40v22h40v70zM780 150V96h40V70c0-28 44-48 70-48s70 20 70 48v26h40v54zM1020 150V78h60V60h30v18h60v72zM1180 150V86h40V64l30-18 30 18v86zM1290 150V72h80V54h14v18h56v78zM1450 150V90h60V70h30v20h60v60z"/>
+  </svg>
+  <div class="pagenum">1</div>
+</section>
+
+<!-- ================= SLIDE 2 ================= -->
+<section class="slide" id="s2">
+  <div class="kicker">The error</div>
+  <h2>One missing key: <span class="mono" style="font-size:36px">merge</span> paired rows by position</h2>
+  <div class="ctrl"><span id="stepn" class="stepn">1 / 7</span><button id="reset">↺ Reset</button></div>
+  <div class="codes">
+    <div class="code bad"><span class="tag">WHAT RAN</span><span class="kw">merge</span> using population.dta <span class="cm">// no key → row i ↔ row i</span></div>
+    <div class="code good"><span class="tag">WHAT WAS MEANT</span><span class="kw">merge</span> 1:1 stnumber year using population.dta</div>
+  </div>
+  <div class="anim">
+    <div>
+      <div class="belt">
+        <div class="belt-head"><span>row</span><span>homicide file</span><span></span><span>population it got</span></div>
+        <div class="rows" id="rows"></div>
+      </div>
+      <div class="readout" id="readout"></div>
+    </div>
+    <div class="side">
+      <h3>Two files, two shapes</h3>
+      <div class="ribbon-wrap"><svg id="ribbon" width="830" height="250" viewBox="0 0 830 250"></svg></div>
+      <div class="fact">
+        <div class="box" style="--c:var(--brick)"><div class="big">100%</div><div class="sm">of the 1,122 rows that survived got another state-year's population</div></div>
+        <div class="box" style="--c:var(--maple)"><div class="big">2.6 → 19.7</div><div class="sm">Alabama 1980 IPH per 100k: its homicides ÷ <b>Alaska's</b> population</div></div>
+        <div class="box" style="--c:var(--river)"><div class="big">+0.83* → +0.02</div><div class="sm">Mandatory arrest effect, her Table 3 col. 1, before → after fixing the merge</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="pagenum">2</div>
+</section>
+
+<!-- ================= SLIDE 3 ================= -->
+<section class="slide" id="s3">
+  <div class="kicker">Chin &amp; Cunningham (2019, JPubE)</div>
+  <h2>With the merge fixed and every law re-coded</h2>
+  <div class="plotwrap"><svg class="cplot" id="plot3" viewBox="0 0 1420 500"></svg></div>
+  <div class="note">
+    <div class="callout frag" style="--c:var(--brick)"><p><b>Mandatory: nothing.</b> No sign that removing officer discretion raised homicides. <b>Discretionary: fewer</b> current-spouse homicides, about a third of the mean (0.36).</p></div>
+    <div class="callout frag" style="--c:var(--river)"><p><b>Before the DiD revolution.</b> Plain two-way fixed effects with <b>three treatments at once</b> and staggered timing. Today we'd reach for heterogeneity-robust estimators first.</p></div>
+  </div>
+  <div class="pagenum">3</div>
+</section>
+
+<!-- ================= SLIDE 4 ================= -->
+<section class="slide" id="s4">
+  <div class="kicker">What they did · Jelveh, Ash &amp; Ruskin</div>
+  <h2>They read every session law, not just the ones we looked for</h2>
+  <div class="pipe">
+    <div class="step"><div class="n">1</div><b>Scan</b><span>a century of state session laws (HeinOnline)</span></div>
+    <div class="step"><div class="n">2</div><b>OCR</b><span>page image → text</span></div>
+    <div class="step"><div class="n">3</div><b>Search</b><span>semantic search of every act, every volume</span></div>
+    <div class="step"><div class="n">4</div><b>First pass</b><span>DeepSeek reads 3 passages: an arrest law?</span></div>
+    <div class="step"><div class="n">5</div><b>Full read</b><span>Claude reads the whole act; quotes the words</span></div>
+    <div class="step"><div class="n">6</div><b>Check</b><span>disagreements go to a person with the page image</span></div>
+  </div>
+  <div class="vs">
+    <div class="col us">
+      <div class="who2">Us, 2016–2019</div>
+      <ul>
+        <li>Started from <b>today's code</b> and worked <b>backward</b> through bills and session laws</li>
+        <li>51 jurisdictions, <b>by hand</b>, two people</li>
+        <li>Found the law we were looking for, and its upgrades</li>
+      </ul>
+    </div>
+    <div class="col them">
+      <div class="who2">Them, 2026</div>
+      <ul>
+        <li>Start from <b>every act ever passed</b> and read <b>forward</b></li>
+        <li>Models search and read; people check the page</li>
+        <li>Find laws that were later <b>amended away</b>, the ones a backward search never reaches</li>
+      </ul>
+    </div>
+  </div>
+  <p class="caveat2">Their own caution: every page check started from a <b>disagreement</b> with us. None was random, so errors we share stay invisible.</p>
+  <div class="pagenum">4</div>
+</section>
+
+<!-- ================= SLIDE 5 ================= -->
+<section class="slide" id="s5f">
+  <div class="kicker">What they found in our coding</div>
+  <h2>Mostly an <em>earlier</em> “may arrest” law we never recorded</h2>
+  <div class="two">
+    <div>
+      <svg width="660" height="400" viewBox="0 0 660 400" aria-label="Pipeline vs C&amp;C tallies">
+        <text x="0" y="22" font-size="17" font-weight="700" fill="#6E5A4B" letter-spacing="2">EARLIEST LAW, PIPELINE vs. C&amp;C · BY STATE</text>
+        <g font-size="20" fill="#2B1E17">
+          <text x="0" y="78">Same year, same type</text>      <rect x="270" y="58" width="306" height="28" fill="#6B7A4F"/><text x="586" y="80" font-family="JetBrains Mono, monospace" font-weight="600">17</text>
+          <text x="0" y="128">Same year, other type</text>     <rect x="270" y="108" width="54"  height="28" fill="#A9B38F"/><text x="334" y="130" font-family="JetBrains Mono, monospace" font-weight="600">3</text>
+          <text x="0" y="178" font-weight="700" fill="#C65A1E">Pipeline found it earlier</text><rect x="270" y="158" width="252" height="28" fill="#C65A1E"/><text x="532" y="180" font-family="JetBrains Mono, monospace" font-weight="700" fill="#C65A1E">14</text>
+          <text x="0" y="228">Pipeline later (its misses)</text><rect x="270" y="208" width="72"  height="28" fill="#C9971C"/><text x="352" y="230" font-family="JetBrains Mono, monospace" font-weight="600">4</text>
+          <text x="0" y="278">Only in ours</text>               <rect x="270" y="258" width="90"  height="28" fill="#CDBBA0"/><text x="370" y="280" font-family="JetBrains Mono, monospace" font-weight="600">5</text>
+        </g>
+        <text x="0" y="330" font-size="17" fill="#6E5A4B">Earlier: AZ OH SC NJ MS NV VA WA WI TN FL NM ND UT</text>
+        <text x="0" y="354" font-size="17" fill="#6E5A4B">Only ours: AK (thin corpus), DC (not in corpus), DE, NE, VT (court rule)</text>
+        <text x="0" y="386" font-size="15" fill="#9A8B7A">Their initial run (discrepancy memo). Updated run: 24 of 49 shared states match on first year.</text>
+      </svg>
+    </div>
+    <div>
+      <svg width="640" height="380" viewBox="0 0 640 380" aria-label="Arizona timeline">
+        <text x="0" y="24" font-size="18" font-weight="700" fill="#6E5A4B" letter-spacing="2">ARIZONA</text>
+        <text x="0" y="78" font-size="19" fill="#2F4858" font-weight="700">Our coding</text>
+        <rect x="0" y="92" width="400" height="38" fill="#EADFCB"/>
+        <text x="12" y="118" font-size="17" fill="#6E5A4B">untreated (control)</text>
+        <rect x="400" y="92" width="240" height="38" fill="#8E2F25"/>
+        <text x="412" y="118" font-size="17" fill="#fff" font-weight="600">mandatory 1991–</text>
+        <text x="0" y="190" font-size="19" fill="#C65A1E" font-weight="700">Session-law pipeline</text>
+        <rect x="0" y="204" width="110" height="38" fill="#EADFCB"/>
+        <rect x="110" y="204" width="290" height="38" fill="#C9971C"/>
+        <text x="122" y="230" font-size="17" fill="#2B1E17" font-weight="600">discretionary 1980–90</text>
+        <rect x="400" y="204" width="240" height="38" fill="#8E2F25"/>
+        <text x="412" y="230" font-size="17" fill="#fff" font-weight="600">mandatory 1991–</text>
+        <line x1="0" y1="270" x2="640" y2="270" stroke="#6E5A4B"/>
+        <g font-size="15" fill="#6E5A4B" font-family="JetBrains Mono, monospace">
+          <text x="0" y="292">1977</text><text x="98" y="292">1980</text><text x="384" y="292">1991</text><text x="590" y="292">1996</text>
+        </g>
+        <rect x="110" y="300" width="290" height="6" fill="#C9971C"/>
+        <text x="110" y="336" font-size="18" fill="#2B1E17">11 years we called <tspan font-weight="700" fill="#8E2F25">control</tspan> were</text>
+        <text x="110" y="360" font-size="18" fill="#2B1E17">really <tspan font-weight="700" fill="#C65A1E">discretionary</tspan>.</text>
+      </svg>
+      <p class="quote">1980: “a peace officer <b>may</b>, with or without a warrant, arrest a person if he has probable cause to believe that domestic violence has been committed.”</p>
+    </div>
+  </div>
+  <p class="frag closer">A better measure of the treatment. <b style="color:var(--brick)">So we redo it again.</b></p>
+  <div class="pagenum">5</div>
+</section>
+
+<!-- ================= SLIDE 5 ================= -->
+<section class="slide" id="s5">
+  <div class="kicker">Our 2019 regression, their dates · 14 states re-dated · in 10 the first law changes type</div>
+  <h2>With their dates, the 2019 result isn’t robust</h2>
+  <div class="plotwrap"><svg class="cplot" id="plot5" viewBox="0 0 1420 500"></svg></div>
+  <div class="note3">
+    <div class="callout frag" style="--c:var(--maple)"><p><b>−0.12 → −0.08</b> in specs (1)–(2). Every 95% interval now crosses zero.</p></div>
+    <div class="callout frag" style="--c:var(--brick)"><p><b>−0.14 → +0.02</b> once pre-period leads are in. The effect was partly timing.</p></div>
+    <div class="callout frag" style="--c:var(--river)"><p><b>Mandatory: still nothing.</b> The 2019 headline on Iyengar holds.</p></div>
+  </div>
+  <p class="caveat">Their <b>initial-run</b> dates (act-passed year; ours are effective years) for 14 states · current spouse only · same TWFE as 2019 · 2019 estimates reproduce the published table exactly.</p>
+  <div class="pagenum">6</div>
+</section>
+
+<!-- ================= SLIDE 7 ================= -->
+<section class="slide" id="s7">
+  <div class="kicker">What it inspired</div>
+  <h2>Re-estimate with modern DiD. But first: <em>what</em> is the treatment?</h2>
+  <div class="two7">
+    <div>
+      <div class="pt" style="--c:var(--brick)"><b>SUTVA has two parts.</b> (1) No interference between units. (2) <b>No hidden versions of the treatment:</b> every treated unit gets the same thing.</div>
+      <div class="pt" style="--c:var(--maple)"><b>Their reclassification found part (2) failing.</b> Our “mandatory” states mixed “shall arrest from scratch” with “may arrest, then shall.” Same label, different treatments.</div>
+      <div class="pt" style="--c:var(--river)"><b>Why it matters.</b> Y(1) − Y(0) is only defined, and only averages coherently across states, if Y(1) means one thing. <b>So must Y(0)</b>: every comparison has to be untreated in the same sense.</div>
+      <div class="pt" style="--c:var(--sage)"><b>Where AI agents come in.</b> Tracing every state’s path, defining each treatment, censoring, re-estimating: a huge pain by hand. With their data and an agent, it’s an afternoon.</div>
+    </div>
+    <div>
+      <svg viewBox="0 0 600 470" class="sd" aria-label="Three state paths">
+        <text x="0" y="26" font-size="17" font-weight="700" fill="#6E5A4B" letter-spacing="2">THREE “MANDATORY” STATES, THREE PATHS</text>
+        <g font-size="18">
+          <text x="0" y="96" font-weight="700" fill="#2B1E17">Connecticut</text>
+          <rect x="150" y="74" width="140" height="34" fill="#EADFCB"/><text x="160" y="97" fill="#6E5A4B">none</text>
+          <rect x="290" y="74" width="300" height="34" fill="#8E2F25"/><text x="300" y="97" fill="#fff" font-weight="600">shall · 1986</text>
+          <text x="0" y="186" font-weight="700" fill="#2B1E17">Arizona</text>
+          <rect x="150" y="164" width="60" height="34" fill="#EADFCB"/>
+          <rect x="210" y="164" width="200" height="34" fill="#C9971C"/><text x="220" y="187" fill="#2B1E17" font-weight="600">may · 1980</text>
+          <rect x="410" y="164" width="180" height="34" fill="#8E2F25"/><text x="420" y="187" fill="#fff" font-weight="600">shall · 1991</text>
+          <text x="0" y="276" font-weight="700" fill="#2B1E17">Wisconsin</text>
+          <rect x="150" y="254" width="180" height="34" fill="#EADFCB"/>
+          <rect x="330" y="254" width="40" height="34" fill="#2F4858"/>
+          <rect x="370" y="254" width="220" height="34" fill="#8E2F25"/><text x="380" y="277" fill="#fff" font-weight="600">shall · 1989</text>
+          <text x="330" y="314" font-size="15" fill="#2F4858">should · 1987</text>
+        </g>
+        <line x1="150" y1="340" x2="590" y2="340" stroke="#6E5A4B"/>
+        <g font-size="14" fill="#6E5A4B" font-family="JetBrains Mono, monospace"><text x="150" y="360">1977</text><text x="550" y="360">1996</text></g>
+        <text x="0" y="410" font-size="20" fill="#2B1E17">In 2019 all three were coded <tspan font-weight="700" fill="#8E2F25">“mandatory”</tspan>.</text>
+        <text x="0" y="440" font-size="20" fill="#2B1E17">Under their dates, they are <tspan font-weight="700" fill="#C65A1E">three different treatments</tspan>.</text>
+      </svg>
+    </div>
+  </div>
+  <div class="pagenum">7</div>
+</section>
+
+<!-- ================= SLIDE 8 ================= -->
+<section class="slide" id="s8">
+  <div class="kicker">Three laws: discretionary (D, “may”) · mandatory (M, “shall”) · preferred (P, “should”)</div>
+  <h2>That gives nine treatment effects</h2>
+  <div class="nine">
+    <div class="ncol">
+      <div class="nhead">Passing a first law</div>
+      <div class="eff"><span class="eq">Y(D) − Y(0)</span><span class="ex">a “may arrest” law, from none</span></div>
+      <div class="eff"><span class="eq">Y(M) − Y(0)</span><span class="ex">a “shall arrest” law, from none</span></div>
+      <div class="eff"><span class="eq">Y(P) − Y(0)</span><span class="ex">a “should arrest” law, from none</span></div>
+    </div>
+    <div class="ncol">
+      <div class="nhead">Tightening</div>
+      <div class="eff"><span class="eq">Y(M) − Y(D)</span><span class="ex">may → shall: remove officer discretion</span></div>
+      <div class="eff"><span class="eq">Y(P) − Y(D)</span><span class="ex">may → should: nudge toward arrest</span></div>
+      <div class="eff"><span class="eq">Y(M) − Y(P)</span><span class="ex">should → shall: finish the job</span></div>
+    </div>
+    <div class="ncol">
+      <div class="nhead">Loosening</div>
+      <div class="eff"><span class="eq">Y(D) − Y(M)</span><span class="ex">shall → may: give discretion back</span></div>
+      <div class="eff"><span class="eq">Y(P) − Y(M)</span><span class="ex">shall → should: soften the mandate</span></div>
+      <div class="eff"><span class="eq">Y(D) − Y(P)</span><span class="ex">should → may: drop the preference</span></div>
+    </div>
+  </div>
+  <p class="closer">All nine are well-defined treatment effects. <b style="color:var(--brick)">Which ones can a DiD actually estimate?</b></p>
+  <div class="pagenum">8</div>
+</section>
+
+<!-- ================= SLIDE 9 ================= -->
+<section class="slide" id="s9">
+  <div class="kicker">The puzzle</div>
+  <h2>DiD needs a comparison group in the same baseline</h2>
+  <div class="two7">
+    <div>
+      <div class="formula">
+        <div class="fl">For states that move from <b>b</b> to <b>a</b>:</div>
+        <div class="fm"><span class="t">{ Y(a)<sub>post</sub> − Y(b)<sub>pre</sub> }</span><span class="minus">−</span><span class="c">{ Y(b)<sub>post</sub> − Y(b)<sub>pre</sub> }</span></div>
+        <div class="fl2"><span class="t">movers b → a</span><span class="c">stayers in b</span></div>
+      </div>
+      <div class="pt" style="--c:var(--brick);margin-top:22px"><b>The comparison group has to be in b, before and after.</b> Otherwise its change isn’t Y(b)’s change.</div>
+      <div class="pt" style="--c:var(--river)"><b>So Y(a) − Y(b) is identified only by states that actually move from b to a.</b> No movers, no DiD for that effect.</div>
+    </div>
+    <div>
+      <svg viewBox="0 0 640 520" class="sd" aria-label="Moves among no law, discretionary, mandatory, preferred">
+        <defs>
+          <marker id="ah9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#2B1E17"/></marker>
+          <marker id="ahm9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#9A8B7A"/></marker>
+        </defs>
+        <rect x="230" y="10" width="180" height="70" rx="8" fill="#EADFCB" stroke="#6E5A4B" stroke-width="2"/>
+        <text x="320" y="44" text-anchor="middle" font-family="Libre Caslon Text, Georgia, serif" font-size="24" font-weight="700" fill="#2B1E17">No law</text>
+        <text x="320" y="68" text-anchor="middle" font-size="16" fill="#6E5A4B">Y(0)</text>
+        <rect x="0" y="215" width="200" height="74" rx="8" fill="#C9971C"/>
+        <text x="100" y="249" text-anchor="middle" font-family="Libre Caslon Text, Georgia, serif" font-size="23" font-weight="700" fill="#2B1E17">Discretionary</text>
+        <text x="100" y="274" text-anchor="middle" font-size="16" fill="#2B1E17">Y(D) · “may”</text>
+        <rect x="440" y="215" width="200" height="74" rx="8" fill="#8E2F25"/>
+        <text x="540" y="249" text-anchor="middle" font-family="Libre Caslon Text, Georgia, serif" font-size="23" font-weight="700" fill="#fff">Mandatory</text>
+        <text x="540" y="274" text-anchor="middle" font-size="16" fill="#F4ECDD">Y(M) · “shall”</text>
+        <rect x="230" y="420" width="180" height="74" rx="8" fill="#2F4858"/>
+        <text x="320" y="454" text-anchor="middle" font-family="Libre Caslon Text, Georgia, serif" font-size="23" font-weight="700" fill="#fff">Preferred</text>
+        <text x="320" y="479" text-anchor="middle" font-size="16" fill="#DCE4E8">Y(P) · “should”</text>
+        <path d="M245 82 L130 210" stroke="#2B1E17" stroke-width="3" fill="none" marker-end="url(#ah9)"/>
+        <path d="M395 82 L510 210" stroke="#2B1E17" stroke-width="3" fill="none" marker-end="url(#ah9)"/>
+        <path d="M320 82 L320 414" stroke="#2B1E17" stroke-width="2" fill="none" marker-end="url(#ah9)"/>
+        <path d="M204 238 L434 238" stroke="#2B1E17" stroke-width="3" fill="none" marker-end="url(#ah9)"/>
+        <path d="M434 268 L204 268" stroke="#9A8B7A" stroke-width="2" stroke-dasharray="6 6" fill="none" marker-end="url(#ahm9)"/>
+        <path d="M130 292 L250 416" stroke="#2B1E17" stroke-width="2" fill="none" marker-end="url(#ah9)"/>
+        <path d="M228 432 L84 294" stroke="#9A8B7A" stroke-width="2" stroke-dasharray="6 6" fill="none" marker-end="url(#ahm9)"/>
+        <path d="M510 292 L390 416" stroke="#2B1E17" stroke-width="2" fill="none" marker-end="url(#ah9)"/>
+        <path d="M412 432 L556 294" stroke="#2B1E17" stroke-width="2" fill="none" marker-end="url(#ah9)"/>
+        <g font-size="17" fill="#2B1E17">
+          <text x="150" y="140" text-anchor="end" font-weight="700">29 states</text>
+          <text x="490" y="140" font-weight="700">14 states</text>
+          <text x="330" y="160">4</text>
+          <text x="320" y="230" text-anchor="middle" font-weight="700">9 states</text>
+          <text x="320" y="292" text-anchor="middle" fill="#9A8B7A">none</text>
+          <text x="128" y="372" text-anchor="end">2</text>
+          <text x="40" y="330" fill="#9A8B7A">none</text>
+          <text x="452" y="338" text-anchor="end">1</text>
+          <text x="548" y="392">1</text>
+        </g>
+      </svg>
+      <p class="svgcap">Arrows = states that actually make each move, in their data.</p>
+    </div>
+  </div>
+  <div class="pagenum">9</div>
+</section>
+
+<!-- ================= SLIDE 10 ================= -->
+<section class="slide" id="s10">
+  <div class="kicker">Their data · which effects can a DiD identify?</div>
+  <h2>Crossing them off, one at a time</h2>
+  <table class="xoff">
+    <thead><tr><th>Effect</th><th>Needs states that move</th><th>Movers</th><th>Comparison (stays in baseline)</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr class="keep" data-g="3"><td class="eq">Y(D) − Y(0)</td><td>none → may</td><td class="n">29</td><td>no law yet</td><td class="v"><span class="frag ok" data-g="3">✓ estimate</span></td></tr>
+      <tr class="keep" data-g="3"><td class="eq">Y(M) − Y(0)</td><td>none → shall</td><td class="n">14</td><td>no law yet</td><td class="v"><span class="frag ok" data-g="3">✓ estimate</span></td></tr>
+      <tr class="keep" data-g="3"><td class="eq">Y(M) − Y(D)</td><td>may → shall</td><td class="n">9</td><td>may, not yet upgraded</td><td class="v"><span class="frag ok" data-g="3">✓ estimate</span></td></tr>
+      <tr><td class="eq">Y(P) − Y(0)</td><td>none → should</td><td class="n">4</td><td>no law yet</td><td class="v"><span class="frag few" data-g="2">too few</span><span class="strike frag" data-g="2"></span></td></tr>
+      <tr><td class="eq">Y(P) − Y(D)</td><td>may → should</td><td class="n">2</td><td>may, unchanged</td><td class="v"><span class="frag few" data-g="2">too few</span><span class="strike frag" data-g="2"></span></td></tr>
+      <tr><td class="eq">Y(P) − Y(M)</td><td>shall → should</td><td class="n">1</td><td>shall, unchanged</td><td class="v"><span class="frag few" data-g="2">too few</span><span class="strike frag" data-g="2"></span></td></tr>
+      <tr><td class="eq">Y(M) − Y(P)</td><td>should → shall</td><td class="n">1</td><td>should, unchanged</td><td class="v"><span class="frag few" data-g="2">too few</span><span class="strike frag" data-g="2"></span></td></tr>
+      <tr><td class="eq">Y(D) − Y(M)</td><td>shall → may</td><td class="n">0</td><td>—</td><td class="v"><span class="frag no" data-g="1">no movers</span><span class="strike frag" data-g="1"></span></td></tr>
+      <tr><td class="eq">Y(D) − Y(P)</td><td>should → may</td><td class="n">0</td><td>—</td><td class="v"><span class="frag no" data-g="1">no movers</span><span class="strike frag" data-g="1"></span></td></tr>
+    </tbody>
+  </table>
+  <p class="frag closer" data-g="4">Nine effects, <b style="color:var(--brick)">three estimable</b>. And may → shall <b style="color:var(--maple)">exists only because of their data</b>.</p>
+  <div class="pagenum">10</div>
+</section>
+
+<!-- ================= SLIDE 11 ================= -->
+<section class="slide" id="s11">
+  <div class="kicker">Callaway–Sant’Anna · their dates · Y(0) = no law · not-yet-treated · absorbing</div>
+  <h2>The three that survive</h2>
+  <div class="row8">
+    <div class="plotwrap"><svg class="cplot" id="plot8" viewBox="0 0 1040 520"></svg></div>
+    <div class="matrix">
+      <div class="mt-title">What it says</div>
+      <div class="tk" style="--c:#C9971C"><b>may arrest, from none: ≈ 0.</b> The 2019 TWFE effect was a pre-trend.</div>
+      <div class="tk" style="--c:#8E2F25"><b>shall arrest, from none: +0.13</b>, about +30–38% of the pre-law mean. Iyengar’s sign at roughly half her ~60%. Flat pre-trends; 14 states; interval just excludes 0.</div>
+      <div class="tk" style="--c:#C65A1E"><b>may → shall: −0.11.</b> Opposite sign. “Mandatory” was never one treatment.</div>
+    </div>
+  </div>
+  <p class="caveat">Current spouse · pipeline initial run · 95% simultaneous bands · * overall CI excludes 0 · no covariates.</p>
+  <div class="pagenum">11</div>
+</section>
+
+<!-- ================= SLIDE 12 ================= -->
+<section class="slide" id="s12">
+  <div class="kicker">To conclude · 1</div>
+  <h2>How stable is one AI classification?</h2>
+  <div class="two12">
+    <div class="ev">
+      <div class="evhead">What we’ve seen with estimation</div>
+      <div class="bignum">3,200</div>
+      <div class="evtxt">AI agents, same dataset, varied conditions</div>
+      <div class="bar"><div class="fill"></div><span>4–7%</span></div>
+      <div class="evtxt">of the variation in their estimates is explained by our experimental conditions. <b>The rest is agent-to-agent variation.</b></div>
+      <div class="evsrc">Cunningham and coauthors</div>
+    </div>
+    <div>
+      <div class="qhead">Questions for the pipeline</div>
+      <div class="q12 frag" style="--c:var(--brick)"><span class="qn">1</span><div><b>Run it many times.</b> Same acts, same rubric: how often does a state’s date or type flip?</div></div>
+      <div class="q12 frag" style="--c:var(--maple)"><span class="qn">2</span><div><b>Do the models disagree?</b> NJ 1982: the first pass quotes an order-violation clause, the full read calls it DV arrest authority.</div></div>
+      <div class="q12 frag" style="--c:var(--river)"><span class="qn">3</span><div><b>Is it validated on human codes first?</b> Today every human check starts from a disagreement; none is random. A random, human-coded sample would measure accuracy.</div></div>
+    </div>
+  </div>
+  <p class="frag closer">If the coding varies from run to run, that’s measurement error in the treatment. <b style="color:var(--brick)">Re-estimate across many classifications and report the distribution, not one run.</b></p>
+  <div class="pagenum">12</div>
+</section>
+
+</div></div>
+<div id="hint">← → to move (slide 2 steps through the merge)</div>
+
+<script>
+const MAP = [["AL",1976,"AK",1980,401851],["AL",1977,"AK",1981,418491],["AL",1978,"AK",1982,449606],["AL",1979,"AK",1983,488417],["AL",1980,"AK",1984,513702],["AL",1981,"AK",1985,532495],["AL",1982,"AK",1986,544268],["AL",1983,"AK",1987,539309],["AL",1984,"AK",1988,541983],["AL",1985,"AK",1989,547159],["AL",1986,"AK",1990,550043],["AL",1987,"AK",1991,619500],["AL",1988,"AK",1992,615205],["AL",1989,"AK",1993,608846],["AL",1990,"AK",1994,604918],["AL",1991,"AK",1995,601345],["AL",1992,"AK",1996,600624],["AL",1993,"AK",1997,596993],["AL",1994,"AK",1998,587073],["AL",1995,"AK",1999,569273],["AL",1996,"AK",2000,553120],["AL",1997,"AK",2001,550043],["AL",1998,"AR",1980,2286435],["AL",1999,"AR",1981,2293201],["AL",2000,"AR",1982,2294257],["AL",2001,"AR",1983,2305761],["AL",2002,"AR",1984,2319768],["AL",2003,"AR",1985,2327046],["AZ",1976,"AR",1986,2331984],["AZ",1977,"AR",1987,2342355],["AZ",1978,"AR",1988,2342656],["AZ",1979,"AR",1989,2346358],["AZ",1980,"AR",1990,2350725],["AZ",1981,"AR",1991,2551373],["AZ",1982,"AR",1992,2538202],["AZ",1983,"AR",1993,2524007],["AZ",1984,"AR",1994,2504858],["AZ",1985,"AR",1995,2480121],["AZ",1986,"AR",1996,2450605],["AZ",1987,"AR",1997,2423743],["AZ",1988,"AR",1998,2394098],["AZ",1989,"AR",1999,2370666],["AZ",1990,"AR",2000,2354343],["AZ",1991,"AR",2001,2350624],["AZ",1992,"AZ",1980,2718215],["AZ",1993,"AZ",1981,2810107],["AZ",1994,"AZ",1982,2889861],["AZ",1995,"AZ",1983,2968925],["AZ",1996,"AZ",1984,3067135],["AZ",1997,"AZ",1985,3183538],["AZ",1998,"AZ",1986,3308262],["AZ",1999,"AZ",1987,3437103],["AZ",2000,"AZ",1988,3535183],["AZ",2001,"AZ",1989,3622185],["AZ",2002,"AZ",1990,3665228],["AZ",2003,"AZ",1991,4778332],["AR",1976,"AZ",1992,4667277],["AR",1977,"AZ",1993,4552207],["AR",1978,"AZ",1994,4432308],["AR",1979,"AZ",1995,4306908],["AR",1980,"AZ",1996,4147561],["AR",1981,"AZ",1997,3993390],["AR",1982,"AZ",1998,3867333],["AR",1983,"AZ",1999,3762394],["AR",1984,"AZ",2000,3679056],["AR",1985,"AZ",2001,3665339],["AR",1986,"CA",1980,23667902],["AR",1987,"CA",1981,24285933],["AR",1988,"CA",1982,24820009],["AR",1989,"CA",1983,25360026],["AR",1990,"CA",1984,25844393],["AR",1991,"CA",1985,26441109],["AR",1992,"CA",1986,27102237],["AR",1993,"CA",1987,27777158],["AR",1994,"CA",1988,28464249],["AR",1995,"CA",1989,29218164],["AR",1996,"CA",1990,29760021],["AR",1997,"CA",1991,33145121],["AR",1998,"CA",1992,32682794],["AR",1999,"CA",1993,32217708],["AR",2000,"CA",1994,31780829],["AR",2001,"CA",1995,31493525],["AR",2002,"CA",1996,31317179],["AR",2003,"CA",1997,31147208],["CA",1976,"CA",1998,30875920],["CA",1977,"CA",1999,30414114],["CA",1978,"CA",2000,29950111],["CA",1979,"CA",2001,29811427],["CA",1980,"CO",1980,2889964],["CA",1981,"CO",1981,2977898],["CA",1982,"CO",1982,3061564],["CA",1983,"CO",1983,3133630],["CA",1984,"CO",1984,3169992],["CA",1985,"CO",1985,3208723],["CA",1986,"CO",1986,3237450],["CA",1987,"CO",1987,3260480],["CA",1988,"CO",1988,3262281],["CA",1989,"CO",1989,3275818],["CA",1990,"CO",1990,3294394],["CA",1991,"CO",1991,4056133],["CA",1992,"CO",1992,3968967],["CA",1993,"CO",1993,3891293],["CA",1994,"CO",1994,3812716],["CA",1995,"CO",1995,3738061],["CA",1996,"CO",1996,3653910],["CA",1997,"CO",1997,3560884],["CA",1998,"CO",1998,3459995],["CA",1999,"CO",1999,3367567],["CA",2000,"CO",2000,3303862],["CA",2001,"CO",2001,3294473],["CA",2002,"CT",1980,3107576],["CA",2003,"CT",1981,3128836],["CO",1976,"CT",1982,3139013],["CO",1977,"CT",1983,3162354],["CO",1978,"CT",1984,3180014],["CO",1979,"CT",1985,3201131],["CO",1980,"CT",1986,3223740],["CO",1981,"CT",1987,3247291],["CO",1982,"CT",1988,3271953],["CO",1983,"CT",1989,3283403],["CO",1984,"CT",1990,3287116],["CO",1985,"CT",1991,3282031],["CO",1986,"CT",1992,3272563],["CO",1987,"CT",1993,3268514],["CO",1988,"CT",1994,3267030],["CO",1989,"CT",1995,3265293],["CO",1990,"CT",1996,3268346],["CO",1991,"CT",1997,3272325],["CO",1992,"CT",1998,3274997],["CO",1993,"CT",1999,3288640],["CO",1994,"CT",2000,3289056],["CO",1995,"CT",2001,3287116],["CO",1996,"DE",1980,594338],["CO",1997,"DE",1981,595975],["CO",1998,"DE",1982,599148],["CO",1999,"DE",1983,605458],["CO",2000,"DE",1984,611565],["CO",2001,"DE",1985,618280],["CO",2002,"DE",1986,627559],["CO",2003,"DE",1987,636947],["CT",1976,"DE",1988,647622],["CT",1977,"DE",1989,658273],["CT",1978,"DE",1990,666168],["CT",1979,"DE",1991,753538],["CT",1980,"DE",1992,744066],["CT",1981,"DE",1993,735024],["CT",1982,"DE",1994,727090],["CT",1983,"DE",1995,718265],["CT",1984,"DE",1996,708416],["CT",1985,"DE",1997,699475],["CT",1986,"DE",1998,690158],["CT",1987,"DE",1999,680495],["CT",1988,"DE",2000,669063],["CT",1989,"DE",2001,666168],["CT",1990,"VA",1980,5346818],["CT",1991,"VA",1981,5444097],["CT",1992,"VA",1982,5492783],["CT",1993,"VA",1983,5564657],["CT",1994,"VA",1984,5643870],["CT",1995,"VA",1985,5715153],["CT",1996,"VA",1986,5811700],["CT",1997,"VA",1987,5932268],["CT",1998,"VA",1988,6036909],["CT",1999,"VA",1989,6120246],["CT",2000,"VA",1990,6187358],["CT",2001,"VA",1991,6872912],["CT",2002,"VA",1992,6789225],["CT",2003,"VA",1993,6732878],["DE",1976,"VA",1994,6665491],["DE",1977,"VA",1995,6601392],["DE",1978,"VA",1996,6536771],["DE",1979,"VA",1997,6464795],["DE",1980,"VA",1998,6383315],["DE",1981,"VA",1999,6283853],["DE",1982,"VA",2000,6213526],["DE",1983,"VA",2001,6189197],["DE",1984,"DC",1980,638333],["DE",1985,"DC",1981,636893],["DE",1986,"DC",1982,634174],["DE",1987,"DC",1983,632433],["DE",1988,"DC",1984,633382],["DE",1989,"DC",1985,634549],["DE",1990,"DC",1986,638269],["DE",1991,"DC",1987,636930],["DE",1992,"DC",1988,630432],["DE",1993,"DC",1989,624168],["DE",1994,"DC",1990,606900],["DE",1995,"DC",1991,519000],["DE",1996,"DC",1992,521426],["DE",1997,"DC",1993,528752],["DE",1998,"DC",1994,538273],["DE",1999,"DC",1995,551273],["DE",2000,"DC",1996,564982],["DE",2001,"DC",1997,576358],["DE",2002,"DC",1998,584183],["DE",2003,"DC",1999,593239],["DC",1976,"DC",2000,603814],["DC",1977,"DC",2001,606900],["DC",1978,"FL",1980,9746324],["DC",1979,"FL",1981,10192774],["DC",1980,"FL",1982,10471407],["DC",1981,"FL",1983,10749851],["DC",1982,"FL",1984,11039925],["DC",1983,"FL",1985,11351118],["DC",1984,"FL",1986,11667505],["DC",1985,"FL",1987,11997283],["DC",1986,"FL",1988,12306395],["DC",1987,"FL",1989,12637715],["DC",1988,"FL",1990,12937926],["DC",1989,"FL",1991,15111244],["DC",1990,"FL",1992,14908230],["DC",1991,"FL",1993,14683350],["DC",1992,"FL",1994,14426911],["DC",1993,"FL",1995,14185403],["DC",1994,"FL",1996,13961798],["DC",1995,"FL",1997,13713593],["DC",1997,"FL",1998,13504775],["DC",2001,"FL",1999,13289497],["DC",2003,"FL",2000,13018365],["FL",1976,"FL",2001,12938071],["FL",1977,"ID",1980,943935],["FL",1978,"ID",1981,962204],["FL",1979,"ID",1982,973721],["FL",1980,"ID",1983,981869],["FL",1981,"ID",1984,990839],["FL",1982,"ID",1985,994051],["FL",1983,"ID",1986,990224],["FL",1984,"ID",1987,984997],["FL",1985,"ID",1988,985664],["FL",1986,"ID",1989,994416],["FL",1987,"ID",1990,1006749],["FL",1992,"ID",1991,1251700],["FL",1993,"ID",1992,1230923],["FL",1994,"ID",1993,1210638],["FL",1995,"ID",1994,1187706],["FL",1996,"ID",1995,1165000],["GA",1976,"ID",1996,1135459],["GA",1977,"ID",1997,1101204],["GA",1978,"ID",1998,1066490],["GA",1979,"ID",1999,1038915],["GA",1980,"ID",2000,1011882],["GA",1981,"ID",2001,1006734],["GA",1982,"IL",1980,11426518],["GA",1983,"IL",1981,11443458],["GA",1984,"IL",1982,11423412],["GA",1985,"IL",1983,11408818],["GA",1986,"IL",1984,11412132],["GA",1987,"IL",1985,11399806],["GA",1988,"IL",1986,11387257],["GA",1989,"IL",1987,11391178],["GA",1990,"IL",1988,11390183],["GA",1991,"IL",1989,11409782],["GA",1992,"IL",1990,11430602],["GA",1993,"IL",1991,12128370],["GA",1994,"IL",1992,12069774],["GA",1995,"IL",1993,12011509],["GA",1996,"IL",1994,11953003],["GA",1997,"IL",1995,11884935],["GA",1998,"IL",1996,11804986],["GA",1999,"IL",1997,11725984],["GA",2000,"IL",1998,11635197],["GA",2001,"IL",1999,11535973],["GA",2002,"IL",2000,11446979],["GA",2003,"IL",2001,11430602],["ID",1976,"IN",1980,5490224],["ID",1977,"IN",1981,5480435],["ID",1978,"IN",1982,5467922],["ID",1979,"IN",1983,5450395],["ID",1980,"IN",1984,5458322],["ID",1981,"IN",1985,5459211],["ID",1982,"IN",1986,5454108],["ID",1983,"IN",1987,5473012],["ID",1984,"IN",1988,5491735],["ID",1985,"IN",1989,5523693],["ID",1986,"IN",1990,5544159],["ID",1987,"IN",1991,5942901],["ID",1988,"IN",1992,5907617],["ID",1989,"IN",1993,5872370],["ID",1990,"IN",1994,5834908],["ID",1991,"IN",1995,5791819],["ID",1992,"IN",1996,5745626],["ID",1993,"IN",1997,5701965],["ID",1994,"IN",1998,5648649],["ID",1995,"IN",1999,5602062],["ID",1996,"IN",2000,5555097],["ID",1997,"IN",2001,5544156],["ID",1998,"HI",1980,964691],["ID",1999,"HI",1981,978195],["ID",2000,"HI",1982,993780],["ID",2001,"HI",1983,1012717],["ID",2002,"HI",1984,1027922],["ID",2003,"HI",1985,1039698],["IL",1976,"HI",1986,1051762],["IL",1977,"HI",1987,1067918],["IL",1978,"HI",1988,1079828],["IL",1979,"HI",1989,1094588],["IL",1980,"HI",1990,1108229],["IL",1981,"HI",1991,1185497],["IL",1982,"HI",1992,1190472],["IL",1983,"HI",1993,1189322],["IL",1984,"HI",1994,1184434],["IL",1985,"HI",1995,1180490],["IL",1986,"HI",1996,1173903],["IL",1987,"HI",1997,1161508],["IL",1988,"HI",1998,1149926],["IL",1989,"HI",1999,1131412],["IL",1990,"HI",2000,1112703],["IL",1991,"HI",2001,1108229],["IL",1992,"IA",1980,2913808],["IL",1993,"IA",1981,2907983],["IL",1994,"IA",1982,2888189],["IL",1995,"IA",1983,2870543],["IL",1996,"IA",1984,2858618],["IL",1997,"IA",1985,2829684],["IL",1998,"IA",1986,2791970],["IL",1999,"IA",1987,2767011],["IL",2000,"IA",1988,2768388],["IL",2001,"IA",1989,2770592],["IL",2002,"IA",1990,2776755],["IL",2003,"IA",1991,2869413],["IN",1976,"IA",1992,2861025],["IN",1977,"IA",1993,2854396],["IN",1978,"IA",1994,2848473],["IN",1979,"IA",1995,2840860],["IN",1980,"IA",1996,2829422],["IN",1981,"IA",1997,2820525],["IN",1982,"IA",1998,2806923],["IN",1983,"IA",1999,2791227],["IN",1984,"IA",2000,2779769],["IN",1985,"IA",2001,2776831],["IN",1986,"KS",1980,2363679],["IN",1987,"KS",1981,2384849],["IN",1988,"KS",1982,2401202],["IN",1989,"KS",1983,2415531],["IN",1990,"KS",1984,2424086],["IN",1991,"KS",1985,2427405],["IN",1992,"KS",1986,2432619],["IN",1993,"KS",1987,2445367],["IN",1994,"KS",1988,2461996],["IN",1995,"KS",1989,2472849],["IN",1996,"KS",1990,2477574],["IN",1997,"KS",1991,2654052],["IN",1998,"KS",1992,2638667],["IN",1999,"KS",1993,2616339],["IN",2000,"KS",1994,2598266],["IN",2001,"KS",1995,2586942],["IN",2002,"KS",1996,2569118],["IN",2003,"KS",1997,2547605],["IA",1976,"KS",1998,2526042],["IA",1977,"KS",1999,2495209],["IA",1978,"KS",2000,2480683],["IA",1979,"KS",2001,2477588],["IA",1980,"KY",1980,3660777],["IA",1981,"KY",1981,3670394],["IA",1982,"KY",1982,3683445],["IA",1983,"KY",1983,3694484],["IA",1984,"KY",1984,3695453],["IA",1985,"KY",1985,3694826],["IA",1986,"KY",1986,3687809],["IA",1987,"KY",1987,3683329],["IA",1988,"KY",1988,3679999],["IA",1989,"KY",1989,3677306],["IA",1990,"KY",1990,3685296],["IA",1992,"KY",1991,3960825],["IA",1993,"KY",1992,3934310],["IA",1994,"KY",1993,3907816],["IA",1995,"KY",1994,3881051],["IA",1996,"KY",1995,3855248],["IA",1997,"KY",1996,3823215],["IA",1998,"KY",1997,3792288],["IA",1999,"KY",1998,3756358],["IA",2000,"KY",1999,3714686],["IA",2001,"KY",2000,3692584],["IA",2002,"KY",2001,3686892],["IA",2003,"MD",1980,4216975],["KS",1976,"MD",1981,4261905],["KS",1977,"MD",1982,4282923],["KS",1978,"MD",1983,4313327],["KS",1979,"MD",1984,4365243],["KS",1980,"MD",1985,4413071],["KS",1981,"MD",1986,4486957],["KS",1982,"MD",1987,4565557],["KS",1983,"MD",1988,4657904],["KS",1984,"MD",1989,4727301],["KS",1985,"MD",1990,4781468],["KS",1986,"MD",1991,5171634],["KS",1987,"MD",1992,5130072],["KS",1988,"MD",1993,5092914],["KS",1989,"MD",1994,5057142],["KS",1990,"MD",1995,5023650],["KS",1991,"MD",1996,4985411],["KS",1992,"MD",1997,4942504],["KS",1993,"MD",1998,4902545],["KS",2000,"MD",1999,4856176],["KS",2001,"MD",2000,4797431],["KS",2002,"MD",2001,4780753],["KS",2003,"ME",1980,1124660],["KY",1976,"ME",1981,1133033],["KY",1977,"ME",1982,1136684],["KY",1978,"ME",1983,1144772],["KY",1979,"ME",1984,1155635],["KY",1980,"ME",1985,1162936],["KY",1981,"ME",1986,1170126],["KY",1982,"ME",1987,1184574],["KY",1983,"ME",1988,1203840],["KY",1984,"ME",1989,1219961],["KY",1985,"ME",1990,1227928],["KY",1986,"ME",1991,1253040],["KY",1987,"ME",1992,1247554],["KY",1989,"ME",1993,1245215],["KY",1990,"ME",1994,1241436],["KY",1991,"ME",1995,1237438],["KY",1992,"ME",1996,1237687],["KY",1993,"ME",1997,1238256],["KY",1994,"ME",1998,1235748],["KY",1995,"ME",1999,1235439],["KY",1996,"ME",2000,1231296],["KY",1997,"ME",2001,1227928],["KY",1998,"LA",1980,4205900],["KY",1999,"LA",1981,4283303],["KY",2000,"LA",1982,4352608],["KY",2001,"LA",1983,4395316],["KY",2002,"LA",1984,4400477],["KY",2003,"LA",1985,4408118],["LA",1976,"LA",1986,4406919],["LA",1977,"LA",1987,4344148],["LA",1978,"LA",1988,4288863],["LA",1979,"LA",1989,4252894],["LA",1980,"LA",1990,4219973],["LA",1981,"LA",1991,4372035],["LA",1982,"LA",1992,4362758],["LA",1983,"LA",1993,4351390],["LA",1984,"LA",1994,4338763],["LA",1985,"LA",1995,4327978],["LA",1986,"LA",1996,4306500],["LA",1987,"LA",1997,4284749],["LA",1988,"LA",1998,4270849],["LA",1989,"LA",1999,4240950],["LA",1990,"LA",2000,4219179],["LA",1991,"LA",2001,4221826],["LA",1992,"MA",1980,5737037],["LA",1993,"MA",1981,5768685],["LA",1994,"MA",1982,5771222],["LA",1995,"MA",1983,5799407],["LA",1996,"MA",1984,5840773],["LA",1997,"MA",1985,5880733],["LA",1998,"MA",1986,5902678],["LA",1999,"MA",1987,5935204],["LA",2000,"MA",1988,5979982],["LA",2001,"MA",1989,6015478],["LA",2002,"MA",1990,6016425],["LA",2003,"MA",1991,6175169],["ME",1976,"MA",1992,6144407],["ME",1977,"MA",1993,6115476],["ME",1978,"MA",1994,6085393],["ME",1979,"MA",1995,6062335],["ME",1980,"MA",1996,6031352],["ME",1981,"MA",1997,6010884],["ME",1982,"MA",1998,5993474],["ME",1983,"MA",1999,5998652],["ME",1984,"MA",2000,6018664],["ME",1985,"MA",2001,6016425],["ME",1986,"MI",1980,9262078],["ME",1987,"MI",1981,9209287],["ME",1988,"MI",1982,9115198],["ME",1989,"MI",1983,9047754],["ME",1990,"MI",1984,9049452],["ME",1993,"MI",1985,9076293],["ME",1994,"MI",1986,9127775],["ME",1995,"MI",1987,9187481],["ME",1996,"MI",1988,9217998],["ME",1997,"MI",1989,9253295],["ME",1998,"MI",1990,9295297],["ME",1999,"MI",1991,9863775],["ME",2000,"MI",1992,9820231],["ME",2001,"MI",1993,9785450],["ME",2002,"MI",1994,9739184],["ME",2003,"MI",1995,9659871],["MD",1976,"MI",1996,9584481],["MD",1977,"MI",1997,9529240],["MD",1978,"MI",1998,9470323],["MD",1979,"MI",1999,9395022],["MD",1980,"MI",2000,9310462],["MD",1981,"MI",2001,9295287],["MD",1982,"MS",1980,2520638],["MD",1983,"MS",1981,2539036],["MD",1984,"MS",1982,2556777],["MD",1985,"MS",1983,2567717],["MD",1986,"MS",1984,2578051],["MD",1987,"MS",1985,2588102],["MD",1988,"MS",1986,2593597],["MD",1989,"MS",1987,2588545],["MD",1990,"MS",1988,2580352],["MD",1991,"MS",1989,2574269],["MD",1992,"MS",1990,2573216],["MD",1993,"MS",1991,2768619],["MD",1994,"MS",1992,2751335],["MD",1995,"MS",1993,2731826],["MD",1996,"MS",1994,2709925],["MD",1997,"MS",1995,2690788],["MD",1998,"MS",1996,2663450],["MD",1999,"MS",1997,2635574],["MD",2000,"MS",1998,2610193],["MD",2001,"MS",1999,2591230],["MD",2002,"MS",2000,2577426],["MD",2003,"MS",2001,2575475],["MA",1976,"MN",1980,4075970],["MA",1977,"MN",1981,4111728],["MA",1978,"MN",1982,4131450],["MA",1979,"MN",1983,4141456],["MA",1980,"MN",1984,4157706],["MA",1981,"MN",1985,4184302],["MA",1982,"MN",1986,4205212],["MA",1983,"MN",1987,4235136],["MA",1984,"MN",1988,4296166],["MA",1985,"MN",1989,4338057],["MA",1986,"MN",1990,4375099],["MA",1987,"MN",1991,4775508],["MA",1988,"MN",1992,4726411],["MA",1989,"MN",1993,4687726],["MA",1990,"MN",1994,4647723],["MA",1991,"MN",1995,4605445],["MA",1992,"MN",1996,4566028],["MA",1993,"MN",1997,4521709],["MA",1994,"MN",1998,4471503],["MA",1995,"MN",1999,4427429],["MA",1996,"MN",2000,4387283],["MA",1997,"MN",2001,4375665],["MA",1998,"MO",1980,4916686],["MA",1999,"MO",1981,4932064],["MA",2000,"MO",1982,4929451],["MA",2001,"MO",1983,4943733],["MA",2002,"MO",1984,4975278],["MA",2003,"MO",1985,5000268],["MI",1976,"MO",1986,5023068],["MI",1977,"MO",1987,5056696],["MI",1978,"MO",1988,5081736],["MI",1979,"MO",1989,5095830],["MI",1980,"MO",1990,5117073],["MI",1981,"MO",1991,5468338],["MI",1982,"MO",1992,5437562],["MI",1983,"MO",1993,5407113],["MI",1984,"MO",1994,5367888],["MI",1985,"MO",1995,5324610],["MI",1986,"MO",1996,5281206],["MI",1987,"MO",1997,5237757],["MI",1988,"MO",1998,5193686],["MI",1989,"MO",1999,5157770],["MI",1990,"MO",2000,5126370],["MI",1991,"MO",2001,5116901],["MI",1992,"NV",1980,800493],["MI",1993,"NV",1981,847655],["MI",1994,"NV",1982,881537],["MI",1995,"NV",1983,901977],["MI",1996,"NV",1984,924922],["MI",1997,"NV",1985,951030],["MI",1998,"NV",1986,980613],["MI",1999,"NV",1987,1023376],["MI",2000,"NV",1988,1075022],["MI",2001,"NV",1989,1137382],["MI",2002,"NV",1990,1201833],["MI",2003,"NV",1991,1809253],["MN",1976,"NV",1992,1743772],["MN",1977,"NV",1993,1675581],["MN",1978,"NV",1994,1596476],["MN",1979,"NV",1995,1525777],["MN",1980,"NV",1996,1456388],["MN",1981,"NV",1997,1380197],["MN",1982,"NV",1998,1330694],["MN",1983,"NV",1999,1285046],["MN",1984,"NV",2000,1218629],["MN",1985,"NV",2001,1201675],["MN",1986,"NY",1980,17558072],["MN",1987,"NY",1981,17567734],["MN",1988,"NY",1982,17589738],["MN",1989,"NY",1983,17686905],["MN",1990,"NY",1984,17745684],["MN",1991,"NY",1985,17791672],["MN",1992,"NY",1986,17833419],["MN",1993,"NY",1987,17868848],["MN",1994,"NY",1988,17941309],["MN",1995,"NY",1989,17983086],["MN",1996,"NY",1990,17990455],["MN",1997,"NY",1991,18196601],["MN",1998,"NY",1992,18159175],["MN",1999,"NY",1993,18143184],["MN",2000,"NY",1994,18143805],["MN",2001,"NY",1995,18150928],["MN",2002,"NY",1996,18156652],["MN",2003,"NY",1997,18140894],["MS",1976,"NY",1998,18082032],["MS",1977,"NY",1999,18029532],["MS",1978,"NY",2000,18002855],["MS",1979,"NY",2001,17990778],["MS",1980,"NH",1980,920610],["MS",1981,"NH",1981,936621],["MS",1982,"NH",1982,947719],["MS",1983,"NH",1983,958134],["MS",1984,"NH",1984,976864],["MS",1985,"NH",1985,996753],["MS",1986,"NH",1986,1025053],["MS",1987,"NH",1987,1054289],["MS",1988,"NH",1988,1082577],["MS",1989,"NH",1989,1104522],["MS",1990,"NH",1990,1109252],["MS",1991,"NH",1991,1201134],["MS",1992,"NH",1992,1185823],["MS",1993,"NH",1993,1173239],["MS",1994,"NH",1994,1160768],["MS",1995,"NH",1995,1145604],["MS",1996,"NH",1996,1133054],["MS",1997,"NH",1997,1122191],["MS",1998,"NH",1998,1112766],["MS",1999,"NH",1999,1107055],["MS",2000,"NH",2000,1111831],["MS",2001,"NH",2001,1109252],["MS",2002,"NJ",1980,7364823],["MS",2003,"NJ",1981,7407472],["MO",1976,"NJ",1982,7430968],["MO",1977,"NJ",1983,7467785],["MO",1978,"NJ",1984,7515473],["MO",1979,"NJ",1985,7565528],["MO",1980,"NJ",1986,7622159],["MO",1981,"NJ",1987,7670742],["MO",1982,"NJ",1988,7712333],["MO",1983,"NJ",1989,7726089],["MO",1984,"NJ",1990,7730188],["MO",1985,"NJ",1991,8143412],["MO",1986,"NJ",1992,8095542],["MO",1987,"NJ",1993,8054178],["MO",1988,"NJ",1994,8009624],["MO",1989,"NJ",1995,7965523],["MO",1990,"NJ",1996,7918796],["MO",1991,"NJ",1997,7874891],["MO",1992,"NJ",1998,7827770],["MO",1993,"NJ",1999,7784269],["MO",1994,"NJ",2000,7757158],["MO",1995,"NJ",2001,7747750],["MO",1996,"NM",1980,1302894],["MO",1997,"NM",1981,1332748],["MO",1998,"NM",1982,1363823],["MO",1999,"NM",1983,1394361],["MO",2000,"NM",1984,1416717],["MO",2001,"NM",1985,1438361],["MO",2002,"NM",1986,1462729],["MO",2003,"NM",1987,1478520],["MT",1976,"NM",1988,1490337],["MT",1977,"NM",1989,1503901],["MT",1978,"NM",1990,1515069],["MT",1979,"NM",1991,1739844],["MT",1980,"NM",1992,1733535],["MT",1981,"NM",1993,1722939],["MT",1982,"NM",1994,1706151],["MT",1983,"NM",1995,1682417],["MT",1984,"NM",1996,1653329],["MT",1985,"NM",1997,1614937],["MT",1986,"NM",1998,1580750],["MT",1988,"NM",1999,1547115],["MT",1989,"NM",2000,1519933],["MT",1990,"NM",2001,1515069],["MT",1991,"NC",1980,5881766],["MT",1992,"NC",1981,5956653],["MT",1995,"NC",1982,6019101],["MT",1997,"NC",1983,6077056],["MT",1998,"NC",1984,6164006],["MT",1999,"NC",1985,6253954],["MT",2000,"NC",1986,6321578],["MT",2001,"NC",1987,6403700],["MT",2002,"NC",1988,6480594],["MT",2003,"NC",1989,6565459],["NE",1976,"NC",1990,6628637],["NE",1977,"NC",1991,7650789],["NE",1978,"NC",1992,7545828],["NE",1979,"NC",1993,7428672],["NE",1980,"NC",1994,7307658],["NE",1981,"NC",1995,7185403],["NE",1982,"NC",1996,7060959],["NE",1983,"NC",1997,6947412],["NE",1984,"NC",1998,6831850],["NE",1985,"NC",1999,6748135],["NE",1986,"NC",2000,6656987],["NE",1987,"NC",2001,6632448],["NE",1988,"MT",1980,786690],["NE",1989,"MT",1981,795328],["NE",1990,"MT",1982,803986],["NE",1991,"MT",1983,814031],["NE",1992,"MT",1984,820905],["NE",1993,"MT",1985,822320],["NE",1994,"MT",1986,813739],["NE",1995,"MT",1987,805063],["NE",1996,"MT",1988,800202],["NE",1997,"MT",1989,799636],["NE",1998,"MT",1990,799065],["NE",1999,"MT",1991,882779],["NE",2000,"MT",1992,879533],["NE",2001,"MT",1993,878706],["NE",2002,"MT",1994,876656],["NE",2003,"MT",1995,868522],["NV",1976,"MT",1996,854923],["NV",1977,"MT",1997,839876],["NV",1978,"MT",1998,822436],["NV",1979,"MT",1999,807837],["NV",1980,"MT",2000,799824],["NV",1981,"MT",2001,799065],["NV",1982,"NE",1980,1569825],["NV",1983,"NE",1981,1578515],["NV",1984,"NE",1982,1581780],["NV",1985,"NE",1983,1584293],["NV",1986,"NE",1984,1588639],["NV",1987,"NE",1985,1584664],["NV",1988,"NE",1986,1574333],["NV",1989,"NE",1987,1566547],["NV",1990,"NE",1988,1571477],["NV",1991,"NE",1989,1574864],["NV",1992,"NE",1990,1578385],["NV",1993,"NE",1991,1666028],["NV",1994,"NE",1992,1660772],["NV",1995,"NE",1993,1656042],["NV",1996,"NE",1994,1647657],["NV",1997,"NE",1995,1635142],["NV",1998,"NE",1996,1621551],["NV",1999,"NE",1997,1612149],["NV",2000,"NE",1998,1602406],["NV",2001,"NE",1999,1590805],["NV",2002,"NE",2000,1580664],["NV",2003,"NE",2001,1578417],["NH",1976,"ND",1980,652717],["NH",1977,"ND",1981,659505],["NH",1978,"ND",1982,668972],["NH",1979,"ND",1983,676688],["NH",1980,"ND",1984,680497],["NH",1981,"ND",1985,676980],["NH",1982,"ND",1986,669512],["NH",1983,"ND",1987,661136],["NH",1984,"ND",1988,655331],["NH",1985,"ND",1989,646351],["NH",1986,"ND",1990,638800],["NH",1987,"ND",1991,633666],["NH",1988,"ND",1992,637808],["NH",1989,"ND",1993,640945],["NH",1990,"ND",1994,642858],["NH",1991,"ND",1995,641548],["NH",1992,"ND",1996,639762],["NH",1993,"ND",1997,637229],["NH",1994,"ND",1998,635427],["NH",1995,"ND",1999,634199],["NH",1996,"ND",2000,637364],["NH",1998,"ND",2001,638800],["NH",1999,"OH",1980,10797630],["NH",2000,"OH",1981,10788330],["NH",2001,"OH",1982,10757087],["NH",2002,"OH",1983,10737632],["NH",2003,"OH",1984,10737746],["NJ",1976,"OH",1985,10734926],["NJ",1977,"OH",1986,10730268],["NJ",1978,"OH",1987,10760090],["NJ",1979,"OH",1988,10798552],["NJ",1980,"OH",1989,10829217],["NJ",1981,"OH",1990,10847115],["NJ",1982,"OH",1991,11256654],["NJ",1983,"OH",1992,11237752],["NJ",1984,"OH",1993,11212498],["NJ",1985,"OH",1994,11187032],["NJ",1986,"OH",1995,11155493],["NJ",1987,"OH",1996,11111451],["NJ",1988,"OH",1997,11070385],["NJ",1989,"OH",1998,11007609],["NJ",1990,"OH",1999,10933683],["NJ",1991,"OH",2000,10861837],["NJ",1992,"OH",2001,10847115],["NJ",1993,"OK",1980,3025290],["NJ",1994,"OK",1981,3096164],["NJ",1995,"OK",1982,3206123],["NJ",1996,"OK",1983,3290402],["NJ",1997,"OK",1984,3285533],["NJ",1998,"OK",1985,3271332],["NJ",1999,"OK",1986,3252735],["NJ",2000,"OK",1987,3210122],["NJ",2001,"OK",1988,3167057],["NJ",2002,"OK",1989,3150307],["NJ",2003,"OK",1990,3145585],["NM",1976,"OK",1991,3358044],["NM",1977,"OK",1992,3339478],["NM",1978,"OK",1993,3314259],["NM",1979,"OK",1994,3289634],["NM",1980,"OK",1995,3265547],["NM",1981,"OK",1996,3246119],["NM",1982,"OK",1997,3228829],["NM",1983,"OK",1998,3204174],["NM",1984,"OK",1999,3166471],["NM",1985,"OK",2000,3147105],["NM",1986,"OK",2001,3145576],["NM",1987,"OR",1980,2633105],["NM",1988,"OR",1981,2667982],["NM",1989,"OR",1982,2664922],["NM",1990,"OR",1983,2653066],["NM",1991,"OR",1984,2666588],["NM",1992,"OR",1985,2672652],["NM",1993,"OR",1986,2683528],["NM",1994,"OR",1987,2700991],["NM",1995,"OR",1988,2741297],["NM",1996,"OR",1989,2790575],["NM",1997,"OR",1990,2842321],["NM",1998,"OR",1991,3316154],["NM",1999,"OR",1992,3282055],["NM",2000,"OR",1993,3243254],["NM",2001,"OR",1994,3195087],["NM",2002,"OR",1995,3141421],["NM",2003,"OR",1996,3087142],["NY",1976,"OR",1997,3034490],["NY",1977,"OR",1998,2973934],["NY",1978,"OR",1999,2918745],["NY",1979,"OR",2000,2858547],["NY",1980,"OR",2001,2842337],["NY",1981,"PA",1980,11863895],["NY",1982,"PA",1981,11858567],["NY",1983,"PA",1982,11845146],["NY",1984,"PA",1983,11837723],["NY",1985,"PA",1984,11815172],["NY",1986,"PA",1985,11770862],["NY",1987,"PA",1986,11782752],["NY",1988,"PA",1987,11810866],["NY",1989,"PA",1988,11845752],["NY",1990,"PA",1989,11865996],["NY",1991,"PA",1990,11881643],["NY",1992,"PA",1991,11994016],["NY",1993,"PA",1992,12002329],["NY",1994,"PA",1993,12015888],["NY",1995,"PA",1994,12038008],["NY",1996,"PA",1995,12044780],["NY",1997,"PA",1996,12042545],["NY",1998,"PA",1997,12022128],["NY",1999,"PA",1998,11980819],["NY",2000,"PA",1999,11943160],["NY",2001,"PA",2000,11895604],["NY",2002,"PA",2001,11882842],["NY",2003,"RI",1980,947154],["NC",1976,"RI",1981,953013],["NC",1977,"RI",1982,954170],["NC",1978,"RI",1983,956382],["NC",1979,"RI",1984,961894],["NC",1980,"RI",1985,968955],["NC",1981,"RI",1986,977341],["NC",1982,"RI",1987,989604],["NC",1983,"RI",1988,996408],["NC",1984,"RI",1989,1000666],["NC",1985,"RI",1990,1003464],["NC",1986,"RI",1991,990819],["NC",1987,"RI",1992,987704],["NC",1988,"RI",1993,986966],["NC",1989,"RI",1994,987858],["NC",1990,"RI",1995,989203],["NC",1991,"RI",1996,993412],["NC",1992,"RI",1997,997852],["NC",1993,"RI",1998,1000571],["NC",1994,"RI",1999,1003990],["NC",1995,"RI",2000,1004649],["NC",1996,"RI",2001,1003464],["NC",1997,"SC",1980,3121820],["NC",1998,"SC",1981,3179255],["NC",1999,"SC",1982,3207614],["NC",2000,"SC",1983,3234066],["NC",2001,"SC",1984,3271868],["NC",2002,"SC",1985,3303209],["NC",2003,"SC",1986,3342758],["ND",1976,"SC",1987,3380506],["ND",1977,"SC",1988,3412096],["ND",1978,"SC",1989,3456775],["ND",1979,"SC",1990,3486703],["ND",1980,"SC",1991,3885736],["ND",1981,"SC",1992,3839578],["ND",1982,"SC",1993,3790066],["ND",1983,"SC",1994,3738974],["ND",1984,"SC",1995,3699943],["ND",1985,"SC",1996,3666456],["ND",1986,"SC",1997,3634507],["ND",1987,"SC",1998,3600576],["ND",1988,"SC",1999,3559470],["ND",1989,"SC",2000,3499064],["ND",1990,"SC",2001,3486310],["ND",1991,"SD",1980,690768],["ND",1992,"SD",1981,689584],["ND",1993,"SD",1982,690597],["ND",1995,"SD",1983,693008],["ND",1996,"SD",1984,697249],["ND",1997,"SD",1985,698402],["ND",1998,"SD",1986,696034],["ND",1999,"SD",1987,696036],["ND",2000,"SD",1988,698165],["ND",2001,"SD",1989,696701],["ND",2002,"SD",1990,696004],["ND",2003,"SD",1991,733133],["OH",1976,"SD",1992,730789],["OH",1977,"SD",1993,730855],["OH",1978,"SD",1994,730699],["OH",1979,"SD",1995,728251],["OH",1980,"SD",1996,723038],["OH",1981,"SD",1997,716258],["OH",1982,"SD",1998,708698],["OH",1983,"SD",1999,701445],["OH",1984,"SD",2000,696667],["OH",1985,"SD",2001,696004],["OH",1986,"TN",1980,4591120],["OH",1987,"TN",1981,4627658],["OH",1988,"TN",1982,4646041],["OH",1989,"TN",1983,4659749],["OH",1990,"TN",1984,4686737],["OH",1991,"TN",1985,4715296],["OH",1992,"TN",1986,4738708],["OH",1993,"TN",1987,4782927],["OH",1994,"TN",1988,4822437],["OH",1995,"TN",1989,4854444],["OH",1996,"TN",1990,4877185],["OH",1997,"TN",1991,5483535],["OH",1998,"TN",1992,5432679],["OH",1999,"TN",1993,5378433],["OH",2000,"TN",1994,5313576],["OH",2001,"TN",1995,5241168],["OH",2002,"TN",1996,5163016],["OH",2003,"TN",1997,5085666],["OK",1976,"TN",1998,5013999],["OK",1977,"TN",1999,4946886],["OK",1978,"TN",2000,4890626],["OK",1979,"TN",2001,4877203],["OK",1980,"TX",1980,14229191],["OK",1981,"TX",1981,14746318],["OK",1982,"TX",1982,15331415],["OK",1983,"TX",1983,15751676],["OK",1984,"TX",1984,16007086],["OK",1985,"TX",1985,16272734],["OK",1986,"TX",1986,16561113],["OK",1987,"TX",1987,16621791],["OK",1988,"TX",1988,16667022],["OK",1989,"TX",1989,16806735],["OK",1990,"TX",1990,16986510],["OK",1991,"TX",1991,20044141],["OK",1992,"TX",1992,19712389],["OK",1993,"TX",1993,19355427],["OK",1994,"TX",1994,19006240],["OK",1995,"TX",1995,18679706],["OK",1996,"TX",1996,18338319],["OK",1997,"TX",1997,17996764],["OK",1998,"TX",1998,17650479],["OK",1999,"TX",1999,17339904],["OK",2000,"TX",2000,17044714],["OK",2001,"TX",2001,16986335],["OK",2002,"VT",1980,511456],["OK",2003,"VT",1981,515594],["OR",1976,"VT",1982,519109],["OR",1977,"VT",1983,523302],["OR",1978,"VT",1984,526660],["OR",1979,"VT",1985,530035],["OR",1980,"VT",1986,534066],["OR",1981,"VT",1987,540267],["OR",1982,"VT",1988,549763],["OR",1983,"VT",1989,557707],["OR",1984,"VT",1990,562758],["OR",1985,"VT",1991,593740],["OR",1986,"VT",1992,590579],["OR",1987,"VT",1993,588665],["OR",1988,"VT",1994,586352],["OR",1989,"VT",1995,582827],["OR",1990,"VT",1996,578900],["OR",1991,"VT",1997,574004],["OR",1992,"VT",1998,570115],["OR",1993,"VT",1999,567141],["OR",1994,"VT",2000,564526],["OR",1995,"VT",2001,562758],["OR",1996,"UT",1980,1461037],["OR",1997,"UT",1981,1515471],["OR",1998,"UT",1982,1558314],["OR",1999,"UT",1983,1594943],["OR",2000,"UT",1984,1622342],["OR",2001,"UT",1985,1642910],["OR",2002,"UT",1986,1662834],["OR",2003,"UT",1987,1678119],["PA",1976,"UT",1988,1689372],["PA",1977,"UT",1989,1705864],["PA",1978,"UT",1990,1722850],["PA",1979,"UT",1991,2129836],["PA",1980,"UT",1992,2100562],["PA",1981,"UT",1993,2065397],["PA",1982,"UT",1994,2022253],["PA",1983,"UT",1995,1976774],["PA",1984,"UT",1996,1930436],["PA",1985,"UT",1997,1875993],["PA",1986,"UT",1998,1821498],["PA",1987,"UT",1999,1771941],["PA",1988,"UT",2000,1729722],["PA",1989,"UT",2001,1722850],["PA",1990,"WA",1980,4132156],["PA",1991,"WA",1981,4235731],["PA",1992,"WA",1982,4276552],["PA",1993,"WA",1983,4300266],["PA",1994,"WA",1984,4343656],["PA",1995,"WA",1985,4400098],["PA",1996,"WA",1986,4452720],["PA",1997,"WA",1987,4531901],["PA",1998,"WA",1988,4639893],["PA",1999,"WA",1989,4746316],["PA",2000,"WA",1990,4866692],["PA",2001,"WA",1991,5756361],["PA",2002,"WA",1992,5687832],["PA",2003,"WA",1993,5604105],["RI",1976,"WA",1994,5509963],["RI",1977,"WA",1995,5431024],["RI",1978,"WA",1996,5334896],["RI",1979,"WA",1997,5247704],["RI",1980,"WA",1998,5139011],["RI",1981,"WA",1999,5013443],["RI",1982,"WA",2000,4900780],["RI",1983,"WA",2001,4866669],["RI",1984,"WV",1980,1949644],["RI",1985,"WV",1981,1954124],["RI",1986,"WV",1982,1949604],["RI",1987,"WV",1983,1945061],["RI",1988,"WV",1984,1927697],["RI",1989,"WV",1985,1906831],["RI",1990,"WV",1986,1882350],["RI",1991,"WV",1987,1857585],["RI",1992,"WV",1988,1830215],["RI",1993,"WV",1989,1806568],["RI",1994,"WV",1990,1793477],["RI",1995,"WV",1991,1806928],["RI",1996,"WV",1992,1811688],["RI",1997,"WV",1993,1815588],["RI",1998,"WV",1994,1818983],["RI",1999,"WV",1995,1820560],["RI",2000,"WV",1996,1818490],["RI",2001,"WV",1997,1816179],["RI",2002,"WV",1998,1805462],["RI",2003,"WV",1999,1798212],["SC",1976,"WV",2000,1792481],["SC",1977,"WV",2001,1793477],["SC",1978,"WI",1980,4705767],["SC",1979,"WI",1981,4726343],["SC",1980,"WI",1982,4728870],["SC",1981,"WI",1983,4721438],["SC",1982,"WI",1984,4735563],["SC",1983,"WI",1985,4747767],["SC",1984,"WI",1986,4755618],["SC",1985,"WI",1987,4777919],["SC",1986,"WI",1988,4822388],["SC",1987,"WI",1989,4856574],["SC",1988,"WI",1990,4891769],["SC",1989,"WI",1991,5250446],["SC",1990,"WI",1992,5222124],["SC",1991,"WI",1993,5200235],["SC",1992,"WI",1994,5173828],["SC",1993,"WI",1995,5137004],["SC",1994,"WI",1996,5095504],["SC",1995,"WI",1997,5055318],["SC",1996,"WI",1998,5004636],["SC",1997,"WI",1999,4952675],["SC",1998,"WI",2000,4902265],["SC",1999,"WI",2001,4891954],["SC",2000,"WY",1980,469557],["SC",2001,"WY",1981,491712],["SC",2002,"WY",1982,506400],["SC",2003,"WY",1983,510345],["SD",1976,"WY",1984,504896],["SD",1977,"WY",1985,499695],["SD",1978,"WY",1986,495633],["SD",1979,"WY",1987,476965],["SD",1980,"WY",1988,465101],["SD",1981,"WY",1989,458374],["SD",1982,"WY",1990,453588],["SD",1983,"WY",1991,479602],["SD",1984,"WY",1992,480045],["SD",1985,"WY",1993,480031],["SD",1986,"WY",1994,480085],["SD",1987,"WY",1995,478447],["SD",1988,"WY",1996,474982],["SD",1989,"WY",1997,469033],["SD",1990,"WY",1998,463491],["SD",1991,"WY",1999,457739],["SD",1992,"WY",2000,453401],["SD",1993,"WY",2001,453589],["SD",1994,"AL",1980,3893888],["SD",1995,"AL",1981,3918531],["SD",1996,"AL",1982,3925266],["SD",1997,"AL",1983,3934102],["SD",1998,"AL",1984,3951820],["SD",1999,"AL",1985,3972523],["SD",2000,"AL",1986,3991569],["SD",2001,"AL",1987,4015264],["SD",2002,"AL",1988,4023844],["SD",2003,"AL",1989,4030222],["TN",1976,"AL",1990,4040587],["TN",1977,"AL",1991,4369862],["TN",1978,"AL",1992,4351037],["TN",1979,"AL",1993,4320281],["TN",1980,"AL",1994,4290403],["TN",1981,"AL",1995,4262731],["TN",1982,"AL",1996,4232965],["TN",1983,"AL",1997,4193114],["TN",1984,"AL",1998,4139269],["TN",1985,"AL",1999,4091025],["TN",1986,"AL",2000,4048508],["TN",1987,"AL",2001,4040389],["TN",1988,"GA",1980,5463105],["TN",1989,"GA",1981,5568345],["TN",1990,"GA",1982,5649792],["TN",1991,"GA",1983,5728250],["TN",1992,"GA",1984,5834954],["TN",1993,"GA",1985,5962661],["TN",1994,"GA",1986,6084666],["TN",1995,"GA",1987,6208467],["TN",1996,"GA",1988,6316142],["TN",1997,"GA",1989,6411099],["TN",1998,"GA",1990,6478216],["TN",1999,"GA",1991,7788240],["TN",2000,"GA",1992,7636522],["TN",2001,"GA",1993,7486094],["TN",2002,"GA",1994,7332225],["TN",2003,"GA",1995,7188538],["TX",1976,"GA",1996,7045900],["TX",1977,"GA",1997,6894092],["TX",1978,"GA",1998,6759474],["TX",1979,"GA",1999,6621279],["TX",1980,"GA",2000,6506531],["TX",1981,"GA",2001,6478149],["TX",1982,null,null,null],["TX",1983,null,null,null],["TX",1984,null,null,null],["TX",1985,null,null,null],["TX",1986,null,null,null],["TX",1987,null,null,null],["TX",1988,null,null,null],["TX",1989,null,null,null],["TX",1990,null,null,null],["TX",1991,null,null,null],["TX",1992,null,null,null],["TX",1993,null,null,null],["TX",1994,null,null,null],["TX",1995,null,null,null],["TX",1996,null,null,null],["TX",1997,null,null,null],["TX",1998,null,null,null],["TX",1999,null,null,null],["TX",2000,null,null,null],["TX",2001,null,null,null],["TX",2002,null,null,null],["TX",2003,null,null,null],["UT",1976,null,null,null],["UT",1977,null,null,null],["UT",1978,null,null,null],["UT",1979,null,null,null],["UT",1980,null,null,null],["UT",1981,null,null,null],["UT",1982,null,null,null],["UT",1983,null,null,null],["UT",1984,null,null,null],["UT",1985,null,null,null],["UT",1986,null,null,null],["UT",1987,null,null,null],["UT",1988,null,null,null],["UT",1989,null,null,null],["UT",1990,null,null,null],["UT",1991,null,null,null],["UT",1992,null,null,null],["UT",1993,null,null,null],["UT",1994,null,null,null],["UT",1995,null,null,null],["UT",1996,null,null,null],["UT",1997,null,null,null],["UT",1998,null,null,null],["UT",1999,null,null,null],["UT",2000,null,null,null],["UT",2001,null,null,null],["UT",2002,null,null,null],["UT",2003,null,null,null],["VT",1976,null,null,null],["VT",1977,null,null,null],["VT",1978,null,null,null],["VT",1979,null,null,null],["VT",1980,null,null,null],["VT",1981,null,null,null],["VT",1982,null,null,null],["VT",1983,null,null,null],["VT",1984,null,null,null],["VT",1985,null,null,null],["VT",1986,null,null,null],["VT",1987,null,null,null],["VT",1988,null,null,null],["VT",1989,null,null,null],["VT",1990,null,null,null],["VT",1991,null,null,null],["VT",1992,null,null,null],["VT",1993,null,null,null],["VT",1994,null,null,null],["VT",1995,null,null,null],["VT",1996,null,null,null],["VT",1997,null,null,null],["VT",1998,null,null,null],["VT",1999,null,null,null],["VT",2000,null,null,null],["VT",2001,null,null,null],["VT",2002,null,null,null],["VT",2003,null,null,null],["VA",1976,null,null,null],["VA",1977,null,null,null],["VA",1978,null,null,null],["VA",1979,null,null,null],["VA",1980,null,null,null],["VA",1981,null,null,null],["VA",1982,null,null,null],["VA",1983,null,null,null],["VA",1984,null,null,null],["VA",1985,null,null,null],["VA",1986,null,null,null],["VA",1987,null,null,null],["VA",1988,null,null,null],["VA",1989,null,null,null],["VA",1990,null,null,null],["VA",1991,null,null,null],["VA",1992,null,null,null],["VA",1993,null,null,null],["VA",1994,null,null,null],["VA",1995,null,null,null],["VA",1996,null,null,null],["VA",1997,null,null,null],["VA",1998,null,null,null],["VA",1999,null,null,null],["VA",2000,null,null,null],["VA",2001,null,null,null],["VA",2002,null,null,null],["VA",2003,null,null,null],["WA",1976,null,null,null],["WA",1977,null,null,null],["WA",1978,null,null,null],["WA",1979,null,null,null],["WA",1980,null,null,null],["WA",1981,null,null,null],["WA",1982,null,null,null],["WA",1983,null,null,null],["WA",1984,null,null,null],["WA",1985,null,null,null],["WA",1986,null,null,null],["WA",1987,null,null,null],["WA",1988,null,null,null],["WA",1989,null,null,null],["WA",1990,null,null,null],["WA",1991,null,null,null],["WA",1992,null,null,null],["WA",1993,null,null,null],["WA",1994,null,null,null],["WA",1995,null,null,null],["WA",1996,null,null,null],["WA",1997,null,null,null],["WA",1998,null,null,null],["WA",1999,null,null,null],["WA",2000,null,null,null],["WA",2001,null,null,null],["WA",2002,null,null,null],["WA",2003,null,null,null],["WV",1976,null,null,null],["WV",1977,null,null,null],["WV",1978,null,null,null],["WV",1979,null,null,null],["WV",1980,null,null,null],["WV",1981,null,null,null],["WV",1982,null,null,null],["WV",1983,null,null,null],["WV",1984,null,null,null],["WV",1985,null,null,null],["WV",1986,null,null,null],["WV",1987,null,null,null],["WV",1988,null,null,null],["WV",1989,null,null,null],["WV",1990,null,null,null],["WV",1991,null,null,null],["WV",1992,null,null,null],["WV",1993,null,null,null],["WV",1994,null,null,null],["WV",1995,null,null,null],["WV",1996,null,null,null],["WV",1997,null,null,null],["WV",1998,null,null,null],["WV",1999,null,null,null],["WV",2000,null,null,null],["WV",2001,null,null,null],["WV",2002,null,null,null],["WV",2003,null,null,null],["WI",1976,null,null,null],["WI",1977,null,null,null],["WI",1978,null,null,null],["WI",1979,null,null,null],["WI",1980,null,null,null],["WI",1981,null,null,null],["WI",1982,null,null,null],["WI",1983,null,null,null],["WI",1984,null,null,null],["WI",1985,null,null,null],["WI",1986,null,null,null],["WI",1987,null,null,null],["WI",1988,null,null,null],["WI",1989,null,null,null],["WI",1990,null,null,null],["WI",1991,null,null,null],["WI",1992,null,null,null],["WI",1993,null,null,null],["WI",1994,null,null,null],["WI",1995,null,null,null],["WI",1996,null,null,null],["WI",1997,null,null,null],["WI",1999,null,null,null],["WI",2000,null,null,null],["WI",2001,null,null,null],["WI",2002,null,null,null],["WI",2003,null,null,null],["WY",1976,null,null,null],["WY",1977,null,null,null],["WY",1978,null,null,null],["WY",1979,null,null,null],["WY",1980,null,null,null],["WY",1981,null,null,null],["WY",1982,null,null,null],["WY",1983,null,null,null],["WY",1984,null,null,null],["WY",1985,null,null,null],["WY",1986,null,null,null],["WY",1987,null,null,null],["WY",1988,null,null,null],["WY",1989,null,null,null],["WY",1990,null,null,null],["WY",1991,null,null,null],["WY",1992,null,null,null],["WY",1993,null,null,null],["WY",1994,null,null,null],["WY",1995,null,null,null],["WY",1996,null,null,null],["WY",1997,null,null,null],["WY",1998,null,null,null],["WY",1999,null,null,null],["WY",2000,null,null,null],["WY",2001,null,null,null],["WY",2002,null,null,null],["WY",2003,null,null,null],["AK",1976,null,null,null],["AK",1977,null,null,null],["AK",1978,null,null,null],["AK",1979,null,null,null],["AK",1980,null,null,null],["AK",1981,null,null,null],["AK",1982,null,null,null],["AK",1983,null,null,null],["AK",1984,null,null,null],["AK",1985,null,null,null],["AK",1986,null,null,null],["AK",1987,null,null,null],["AK",1988,null,null,null],["AK",1989,null,null,null],["AK",1990,null,null,null],["AK",1991,null,null,null],["AK",1992,null,null,null],["AK",1993,null,null,null],["AK",1994,null,null,null],["AK",1995,null,null,null],["AK",1996,null,null,null],["AK",1997,null,null,null],["AK",1998,null,null,null],["AK",1999,null,null,null],["AK",2000,null,null,null],["AK",2001,null,null,null],["AK",2002,null,null,null],["AK",2003,null,null,null],["HI",1976,null,null,null],["HI",1977,null,null,null],["HI",1978,null,null,null],["HI",1979,null,null,null],["HI",1980,null,null,null],["HI",1981,null,null,null],["HI",1982,null,null,null],["HI",1983,null,null,null],["HI",1984,null,null,null],["HI",1985,null,null,null],["HI",1986,null,null,null],["HI",1987,null,null,null],["HI",1988,null,null,null],["HI",1989,null,null,null],["HI",1990,null,null,null],["HI",1991,null,null,null],["HI",1992,null,null,null],["HI",1993,null,null,null],["HI",1994,null,null,null],["HI",1995,null,null,null],["HI",1996,null,null,null],["HI",1997,null,null,null],["HI",1998,null,null,null],["HI",1999,null,null,null],["HI",2000,null,null,null],["HI",2001,null,null,null],["HI",2002,null,null,null],["HI",2003,null,null,null]];   // [ownState, ownYear, popState|null, popYear|null, pop|null] for all 1,395 homicide rows
+const NAMES = {AL:"Alabama",AK:"Alaska",AZ:"Arizona",AR:"Arkansas",CA:"California",CO:"Colorado",CT:"Connecticut",DE:"Delaware",DC:"DC",FL:"Florida",GA:"Georgia",HI:"Hawaii",ID:"Idaho",IL:"Illinois",IN:"Indiana",IA:"Iowa",KS:"Kansas",KY:"Kentucky",LA:"Louisiana",ME:"Maine",MD:"Maryland",MA:"Massachusetts",MI:"Michigan",MN:"Minnesota",MS:"Mississippi",MO:"Missouri",MT:"Montana",NE:"Nebraska",NV:"Nevada",NH:"New Hampshire",NJ:"New Jersey",NM:"New Mexico",NY:"New York",NC:"North Carolina",ND:"North Dakota",OH:"Ohio",OK:"Oklahoma",OR:"Oregon",PA:"Pennsylvania",RI:"Rhode Island",SC:"South Carolina",SD:"South Dakota",TN:"Tennessee",TX:"Texas",UT:"Utah",VT:"Vermont",VA:"Virginia",WA:"Washington",WV:"West Virginia",WI:"Wisconsin",WY:"Wyoming"};
+
+/* ---------- scaling + navigation ---------- */
+const stage=document.getElementById('stage');
+function fit(){const s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform=`scale(${s})`;}
+addEventListener('resize',fit);fit();
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+function frags(i){return [...slides[i].querySelectorAll('.frag')].map((x,k)=>[x,k]).sort((a,b)=>((+a[0].dataset.g||0)-(+b[0].dataset.g||0))||(a[1]-b[1])).map(p=>p[0]);}
+function show(i){slides.forEach((s,k)=>s.classList.toggle('active',k===i));cur=i;
+  if(slides[i].id==='s2') initS2();}
+function next(){const f=frags(cur).find(x=>!x.classList.contains('on'));
+  if(f){const g=f.dataset.g; if(g){frags(cur).filter(x=>x.dataset.g===g).forEach(x=>x.classList.add('on'));} else f.classList.add('on'); return;}
+  if(slides[cur].id==='s2' && s2step<STOPS.length-1){goStop(s2step+1);return;}
+  if(cur<slides.length-1)show(cur+1);}
+function prev(){const on=frags(cur).filter(x=>x.classList.contains('on'));
+  if(on.length){const l=on[on.length-1], g=l.dataset.g; if(g){on.filter(x=>x.dataset.g===g).forEach(x=>x.classList.remove('on'));} else l.classList.remove('on'); return;}
+  if(slides[cur].id==='s2' && s2step>0){goStop(s2step-1);return;}
+  if(cur>0)show(cur-1);}
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next();}
+  if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();prev();}
+  if(e.key==='r'||e.key==='R'){if(slides[cur].id==='s2')initS2(true);}
+});
+stage.addEventListener('click',e=>{if(e.target.closest('button'))return;next();});
+
+/* ---------- falling leaves on title ---------- */
+(function(){const L=document.getElementById('leaves');const cols=['#8E2F25','#C65A1E','#C9971C','#7A4A26'];
+  const path='M12 1l2.5 5.5 5-2-1.5 5.5 4.5 1-4 3.5 2 4-5-1-1.5 5.5-1.5-5.5-5 1 2-4-4-3.5 4.5-1L4.5 4.5l5 2z';
+  for(let i=0;i<14;i++){const d=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    d.setAttribute('viewBox','0 0 24 30');d.classList.add('leaf');
+    d.style.left=(Math.random()*100)+'%';d.style.animationDuration=(14+Math.random()*12)+'s';
+    d.style.animationDelay=(-Math.random()*20)+'s';const s=18+Math.random()*16;d.style.width=s+'px';d.style.height=s+'px';
+    d.innerHTML=`<path d="${path}" fill="${cols[i%4]}"/><path d="M12 24v6" stroke="${cols[i%4]}" stroke-width="1.5"/>`;L.appendChild(d);}
+})();
+
+/* ---------- slide 2: conveyor + ribbon ---------- */
+const rowsEl=document.getElementById('rows'), readout=document.getElementById('readout'), rib=document.getElementById('ribbon');
+const ROWH=36, VIS=14, N=MAP.length, CUT=MAP.findIndex(r=>r[2]===null); // first row with no population (index 1122)
+const fmt=n=>n==null?'':n.toLocaleString('en-US');
+
+function rowHTML(i){const r=MAP[i];const dead=r[2]===null;
+  const restart=i>0 && !dead && MAP[i-1][2]!==r[2];
+  const hl=(i===curRow)?' hl':'';
+  return `<div class="row${dead?' dead':''}${hl}${restart?' restart':''}" style="position:absolute;left:0;right:0;top:${i*ROWH}px">
+    <span class="rn">${i+1}</span><span class="l">${r[0]} ${r[1]}</span><span class="arrow">←</span>
+    <span class="r">${dead?'— dropped':`${r[2]} ${r[3]} <span class="pop">${fmt(r[4])}</span>`}</span></div>`;}
+let inner, curRow=0;
+function buildRows(){rowsEl.innerHTML='';inner=document.createElement('div');inner.style.position='relative';
+  inner.style.height=(N*ROWH)+'px';rowsEl.appendChild(inner);}
+function renderWindow(p){ // p = top row (float)
+  const a=Math.max(0,Math.floor(p)-2), b=Math.min(N,Math.ceil(p)+VIS+2);
+  let h='';for(let i=a;i<b;i++)h+=rowHTML(i);inner.innerHTML=h;inner.style.transform=`translateY(${-p*ROWH}px)`;}
+
+/* ribbon: homicide-file states vs population-file states, by row (always full); marker = current row */
+const RX=20, RW=790, sx=i=>RX+i/N*RW;
+function stripes(y,h,key,label,col1,col2,upto){
+  let s=`<text x="${RX}" y="${y-8}" font-size="14" font-weight="700" letter-spacing="1.5" fill="${col1}">${label}</text>`;
+  let start=0,k=0;
+  for(let i=1;i<=upto;i++){if(i===upto||key(i)!==key(start)){
+    s+=`<rect x="${sx(start)}" y="${y}" width="${Math.max(.6,sx(i)-sx(start))}" height="${h}" fill="${k%2?col2:col1}"/>`;start=i;k++;}}
+  return s;}
+function drawRibbon(mark){
+  let s='';
+  s+=stripes(36,40,i=>MAP[i][0],'HOMICIDE FILE · 28 yrs per state, uneven','#2F4858','#7C97A6',N);
+  s+=stripes(128,40,i=>MAP[i][2],'POPULATION ATTACHED · 22 yrs per state, rectangular','#C65A1E','#E7A867',CUT);
+  s+=`<rect x="${sx(CUT)}" y="128" width="${sx(N)-sx(CUT)}" height="40" fill="#D8CBB6"/>`;
+  s+=`<line x1="${sx(CUT)}" y1="122" x2="${sx(CUT)}" y2="200" stroke="#8E2F25" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+  s+=`<text x="${sx(CUT)-6}" y="218" font-size="15" text-anchor="end" fill="#8E2F25" font-weight="700">population file ends · row 1,122</text>`;
+  s+=`<text x="${sx(CUT)+6}" y="238" font-size="15" fill="#6E5A4B">9 states fall off →</text>`;
+  s+=`<text x="${RX}" y="238" font-size="15" fill="#6E5A4B">Each new state starts ~6 rows further off. Matching stripes never line up.</text>`;
+  const mx=sx(mark+0.5);
+  s+=`<line x1="${mx}" y1="26" x2="${mx}" y2="176" stroke="#8E2F25" stroke-width="3"/>`;
+  s+=`<circle cx="${mx}" cy="26" r="6" fill="#8E2F25"/>`;
+  rib.innerHTML=s;}
+
+/* step-through stops: → advances, ← goes back */
+const STOPS=[
+  {row:0,   msg:i=>`Row 1: <b>Alabama 1976</b> homicides ÷ <b>Alaska's</b> population. Wrong state from the very first row.`},
+  {row:21,  msg:i=>`Rows 1–22: Alabama's homicides get <b>all 22 of Alaska's years</b>.`},
+  {row:22,  msg:i=>`Row 23: Alaska runs out. <b>Alabama 1998</b> gets <b>Arkansas 1980</b>. It starts over with the next state's first year.`},
+  {row:28,  msg:i=>`Row 29: <b>Arizona's</b> homicides begin <b>mid-Arkansas</b> (1986). Every state-year is now someone else's.`},
+  {row:56,  msg:i=>`Row 57: <b>Arkansas</b> begins mid-<b>Arizona</b>. Each state starts ~6 rows further off than the last.`},
+  {row:CUT-1, msg:i=>`Row 1,122: <b>Texas 1981</b> takes the <b>last population row</b> in the file.`},
+  {row:CUT, msg:i=>`Row 1,123 on: nothing left to merge. Texas after 1981 and <b>UT, VT, VA, WA, WV, WI, WY, AK, HI</b> are <b>dropped</b>.`}
+];
+let s2step=0, tween=null;
+const focusOf=r=>Math.max(0,Math.min(r-4,N-VIS));
+function stepLabel(){document.getElementById('stepn').textContent=`${s2step+1} / ${STOPS.length}`;}
+function setStop(k){const st=STOPS[k];curRow=st.row;renderWindow(focusOf(st.row));readout.innerHTML=st.msg();drawRibbon(st.row);stepLabel();}
+function goStop(k){
+  const from=focusOf(STOPS[s2step].row), to=focusOf(STOPS[k].row);
+  s2step=k; curRow=STOPS[k].row; readout.innerHTML=STOPS[k].msg(); drawRibbon(STOPS[k].row); stepLabel();
+  if(tween)cancelAnimationFrame(tween);
+  const T=Math.abs(to-from)>60?700:550, t0=performance.now();
+  (function tick(now){const u=Math.min(1,(now-t0)/T), e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;
+    renderWindow(from+(to-from)*e); if(u<1)tween=requestAnimationFrame(tick);})(t0);
+}
+function initS2(){if(tween)cancelAnimationFrame(tween);s2step=0;buildRows();setStop(0);}
+document.getElementById('reset').onclick=()=>initS2();
+
+/* ---------- coefficient plots ---------- */
+const EST = [["old",1,"csdc",-0.1247,-0.2408,-0.0086],["old",1,"csma",-0.0455,-0.1293,0.0383],["old",1,"cspr",-0.0139,-0.1345,0.1067],["old",2,"csdc",-0.1235,-0.2385,-0.0086],["old",2,"csma",-0.0483,-0.1318,0.0353],["old",2,"cspr",-0.0105,-0.135,0.1141],["old",3,"csdc",-0.1378,-0.294,0.0184],["old",3,"csma",-0.0664,-0.1787,0.0459],["old",3,"cspr",-0.1015,-0.283,0.0801],["old",4,"csdc",-0.1553,-0.3417,0.031],["old",4,"csma",-0.0649,-0.1704,0.0405],["old",4,"cspr",-0.0959,-0.2913,0.0995],["old",5,"csdc",-0.0407,-0.1402,0.0589],["old",5,"csma",-0.0118,-0.0647,0.0412],["old",5,"cspr",-0.0097,-0.0997,0.0804],["new",1,"csdc",-0.084,-0.1728,0.0047],["new",1,"csma",-0.0507,-0.1505,0.0491],["new",1,"cspr",-0.0143,-0.1353,0.1067],["new",2,"csdc",-0.0846,-0.1727,0.0035],["new",2,"csma",-0.0544,-0.1539,0.0451],["new",2,"cspr",-0.0119,-0.1346,0.1108],["new",3,"csdc",0.0155,-0.1039,0.1349],["new",3,"csma",-0.0467,-0.1639,0.0705],["new",3,"cspr",-0.0998,-0.2728,0.0732],["new",4,"csdc",-0.0601,-0.1482,0.028],["new",4,"csma",-0.0712,-0.178,0.0355],["new",4,"cspr",-0.1444,-0.2819,-0.0069],["new",5,"csdc",-0.048,-0.1172,0.0212],["new",5,"csma",-0.0306,-0.0863,0.0251],["new",5,"cspr",-0.0252,-0.1038,0.0534]]; // [coding, spec, var, b, lo, hi]
+const SPECS=['(1) FE','(2) + controls','(3) + leads','(4) + group trends','(5) + state trends'];
+function coefPlot(id, showNew){
+  const svg=document.getElementById(id); const W=1420,H=500;
+  const panels=[['csdc','Discretionary arrest'],['csma','Mandatory arrest'],['cspr','Preferred arrest']];
+  const L=86, gap=34, pw=(W-L-20-gap*2)/3, top=58, bot=H-104;
+  const ymin=-0.35, ymax=0.15, y=v=>top+(ymax-v)/(ymax-ymin)*(bot-top);
+  let s='';
+  // y axis labels
+  [-0.3,-0.2,-0.1,0,0.1].forEach(v=>{s+=`<text x="${L-12}" y="${y(v)+6}" text-anchor="end" font-size="17" fill="#6E5A4B" font-family="JetBrains Mono, monospace">${v===0?'0':v.toFixed(1)}</text>`;});
+  s+=`<text transform="translate(22 ${(top+bot)/2}) rotate(-90)" text-anchor="middle" font-size="17" fill="#6E5A4B">effect on current-spouse IPH per 100k</text>`;
+  panels.forEach(([v,label],p)=>{
+    const x0=L+p*(pw+gap);
+    s+=`<rect x="${x0}" y="${top}" width="${pw}" height="${bot-top}" fill="${v==='csdc'?'#F6E9D6':'#FBF6EC'}" stroke="#E3D6C0"/>`;
+    [-0.3,-0.2,-0.1,0.1].forEach(t=>{s+=`<line x1="${x0}" x2="${x0+pw}" y1="${y(t)}" y2="${y(t)}" stroke="#E8DCC8"/>`;});
+    s+=`<line x1="${x0}" x2="${x0+pw}" y1="${y(0)}" y2="${y(0)}" stroke="#2B1E17" stroke-width="1.6"/>`;
+    s+=`<text x="${x0+pw/2}" y="${top-18}" text-anchor="middle" font-family="Libre Caslon Text, Georgia, serif" font-size="25" font-weight="700" fill="${v==='csdc'?'#8E2F25':'#2F4858'}">${label}</text>`;
+    const step=pw/5;
+    for(let k=1;k<=5;k++){
+      const cx=x0+step*(k-.5);
+      s+=`<text x="${cx}" y="${bot+26}" text-anchor="middle" font-size="15" fill="#6E5A4B" font-family="JetBrains Mono, monospace">(${k})</text>`;
+      const draw=(coding,dx,col,fill)=>{
+        const r=EST.find(e=>e[0]===coding&&e[1]===k&&e[2]===v); if(!r)return;
+        const sig=r[5]<0||r[4]>0;
+        s+=`<line x1="${cx+dx}" x2="${cx+dx}" y1="${y(Math.min(r[5],ymax))}" y2="${y(Math.max(r[4],ymin))}" stroke="${col}" stroke-width="3.2" stroke-linecap="round"/>`;
+        s+=`<circle cx="${cx+dx}" cy="${y(r[3])}" r="8" fill="${sig?col:fill}" stroke="${col}" stroke-width="3"/>`;};
+      if(showNew){draw('old',-11,'#8E2F25','#FBF6EC');draw('new',11,'#C65A1E','#FBF6EC');}
+      else draw('old',0,'#8E2F25','#FBF6EC');
+    }
+  });
+  // key row, then spec legend
+  const ky=bot+62; let kx=L;
+  const item=(fill,stroke,label)=>{s+=`<circle cx="${kx+8}" cy="${ky-6}" r="8" fill="${fill}" stroke="${stroke}" stroke-width="3"/><text x="${kx+24}" y="${ky}" font-size="18" fill="#2B1E17">${label}</text>`;kx+=24+label.replace('&amp;','&').length*9.2+34;};
+  item('#8E2F25','#8E2F25','C&amp;C 2019');
+  if(showNew) item('#C65A1E','#C65A1E','with pipeline dates');
+  item('#FBF6EC','#6E5A4B','hollow = 95% CI includes zero');
+  s+=`<text x="${W-20}" y="${ky}" text-anchor="end" font-size="16" fill="#6E5A4B">(1) FE · (2) + unemployment, violent crime · (3) + leads · (4) + cohort trends · (5) + state trends</text>`;
+  svg.innerHTML=s;}
+coefPlot('plot3',false); coefPlot('plot5',true);
+
+/* ---------- slide 8: three treatments ---------- */
+const TT = [["D-0","simple",null,-0.0527,-0.184,0.0786,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",-5,0.0789,-0.0816,0.2394,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",-4,0.0865,-0.1031,0.2761,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",-3,0.1566,-0.1177,0.4309,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",-2,0.0704,-0.05,0.1908,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",-1,0.0,null,null,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",0,0.0364,-0.1568,0.2296,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",1,-0.0027,-0.1551,0.1496,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",2,-0.0115,-0.165,0.1421,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",3,-0.0361,-0.1863,0.114,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",4,-0.023,-0.1755,0.1296,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",5,-0.0069,-0.1506,0.1367,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",6,-0.0324,-0.2141,0.1493,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",7,-0.1118,-0.2994,0.0757,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",8,-0.1091,-0.3077,0.0895,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",9,-0.0789,-0.2822,0.1244,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["D-0","event",10,-0.1346,-0.3608,0.0915,29,"AL AZ GA ID IL IN KY MD MI MN MS NC ND N"],["M-0","simple",null,0.1309,0.014,0.2478,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",-5,-0.0457,-0.2332,0.1417,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",-4,0.0244,-0.1989,0.2477,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",-3,0.0283,-0.1824,0.2389,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",-2,0.0234,-0.1363,0.1831,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",-1,0.0,null,null,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",0,-0.0003,-0.1781,0.1774,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",1,0.0408,-0.0961,0.1777,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",2,0.0654,-0.0801,0.2109,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",3,0.0853,-0.0711,0.2417,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",4,0.1364,-0.0329,0.3057,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",5,0.1069,-0.0781,0.292,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",6,0.1272,-0.0407,0.2951,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",7,0.1928,-0.0127,0.3984,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",8,0.2634,0.08,0.4467,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",9,0.1481,-0.0678,0.364,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["M-0","event",10,0.2416,-0.0061,0.4892,14,"AK CO CT DC IA KS LA MA ME MO NY RI SD U"],["P-0","simple",null,-0.2322,-0.4202,-0.0442,4,"AR CA MT WI"],["P-0","event",-5,-0.0618,-0.2205,0.0969,4,"AR CA MT WI"],["P-0","event",-4,-0.2514,-0.5641,0.0612,4,"AR CA MT WI"],["P-0","event",-3,-0.1897,-0.5306,0.1512,4,"AR CA MT WI"],["P-0","event",-2,-0.091,-0.3575,0.1755,4,"AR CA MT WI"],["P-0","event",-1,0.0,null,null,4,"AR CA MT WI"],["P-0","event",0,-0.1156,-0.3102,0.079,4,"AR CA MT WI"],["P-0","event",1,-0.2142,-0.4706,0.0422,4,"AR CA MT WI"],["P-0","event",2,-0.4103,-0.7635,-0.057,4,"AR CA MT WI"],["P-0","event",3,-0.2149,-0.4804,0.0506,4,"AR CA MT WI"],["P-0","event",4,-0.3539,-0.5503,-0.1576,4,"AR CA MT WI"],["P-0","event",5,-0.4785,-0.5951,-0.3619,4,"AR CA MT WI"],["P-0","event",6,-0.1523,-0.5174,0.2127,4,"AR CA MT WI"],["P-0","event",7,-0.0761,-0.7309,0.5787,4,"AR CA MT WI"],["P-0","event",8,-0.5783,-0.8241,-0.3325,4,"AR CA MT WI"],["P-0","event",10,-0.0866,-0.224,0.0508,4,"AR CA MT WI"],["M-D","simple",null,-0.1087,-0.2354,0.0179,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",-5,0.0099,-0.1016,0.1213,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",-4,-0.0202,-0.183,0.1426,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",-3,-0.0731,-0.1702,0.0239,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",-2,-0.0621,-0.1646,0.0404,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",-1,0.0,null,null,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",0,-0.0904,-0.1912,0.0103,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",1,-0.1651,-0.4552,0.125,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",2,-0.1098,-0.2612,0.0415,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",3,-0.0999,-0.2202,0.0204,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",4,-0.132,-0.3563,0.0924,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",5,-0.1396,-0.3822,0.1029,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",6,-0.1062,-0.1946,-0.0178,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",7,-0.0911,-0.2289,0.0468,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",8,-0.0272,-0.2014,0.1471,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",9,-0.1097,-0.2513,0.032,9,"AZ MS NJ NV OH OR SC VA WA"],["M-D","event",10,-0.1299,-0.2904,0.0306,9,"AZ MS NJ NV OH OR SC VA WA"],["P-D","simple",null,0.1965,0.0641,0.3289,2,"ND TN"],["P-D","event",-5,0.0236,-0.1707,0.218,2,"ND TN"],["P-D","event",-4,-0.0826,-0.1931,0.0279,2,"ND TN"],["P-D","event",-3,0.0844,-0.0476,0.2164,2,"ND TN"],["P-D","event",-2,0.059,-0.3432,0.4611,2,"ND TN"],["P-D","event",-1,0.0,null,null,2,"ND TN"],["P-D","event",0,0.1542,0.018,0.2903,2,"ND TN"],["P-D","event",1,0.2709,-0.1239,0.6657,2,"ND TN"],["P-D","event",2,0.0515,-0.1487,0.2516,2,"ND TN"],["P-D","event",3,0.1667,-0.063,0.3964,2,"ND TN"],["P-D","event",4,0.1368,0.0096,0.264,2,"ND TN"],["P-D","event",5,0.1191,0.0103,0.228,2,"ND TN"],["P-D","event",6,0.1435,0.0297,0.2573,2,"ND TN"],["P-D","event",7,0.1659,0.0499,0.2818,2,"ND TN"],["P-D","event",8,0.292,0.1151,0.4689,2,"ND TN"],["P-D","event",9,0.1512,-0.2436,0.546,2,"ND TN"],["P-D","event",10,0.1632,0.0696,0.2567,2,"ND TN"],["D-M","none",null,null,null,null,0,""],["P-M","simple",null,0.1266,0.084,0.1692,1,"MA"],["P-M","event",-5,0.0746,-0.1921,0.3413,1,"MA"],["P-M","event",-4,-0.0033,-0.2041,0.1975,1,"MA"],["P-M","event",-3,-0.0494,-0.214,0.1151,1,"MA"],["P-M","event",-2,0.1474,-0.0179,0.3127,1,"MA"],["P-M","event",-1,0.0,null,null,1,"MA"],["P-M","event",0,-0.038,-0.1521,0.0761,1,"MA"],["P-M","event",1,0.1007,0.0168,0.1847,1,"MA"],["P-M","event",2,0.1222,-0.0067,0.251,1,"MA"],["P-M","event",3,0.0559,-0.0597,0.1714,1,"MA"],["P-M","event",4,0.2758,0.1754,0.3762,1,"MA"],["P-M","event",5,0.0882,-0.0107,0.1871,1,"MA"],["P-M","event",6,0.0898,0.0031,0.1765,1,"MA"],["P-M","event",7,0.0658,-0.0131,0.1447,1,"MA"],["P-M","event",8,0.1174,0.0418,0.1931,1,"MA"],["P-M","event",9,0.1575,0.0608,0.2541,1,"MA"],["P-M","event",10,0.0832,-0.0106,0.1769,1,"MA"],["D-P","none",null,null,null,null,0,""],["M-P","simple",null,-0.3152,-0.4327,-0.1977,1,"WI"],["M-P","event",-1,0.0,null,null,1,"WI"],["M-P","event",0,-0.1074,-0.1215,-0.0934,1,"WI"],["M-P","event",1,0.1392,0.1211,0.1574,1,"WI"],["M-P","event",2,-0.3724,-136291162761567.5,136291162761566.8,1,"WI"],["M-P","event",3,-0.4508,-133583101756917.8,133583101756916.9,1,"WI"],["M-P","event",4,-0.4769,-70800421898851.05,70800421898850.08,1,"WI"],["M-P","event",5,-0.6976,-403353882777096.8,403353882777095.4,1,"WI"],["M-P","event",6,-0.5407,-43284835840939.17,43284835840938.09,1,"WI"],["M-P","event",7,-0.5644,-56854339632982.51,56854339632981.38,1,"WI"],["M-P","event",8,-0.4486,-67742314493614.82,67742314493613.93,1,"WI"],["M-P","event",10,-0.2801,-40290276964775.18,40290276964774.62,1,"WI"]]; // [contrast, agg, e, b, lo, hi, ntreat, states]
+function csPlot(){
+  const svg=document.getElementById('plot8'); const W=1040,H=520;
+  const P=[['D-0','Discretionary vs none','#C9971C'],['M-0','Mandatory vs none','#8E2F25'],['M-D','Upgrade: may → shall','#C65A1E']];
+  const L=58, gap=18, pw=(W-L-10-gap*2)/3, top=96, bot=H-62;
+  const ymin=-0.6, ymax=0.7, y=v=>top+(ymax-v)/(ymax-ymin)*(bot-top);
+  let s='';
+  [-0.4,-0.2,0,0.2,0.4,0.6].forEach(v=>{s+=`<text x="${L-8}" y="${y(v)+6}" text-anchor="end" font-size="15" fill="#6E5A4B" font-family="JetBrains Mono, monospace">${v===0?'0':v.toFixed(1)}</text>`;});
+  P.forEach(([c,title,col],k)=>{
+    const x0=L+k*(pw+gap);
+    s+=`<rect x="${x0}" y="${top}" width="${pw}" height="${bot-top}" fill="#FBF6EC" stroke="#E3D6C0"/>`;
+    s+=`<text x="${x0+pw/2}" y="30" text-anchor="middle" font-family="Libre Caslon Text, Georgia, serif" font-size="21" font-weight="700" fill="${col}">${c.replace('-','−')}  ${title}</text>`;
+    const simp=TT.find(r=>r[0]===c&&r[1]==='simple');
+    const sig=simp[4]>0||simp[5]<0;
+    s+=`<text x="${x0+pw/2}" y="62" text-anchor="middle" font-size="17"><tspan font-family="JetBrains Mono, monospace" font-weight="700" fill="${col}">${simp[3]>0?'+':''}${simp[3].toFixed(3)}${sig?'*':''}</tspan><tspan fill="#6E5A4B">  [${simp[4].toFixed(2)}, ${simp[5].toFixed(2)}] · ${simp[6]} states</tspan></text>`;
+    [-0.4,-0.2,0.2,0.4,0.6].forEach(t=>{s+=`<line x1="${x0}" x2="${x0+pw}" y1="${y(t)}" y2="${y(t)}" stroke="#EFE5D3"/>`;});
+    s+=`<line x1="${x0}" x2="${x0+pw}" y1="${y(0)}" y2="${y(0)}" stroke="#2B1E17" stroke-width="1.5"/>`;
+    const ev=TT.filter(r=>r[0]===c&&r[1]==='event').sort((a,b)=>a[2]-b[2]);
+    const ex=e=>x0+12+(e+5)/15*(pw-24);
+    s+=`<line x1="${ex(-0.5)}" x2="${ex(-0.5)}" y1="${top}" y2="${bot}" stroke="#CDBBA0" stroke-dasharray="4 4"/>`;
+    ev.forEach(r=>{const e=r[2]; if(r[3]===null)return; const cc=e<0?'#7C97A6':col;
+      if(r[4]!==null) s+=`<line x1="${ex(e)}" x2="${ex(e)}" y1="${y(Math.min(r[5],ymax))}" y2="${y(Math.max(r[4],ymin))}" stroke="${cc}" stroke-width="2.4" opacity=".75"/>`;
+      s+=`<circle cx="${ex(e)}" cy="${y(r[3])}" r="5" fill="${cc}"/>`;});
+    [-5,0,5,10].forEach(e=>{s+=`<text x="${ex(e)}" y="${bot+22}" text-anchor="middle" font-size="14" fill="#6E5A4B" font-family="JetBrains Mono, monospace">${e}</text>`;});
+  });
+  s+=`<text x="${L}" y="${H-12}" font-size="15" fill="#6E5A4B">Years since the move · blue = before · colored = after</text>`;
+  svg.innerHTML=s;
+}
+csPlot();
+
+show(0);
+</script>
+</body>
+</html>
