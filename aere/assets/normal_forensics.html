@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two Fingerprints</title>
+<style>
+  :root{--ink:#2E2A28;--purple:#4D1979;--red:#C0392B;--warm:#6b6b73;--grid:#D8D4CB;}
+  html,body{margin:0;height:100%;overflow:hidden;background:#fff;}
+  body{cursor:pointer;user-select:none;-webkit-user-select:none;font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;}
+  #stage{position:fixed;inset:0;width:100vw;height:100vh;display:block;}
+  .ser{font-family:Georgia,"Times New Roman",serif;}
+  #title{transition:opacity .3s ease;} #note{transition:opacity .3s ease;}
+  .anno{transition:opacity .4s ease;}
+</style>
+</head>
+<body>
+<svg id="stage" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <text id="title" class="ser" x="80" y="92" font-size="44" font-weight="700" fill="#4D1979"></text>
+  <rect x="80" y="112" width="140" height="4" fill="#4D1979"/>
+  <g id="plot"></g>
+  <text id="note" x="80" y="858" font-size="26" fill="#6b6b73"></text>
+  <text id="counter" x="1565" y="876" font-size="18" fill="#D8D4CB" text-anchor="end"></text>
+</svg>
+<script>
+(() => {
+  const NS='http://www.w3.org/2000/svg';
+  const plot=document.getElementById('plot');
+  const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(p||plot).appendChild(e);return e;};
+  const txt=(s,a,p)=>{const t=el('text',a,p);t.textContent=s;return t;};
+  const P='#4D1979', R='#C0392B';
+
+  const VMIN=-20, VMAX=104, X0=150, X1=1490, YB=720, YT=175;
+  const X=v=>X0+((v-VMIN)/(VMAX-VMIN))*(X1-X0);
+  const BW=(X(5)-X(0))*0.8;
+  const bins=[]; for(let v=-15;v<=100+1e-9;v+=5) bins.push(v);
+  const norm=(x,mu,s)=>Math.exp(-0.5*((x-mu)/s)**2);
+
+  // frame builders: return {h, c} per bin
+  const base=x=> (x<0||x>100)?0 : 0.28*norm(x,55,26)+(x===50?0.9:0)+(x===100?0.5:0)+0.12*norm(x,5,8);
+  const bell=x=> (x<0||x>100)?0 : 0.28*norm(x,55,26)+0.52*norm(x,50,8)+(x===100?0.5:0)+0.12*norm(x,5,8);
+  const neg =x=> (x>100)?0 : 0.28*Math.max(0,norm(x,55,26))*(x>=0?1:0)+ (x>=0?0.52*norm(x,50,8):0) + (x>=0&&x===100?0.5:0) + 0.30*norm(x,0,11);
+  const trunc=x=>{ if(x<0) return 0; if(x===0) return 0.86; return 0.28*norm(x,55,26)+0.52*norm(x,50,8)+(x===100?0.5:0)+0.30*norm(x,0,11); };
+  const colBase=x=>P, colNeg=x=>x<0?R:P, colTr=x=>x===0?R:P;
+
+  const FR=[
+    {f:base, c:colBase}, {f:bell, c:colBase}, {f:neg, c:colNeg}, {f:trunc, c:colTr}, {f:trunc, c:colTr}
+  ];
+  // normalize to pixels
+  let MAX=0; FR.forEach(fr=>bins.forEach(b=>{MAX=Math.max(MAX, fr.f(b));}));
+  const H=h=>h/MAX*(YB-YT-20);
+
+  // shaded impossible (negative) region + boundary
+  el('rect',{x:X(VMIN),y:YT,width:X(0)-X(VMIN),height:YB-YT,fill:'#C0392B','fill-opacity':0.05});
+  el('line',{x1:X(0),y1:YT-6,x2:X(0),y2:YB,stroke:'#C0392B','stroke-width':1.5,'stroke-dasharray':'5 6','stroke-opacity':0.6});
+  txt('impossible (< 0)',{x:(X(VMIN)+X(0))/2,y:YT-14,'font-size':20,fill:'#C0392B','text-anchor':'middle'});
+
+  // axis
+  el('line',{x1:X(VMIN),y1:YB,x2:X(VMAX),y2:YB,stroke:'#2E2A28','stroke-width':2.5});
+  [0,25,50,75,100].forEach(t=>{el('line',{x1:X(t),y1:YB,x2:X(t),y2:YB+8,stroke:'#2E2A28','stroke-width':2});
+    txt(String(t),{x:X(t),y:YB+34,'font-size':22,fill:'#2E2A28','text-anchor':'middle'});});
+  txt('feeling thermometer (0–100)',{x:X(50),y:YB+66,'font-size':22,fill:'#6b6b73','text-anchor':'middle'});
+
+  // bars
+  const rects=bins.map(b=>el('rect',{x:X(b)-BW/2,y:YB,width:BW,height:0,fill:P,rx:2}));
+
+  // annotations (final step)
+  const gAnno=el('g',{class:'anno',opacity:0});
+  const anno=(s,x,y,col)=>{const g=el('g',{},gAnno);txt(s,{x,y,'font-size':24,'font-weight':700,fill:col,'text-anchor':'middle',class:'ser'},g);};
+  anno('50: pile gone', X(50), YT+30, '#4D1979');
+  anno('0: new pile', X(0)+12, YT+90, '#C0392B');
+
+  // tween
+  let cur=bins.map(b=>base(b));
+  let raf=null;
+  const draw=hs=>{ rects.forEach((r,i)=>{const px=H(hs[i]); r.setAttribute('y',YB-px); r.setAttribute('height',Math.max(0,px));}); };
+  const animateTo=fr=>{ cancelAnimationFrame(raf);
+    const from=cur.slice(), to=bins.map(b=>fr.f(b)), t0=performance.now(), DUR=600;
+    rects.forEach((r,i)=>r.setAttribute('fill', fr.c(bins[i])));
+    const tick=now=>{ const t=Math.min(1,(now-t0)/DUR), e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+      cur=from.map((h,i)=>h+(to[i]-h)*e); draw(cur);
+      if(t<1) raf=requestAnimationFrame(tick); };
+    raf=requestAnimationFrame(tick);
+  };
+
+  const titleEl=document.getElementById('title'), noteEl=document.getElementById('note'), counter=document.getElementById('counter');
+  const STEPS=[
+    {t:'Real feeling-thermometers pile on round numbers', note:'A tall pile at 50 — people love round answers. Almost no one sits near 0.'},
+    {t:'Add a little normal noise to every answer',        note:'The normal smooths the heaping: the pile at 50 smears into a bell curve and disappears.'},
+    {t:'The normal reaches below zero',                    note:'A 0–100 thermometer can’t be negative, yet the noise produces −4, −9, … (in red).'},
+    {t:'Clip the impossible values to zero',               note:'Truncating the negatives stacks them at 0 — a brand-new spike that was never there.'},
+    {t:'Two fingerprints — and they found both',      note:'The pile at 50 gone, a pile at 0 born: the signature of rnorm() + truncation.'},
+  ];
+  const N=STEPS.length;
+  let step=0, first=true;
+  const render=()=>{
+    const apply=()=>{ animateTo(FR[step]); gAnno.setAttribute('opacity', step===4?1:0); counter.textContent=`${step+1} / ${N}`; };
+    if(first){titleEl.textContent=STEPS[step].t;noteEl.textContent=STEPS[step].note;first=false;draw(cur);apply();return;}
+    titleEl.style.opacity=0;noteEl.style.opacity=0;
+    setTimeout(()=>{titleEl.textContent=STEPS[step].t;noteEl.textContent=STEPS[step].note;titleEl.style.opacity=1;noteEl.style.opacity=1;apply();},260);
+  };
+  const go=d=>{const n=Math.max(0,Math.min(N-1,step+d));if(n!==step){step=n;render();}};
+  document.addEventListener('click',()=>go(1));
+  document.addEventListener('keydown',e=>{
+    if(['ArrowRight',' ','PageDown','Enter'].includes(e.key)){e.preventDefault();go(1);}
+    else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();go(-1);}
+    else if(e.key==='f'||e.key==='F'){if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.();}});
+  window.addEventListener('message',e=>{const m=e.data;
+    if(m==='next'){if(step<N-1)go(1);else parent.postMessage('atEnd','*');}
+    else if(m==='prev'){if(step>0)go(-1);else parent.postMessage('atStart','*');}
+    else if(m==='first'){step=0;render();} else if(m==='last'){step=N-1;render();}});
+  window.__go=n=>{step=n;render();};
+  render();
+})();
+</script>
+</body>
+</html>

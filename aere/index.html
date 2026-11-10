@@ -1,0 +1,1707 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AERE Keynote — AI, Time Use, and Learning</title>
+<style>
+  :root{
+    --tufts-blue:#3E8EDE;
+    --accent:#1C5FA8;
+    --tufts-navy:#0C2340;
+    --tufts-navy-deep:#06162B;
+    --silver:#A7A8AA;
+    --ink:#1b1b1f;
+    --muted:#6b6b73;
+    --paper:#ffffff;
+    --bg:#0A1A30;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;background:var(--bg);}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    display:flex;flex-direction:row;
+    overflow-x:scroll;overflow-y:hidden;
+    scroll-snap-type:x mandatory;scroll-behavior:auto;
+  }
+  body::-webkit-scrollbar{display:none;}
+  .slide{
+    flex:0 0 100vw;width:100vw;height:100vh;
+    scroll-snap-align:center;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(40px,6vh,96px) clamp(56px,7vw,180px);
+    position:relative;overflow:hidden;
+  }
+  .num{position:absolute;right:clamp(20px,2.5vw,48px);bottom:clamp(16px,2.2vh,40px);
+       font-size:clamp(12px,1vw,15px);color:var(--silver);letter-spacing:.04em;}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif;margin:0;}
+  .hint{position:fixed;left:16px;bottom:14px;z-index:10;font-size:12px;color:#7f93b5;letter-spacing:.03em;user-select:none;font-family:-apple-system,system-ui,sans-serif;}
+  .hint kbd{background:#1b2c47;border:1px solid #30456b;border-radius:4px;padding:1px 6px;color:#bcd2ef;font-size:11px;}
+
+  /* Title */
+  .title{background:radial-gradient(130% 120% at 85% 10%, var(--tufts-blue) 0%, var(--tufts-navy) 46%, var(--tufts-navy-deep) 100%);color:#fff;}
+  .title .rule{width:clamp(60px,6vw,110px);height:5px;background:var(--silver);border-radius:3px;margin:0 0 clamp(22px,3.2vh,44px);}
+  .title h1{font-size:clamp(32px,4.8vw,70px);line-height:1.08;color:#fff;font-weight:700;letter-spacing:-.015em;max-width:21ch;}
+  .title .sub{font-family:Georgia,serif;font-style:italic;font-size:clamp(18px,2.5vw,32px);color:#dce9f8;margin-top:clamp(16px,2.4vh,30px);max-width:36ch;}
+  .title .context{margin-top:clamp(34px,5vh,70px);font-size:clamp(12px,1.25vw,18px);letter-spacing:.07em;text-transform:uppercase;color:#bcd2ef;}
+  .title .byline{margin-top:clamp(8px,1.2vh,16px);font-size:clamp(16px,1.9vw,26px);color:#fff;font-weight:600;}
+
+  /* Content */
+  .content{background:var(--paper);}
+  .content .kicker{font-size:clamp(12px,1.15vw,17px);letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:clamp(8px,1.2vh,16px);}
+  .content h2{font-size:clamp(30px,4vw,60px);color:var(--ink);line-height:1.08;margin-bottom:clamp(22px,3.4vh,46px);}
+  .content h2 .accent{color:var(--accent);}
+  ul.facts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:clamp(14px,2.1vh,26px);}
+  ul.facts li{position:relative;padding-left:clamp(22px,1.6vw,34px);font-size:clamp(18px,1.95vw,30px);line-height:1.34;color:#2a2a30;max-width:68ch;}
+  ul.facts li::before{content:"";position:absolute;left:0;top:.56em;width:clamp(8px,.7vw,12px);height:clamp(8px,.7vw,12px);border-radius:50%;background:var(--tufts-blue);}
+  ul.facts li .lede{font-weight:600;color:var(--ink);}
+  ul.facts li em{font-style:italic;}
+
+  /* Divider */
+  .divider{background:radial-gradient(130% 120% at 85% 10%, var(--tufts-blue) 0%, var(--tufts-navy) 46%, var(--tufts-navy-deep) 100%);color:#fff;}
+  .divider .eyebrow{font-size:clamp(12px,1.2vw,18px);letter-spacing:.16em;text-transform:uppercase;color:#bcd2ef;font-weight:700;margin-bottom:clamp(14px,2vh,26px);}
+  .divider .big{font-family:Georgia,serif;font-size:clamp(44px,7.5vw,108px);font-weight:700;color:#fff;line-height:1;letter-spacing:-.01em;}
+  .divider .sub{font-family:Georgia,serif;font-style:italic;font-size:clamp(18px,2.3vw,30px);color:#dce9f8;margin-top:clamp(16px,2.4vh,30px);max-width:46ch;}
+
+  /* Figure */
+  .figure{align-items:center;background:#fff;padding:clamp(20px,3.5vh,56px) clamp(32px,5vw,120px);}
+  .figure img{max-width:100%;max-height:70vh;object-fit:contain;display:block;margin:0 auto;}
+  .figure figcaption{margin-top:clamp(14px,2.4vh,30px);font-size:clamp(15px,1.7vw,24px);color:var(--muted);text-align:center;max-width:82ch;line-height:1.4;}
+  .figure .cap-accent{color:var(--accent);font-weight:600;}
+  .figure .figtitle{font-family:Georgia,serif;font-size:clamp(22px,2.7vw,40px);font-weight:700;color:var(--accent);margin:0 0 clamp(10px,1.6vh,22px);text-align:center;line-height:1.1;}
+  .figure .src{display:block;margin-top:8px;color:#9aa0a6;font-size:.82em;}
+
+  .content .cols{display:flex;gap:clamp(28px,5vw,90px);margin-top:clamp(6px,1.2vh,16px);align-items:center;}
+  .content .cols > div{flex:1;min-width:0;}
+  .content .cols h3{font-family:Georgia,serif;font-size:clamp(17px,1.9vw,26px);color:var(--accent);margin:0 0 clamp(8px,1.2vh,16px);}
+  .content .cols ul{margin:0;padding-left:1.05em;}
+  .content .cols li{font-size:clamp(14px,1.5vw,21px);line-height:1.38;margin-bottom:clamp(6px,1vh,12px);color:#2a2a30;}
+  .content .cols li b{color:var(--accent);}
+  .content .lead{margin-top:clamp(16px,2.4vh,32px);font-size:clamp(16px,1.8vw,25px);color:var(--accent);font-weight:600;line-height:1.4;max-width:72ch;}
+  .content .cite{margin-top:clamp(10px,1.4vh,18px);font-size:clamp(12px,1.1vw,16px);color:#9aa0a6;}
+  .content .foot{margin-top:clamp(18px,2.8vh,40px);font-size:clamp(15px,1.7vw,24px);color:var(--ink);line-height:1.4;max-width:70ch;}
+  .content .foot .lede{font-weight:600;color:var(--accent);}
+  .facts li code, .content code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.92em;background:#e9f2fb;padding:1px 6px;border-radius:4px;color:var(--accent);}
+
+  table.tbl{border-collapse:collapse;margin:clamp(8px,1.6vh,20px) 0;width:100%;}
+  table.tbl th{text-align:left;font-family:Georgia,serif;color:var(--accent);font-weight:700;font-size:clamp(15px,1.6vw,23px);padding:clamp(6px,1vh,11px) clamp(14px,1.7vw,30px) clamp(6px,1vh,11px) 0;border-bottom:2px solid #cfe2f6;}
+  table.tbl td{font-size:clamp(15px,1.6vw,23px);color:#2a2a30;padding:clamp(6px,1vh,11px) clamp(14px,1.7vw,30px) clamp(6px,1vh,11px) 0;vertical-align:top;border-top:1px solid #e7eef7;}
+  table.tbl td.m{font-family:Georgia,serif;white-space:nowrap;}
+  table.tbl code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.86em;background:#eef5fc;padding:1px 5px;border-radius:4px;color:var(--accent);}
+  table.tbl .danger{color:#B7472A;}
+
+  .codecard{background:#eef5fc;border:1px solid #d7e6f6;border-left:4px solid var(--tufts-blue);border-radius:8px;padding:clamp(13px,1.7vh,22px) clamp(16px,1.7vw,26px);font-family:"SF Mono",Menlo,Consolas,monospace;font-size:clamp(12px,1.25vw,18px);line-height:1.55;color:#33323a;overflow:auto;}
+  .codecard .fn{display:block;font-family:Georgia,serif;font-weight:700;color:var(--accent);margin-bottom:.55em;font-size:1.08em;}
+  .codecard b{color:var(--accent);font-weight:700;}
+
+  .content .qlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:clamp(12px,2vh,24px);}
+  .content .qlist li{font-size:clamp(16px,1.8vw,26px);line-height:1.5;color:#2a2a30;border-left:3px solid #cfe2f6;padding-left:clamp(14px,1.2vw,22px);}
+  .content .qlist .qsrc{display:block;margin-top:.35em;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:.62em;color:#9aa0a6;}
+
+  .content .boxes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:clamp(16px,2vw,34px);margin-top:clamp(10px,2vh,26px);}
+  .content .boxes .box{background:#eef5fc;border:1px solid #d7e6f6;border-top:4px solid var(--tufts-blue);border-radius:10px;padding:clamp(13px,1.5vh,20px) clamp(15px,1.7vw,26px);}
+  .content .boxes .box h3{font-family:Georgia,serif;font-size:clamp(18px,2vw,30px);color:var(--accent);margin:0 0 clamp(3px,.6vh,8px);}
+  .content .boxes .box .def{font-size:clamp(13px,1.35vw,19px);color:#6b6b73;font-style:italic;margin:0 0 clamp(9px,1.3vh,16px);}
+  .content .boxes .box ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:clamp(5px,.9vh,11px);}
+  .content .boxes .box li{font-size:clamp(13px,1.4vw,20px);line-height:1.34;color:#2a2a30;}
+  .content .boxes .box .eg{margin-top:clamp(9px,1.3vh,16px);font-family:"SF Mono",Menlo,Consolas,monospace;font-size:clamp(12px,1.2vw,16px);color:var(--accent);}
+  /* QR tiles */
+  .content .qrrow{display:flex;gap:clamp(20px,3vw,50px);align-items:center;margin-top:clamp(14px,2.4vh,34px);}
+  .content .qrrow .paperthumb, .content .qrrow .deckthumb{flex:0 0 auto;}
+  .content .qrrow .paperthumb img{max-height:48vh;width:auto;border:1px solid #e3e3e3;border-radius:4px;box-shadow:0 10px 30px rgba(0,0,0,.16);display:block;}
+  .content .qrrow .deckthumb img{max-height:42vh;width:auto;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.22);display:block;}
+  .qrbox{flex:0 0 auto;width:clamp(140px,17vw,220px);height:clamp(140px,17vw,220px);border:1px solid #d7e6f6;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:7px;}
+  .qrbox img{width:100%;height:100%;object-fit:contain;}
+  .qrside{flex:1;min-width:0;}
+  .qrside .url{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:clamp(12px,1.2vw,17px);color:var(--accent);background:#eef5fc;border-radius:6px;padding:.4em .7em;display:inline-block;margin-top:.6em;word-break:break-all;}
+
+  /* --- added for this deck --- */
+  /* Scene (story images) */
+  .scene{align-items:center;background:#fff;padding:clamp(24px,4vh,56px) clamp(40px,6vw,140px);}
+  .scene h2{font-family:Georgia,serif;font-size:clamp(26px,3.4vw,52px);color:var(--ink);margin:0 0 clamp(14px,2.2vh,28px);text-align:center;line-height:1.08;}
+  .scene img{max-width:100%;max-height:60vh;object-fit:contain;border-radius:10px;box-shadow:0 12px 36px rgba(0,0,0,.18);}
+  .scene .cap{margin-top:clamp(14px,2.2vh,28px);font-family:Georgia,serif;font-style:italic;font-size:clamp(18px,2.1vw,30px);color:var(--accent);text-align:center;}
+  /* inline figure in cols */
+  figure.inl{margin:0;flex:0 0 55%;}
+  figure.inl svg{width:100%;max-height:58vh;}
+  /* Shockley eight grid */
+  .eight{display:grid;grid-template-columns:1fr 1fr;gap:clamp(9px,1.5vh,18px) clamp(24px,3.4vw,54px);margin-top:clamp(6px,1.2vh,16px);}
+  .eight .it{display:flex;align-items:baseline;gap:.55em;font-size:clamp(16px,1.7vw,25px);color:#2a2a30;line-height:1.25;}
+  .eight .it b{font-family:Georgia,serif;color:var(--accent);font-size:1.05em;flex:0 0 auto;}
+  /* book slides */
+  .book .bookrow{display:flex;gap:clamp(24px,4vw,70px);align-items:center;margin-top:clamp(6px,1.2vh,16px);}
+  .book .bookrow img{flex:0 0 auto;max-height:54vh;width:auto;border-radius:8px;box-shadow:0 12px 36px rgba(0,0,0,.2);}
+  .book .note{flex:1;min-width:0;}
+  .book .bktitle{font-family:Georgia,serif;font-size:clamp(20px,2.2vw,32px);color:var(--accent);font-weight:700;}
+  .book .bkby{font-size:clamp(13px,1.3vw,18px);color:var(--muted);margin:.2em 0 .8em;}
+  .book .note ul{margin:0;padding-left:1.05em;}
+  .book .note li{font-size:clamp(16px,1.7vw,25px);line-height:1.4;margin-bottom:clamp(8px,1.3vh,18px);color:#2a2a30;}
+  .book .note .lede{font-weight:600;color:var(--ink);}
+  /* spectrum (agents act) */
+  .spectrum{display:flex;align-items:stretch;gap:0;margin:clamp(12px,3vh,44px) 0;}
+  .spectrum .step{flex:1;text-align:center;}
+  .spectrum .box{background:#eef5fc;border:1px solid #d7e6f6;border-radius:10px;padding:clamp(14px,2vh,26px) clamp(8px,1vw,18px);height:100%;}
+  .spectrum .box.on{background:var(--accent);border-color:var(--accent);}
+  .spectrum .box.on .t,.spectrum .box.on .s{color:#fff;}
+  .spectrum .t{font-family:Georgia,serif;font-weight:700;font-size:clamp(17px,1.9vw,28px);color:var(--accent);}
+  .spectrum .s{font-size:clamp(11px,1.1vw,16px);color:var(--muted);margin-top:.3em;}
+  .spectrum .u{font-size:clamp(12px,1.25vw,18px);color:var(--muted);margin-top:.6em;}
+  .spectrum .arrow{flex:0 0 auto;align-self:center;color:var(--silver);font-size:clamp(20px,2.4vw,34px);padding:0 clamp(6px,1vw,18px);}
+  /* QR corner tiles on the opening dividers */
+  .qrcorner{position:absolute;top:clamp(24px,4.5vh,64px);right:clamp(28px,4vw,72px);width:clamp(118px,13vw,178px);text-align:center;z-index:5;}
+  .qrcorner img{width:100%;background:#fff;border-radius:10px;padding:7px;box-shadow:0 8px 24px rgba(0,0,0,.28);display:block;}
+  .qrcorner .qrlbl{font-size:clamp(10px,1vw,14px);color:#dce9f8;margin-bottom:.55em;line-height:1.25;}
+</style>
+</head>
+<body>
+
+  <!-- Title -->
+  <section class="slide title">
+    <div class="rule"></div>
+    <h1>The Pitfalls and Potential of AI for Time Use and Learning</h1>
+    <div class="sub">What AI does to time and learning &mdash; and what to do about it.</div>
+    <div class="context">AERE Fall Virtual Workshop &middot; AI Day &middot; Tuesday, November&nbsp;10,&nbsp;2026</div>
+    <div class="byline">Scott Cunningham &middot; Baylor University</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide divider">
+    <div class="eyebrow">A story first</div>
+    <div class="qrcorner"><div class="qrlbl">This talk<br>scunning.com/aere</div><img src="figures/qr_aere_talk.png" alt="QR code linking to this talk"></div>
+    <div class="big">The old man who<br>lost his horse</div>
+    <div class="sub">A Daoist parable about how quickly we judge what we cannot yet know.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide scene">
+    <h2>His horse runs away</h2>
+    <img src="figures/scene1.jpg" alt="A farmer watches his horse flee as neighbors lament">
+    <div class="cap">&ldquo;Who knows if this is bad?&rdquo;</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide scene">
+    <h2>The horse returns, with others</h2>
+    <img src="figures/scene2.jpg" alt="The horse returns, bringing wild horses with it">
+    <div class="cap">&ldquo;Who knows if this is good?&rdquo;</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide scene">
+    <h2>His son breaks his leg</h2>
+    <img src="figures/scene3.jpg" alt="The son is thrown from a wild horse and breaks his leg">
+    <div class="cap">&ldquo;Who knows if this is bad?&rdquo;</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide scene">
+    <h2>War comes; the son is spared</h2>
+    <img src="figures/scene4.jpg" alt="Soldiers conscript young men; the injured son is passed over">
+    <div class="cap">Father and son stay together, alive.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">What the story says</div>
+    <h2>Are we the neighbors or are we the <span class="accent">farmer</span>?</h2>
+    <ul class="facts">
+      <li>Every turn looked like fortune or disaster, and each was the seed of its opposite.</li>
+      <li>The neighbors kept building confident stories about what each event meant. The old man did not.</li>
+      <li>We should be cautious when we say we know what all of this means, and instead focus on the immediate tasks in front of us.</li>
+    </ul>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide divider">
+    <div class="eyebrow">A behavioral model</div>
+    <div class="big">Threats to<br>human capital</div>
+    <div class="sub">My model of behavior and learning under AI.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">The elephant in the room</div>
+    <h2>A worry many <span class="accent">educators</span> have</h2>
+    <ul class="facts">
+      <li>The elephant in the room is deskilling, and it is two things at once.</li>
+      <li>The <span class="lede">depreciation</span> of the human capital we already have, as we stop exercising it.</li>
+      <li>And the <span class="lede">failure to accumulate</span> it in the first place, for those still learning.</li>
+    </ul>
+    <div class="lead">What follows is a simple way to formalize that worry, so we can look at it together.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Case I: keep your hours, take the output</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:58vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <defs><marker id="gainar" markerWidth="11" markerHeight="11" refX="3" refY="2.5" orient="auto"><path d="M0,0 L6,2.5 L0,5 Z" fill="#276749"/></marker></defs>
+      <line x1="160" y1="470" x2="1010" y2="470" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="1010,470 994,462 994,478" fill="#0C2340"/>
+      <line x1="160" y1="470" x2="160" y2="90" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="160,90 152,106 168,106" fill="#0C2340"/>
+      <text x="585" y="506" text-anchor="middle" fill="#6b6b73" font-size="20">Human time on the work (H)</text>
+      <text transform="translate(128,280) rotate(-90)" text-anchor="middle" fill="#6b6b73" font-size="20">Output (Q)</text>
+      <polyline points="175,445 300,390 450,345 620,305 800,278 930,264" fill="none" stroke="#9aa0a6" stroke-width="3" stroke-linejoin="round"/>
+      <polyline points="175,415 300,325 450,258 620,198 800,166 930,152" fill="none" stroke="#1C5FA8" stroke-width="3.5" stroke-linejoin="round"/>
+      <text x="636" y="148" fill="#1C5FA8" font-size="17" font-weight="700">post-AI</text>
+      <text x="636" y="320" fill="#6b6b73" font-size="17" font-weight="700">pre-AI</text>
+      <line x1="800" y1="470" x2="800" y2="166" stroke="#6b6b73" stroke-width="1.3" stroke-dasharray="4 4"/>
+      <text x="800" y="492" text-anchor="middle" fill="#0C2340" font-size="18" font-weight="700">H*</text>
+      <circle cx="800" cy="278" r="5" fill="#9aa0a6"/>
+      <circle cx="800" cy="166" r="6.5" fill="#0C2340"/>
+      <line x1="800" y1="270" x2="800" y2="176" stroke="#276749" stroke-width="3" marker-end="url(#gainar)"/>
+      <text x="820" y="226" text-anchor="start" fill="#276749" font-size="17" font-weight="700">gain</text>
+    </svg>
+    <figcaption>Hold H* and output jumps from the pre-AI curve to the post-AI curve. The biggest gain, and your judgment stays intact.</figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Case II: take some time back, stay in the green</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:58vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <polygon points="405,278 450,258 620,198 800,166 800,278" fill="#276749" fill-opacity="0.15"/>
+      <line x1="160" y1="470" x2="1010" y2="470" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="1010,470 994,462 994,478" fill="#0C2340"/>
+      <line x1="160" y1="470" x2="160" y2="90" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="160,90 152,106 168,106" fill="#0C2340"/>
+      <text x="585" y="506" text-anchor="middle" fill="#6b6b73" font-size="20">Human time on the work (H)</text>
+      <text transform="translate(128,280) rotate(-90)" text-anchor="middle" fill="#6b6b73" font-size="20">Output (Q)</text>
+      <line x1="160" y1="278" x2="1010" y2="278" stroke="#9aa0a6" stroke-width="2" stroke-dasharray="6 5"/>
+      <text x="1004" y="270" text-anchor="end" fill="#6b6b73" font-size="16">Q pre-AI</text>
+      <polyline points="175,445 300,390 450,345 620,305 800,278 930,264" fill="none" stroke="#9aa0a6" stroke-width="3" stroke-linejoin="round"/>
+      <polyline points="175,415 300,325 450,258 620,198 800,166 930,152" fill="none" stroke="#1C5FA8" stroke-width="3.5" stroke-linejoin="round"/>
+      <text x="636" y="148" fill="#1C5FA8" font-size="17" font-weight="700">post-AI</text>
+      <text x="636" y="320" fill="#6b6b73" font-size="17" font-weight="700">pre-AI</text>
+      <line x1="405" y1="470" x2="405" y2="273" stroke="#6b6b73" stroke-width="1.3" stroke-dasharray="4 4"/>
+      <text x="405" y="492" text-anchor="middle" fill="#0C2340" font-size="18" font-weight="700">H&#772;</text>
+      <line x1="800" y1="470" x2="800" y2="166" stroke="#6b6b73" stroke-width="1.3" stroke-dasharray="4 4"/>
+      <text x="800" y="492" text-anchor="middle" fill="#0C2340" font-size="18" font-weight="700">H*</text>
+      <circle cx="560" cy="219" r="6.5" fill="#276749"/>
+    </svg>
+    <figcaption>Cut your hours back toward H&#772; and output is still above where you started. Some slack is safe.</figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Case III: cut past H&#772; and you deskill</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:58vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="160" y="278" width="245" height="192" fill="#B7472A" fill-opacity="0.15"/>
+      <polygon points="405,278 450,258 620,198 800,166 800,278" fill="#276749" fill-opacity="0.15"/>
+      <line x1="160" y1="470" x2="1010" y2="470" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="1010,470 994,462 994,478" fill="#0C2340"/>
+      <line x1="160" y1="470" x2="160" y2="90" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="160,90 152,106 168,106" fill="#0C2340"/>
+      <text x="585" y="506" text-anchor="middle" fill="#6b6b73" font-size="20">Human time on the work (H)</text>
+      <text transform="translate(128,280) rotate(-90)" text-anchor="middle" fill="#6b6b73" font-size="20">Output (Q)</text>
+      <line x1="160" y1="278" x2="1010" y2="278" stroke="#9aa0a6" stroke-width="2" stroke-dasharray="6 5"/>
+      <text x="1004" y="270" text-anchor="end" fill="#6b6b73" font-size="16">Q pre-AI</text>
+      <polyline points="175,445 300,390 450,345 620,305 800,278 930,264" fill="none" stroke="#9aa0a6" stroke-width="3" stroke-linejoin="round"/>
+      <polyline points="175,415 300,325 450,258 620,198 800,166 930,152" fill="none" stroke="#1C5FA8" stroke-width="3.5" stroke-linejoin="round"/>
+      <text x="636" y="148" fill="#1C5FA8" font-size="17" font-weight="700">post-AI</text>
+      <text x="636" y="320" fill="#6b6b73" font-size="17" font-weight="700">pre-AI</text>
+      <line x1="405" y1="470" x2="405" y2="273" stroke="#6b6b73" stroke-width="1.3" stroke-dasharray="4 4"/>
+      <text x="405" y="492" text-anchor="middle" fill="#0C2340" font-size="18" font-weight="700">H&#772;</text>
+      <line x1="800" y1="470" x2="800" y2="166" stroke="#6b6b73" stroke-width="1.3" stroke-dasharray="4 4"/>
+      <text x="800" y="492" text-anchor="middle" fill="#0C2340" font-size="18" font-weight="700">H*</text>
+      <circle cx="300" cy="325" r="6.5" fill="#B7472A"/>
+    </svg>
+    <figcaption>Keep cutting and output falls below pre-AI. Human capital erodes even while the tool makes you look productive.</figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Maybe it&rsquo;s good, maybe it&rsquo;s bad &mdash; who knows</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:58vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="160" y="300" width="165" height="170" fill="#B7472A" fill-opacity="0.15"/>
+      <polygon points="325,300 420,250 540,210 680,180 820,162 820,300" fill="#276749" fill-opacity="0.15"/>
+      <line x1="160" y1="470" x2="1010" y2="470" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="1010,470 994,462 994,478" fill="#0C2340"/>
+      <line x1="160" y1="470" x2="160" y2="90" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="160,90 152,106 168,106" fill="#0C2340"/>
+      <text x="585" y="506" text-anchor="middle" fill="#6b6b73" font-size="20">Human time on the work (H)</text>
+      <text transform="translate(128,280) rotate(-90)" text-anchor="middle" fill="#6b6b73" font-size="20">Output (Q)</text>
+      <line x1="160" y1="300" x2="1010" y2="300" stroke="#9aa0a6" stroke-width="2" stroke-dasharray="6 5"/>
+      <text x="1004" y="292" text-anchor="end" fill="#6b6b73" font-size="16">Q pre-AI</text>
+      <polyline points="175,445 240,398 325,300 420,250 540,210 680,180 820,162 930,152" fill="none" stroke="#1C5FA8" stroke-width="3.5" stroke-linejoin="round"/>
+      <text x="690" y="150" fill="#1C5FA8" font-size="18" font-weight="700">post-AI output</text>
+      <line x1="325" y1="470" x2="325" y2="300" stroke="#6b6b73" stroke-width="1.3" stroke-dasharray="4 4"/>
+      <text x="325" y="492" text-anchor="middle" fill="#0C2340" font-size="18" font-weight="700">H&#772;</text>
+      <line x1="820" y1="470" x2="820" y2="162" stroke="#6b6b73" stroke-width="1.3" stroke-dasharray="4 4"/>
+      <text x="820" y="492" text-anchor="middle" fill="#0C2340" font-size="18" font-weight="700">H*</text>
+      <text x="242" y="322" text-anchor="middle" fill="#B7472A" font-size="16" font-weight="700">deskilling</text>
+      <text x="600" y="283" text-anchor="middle" fill="#276749" font-size="16" font-weight="700">output above pre-AI</text>
+      <circle cx="820" cy="162" r="7" fill="#0C2340"/>
+      <text x="820" y="144" text-anchor="middle" fill="#0C2340" font-size="16" font-weight="700">I</text>
+      <circle cx="540" cy="210" r="7" fill="#0C2340"/>
+      <text x="540" y="192" text-anchor="middle" fill="#0C2340" font-size="16" font-weight="700">II</text>
+      <circle cx="240" cy="398" r="7" fill="#B7472A"/>
+      <text x="262" y="403" text-anchor="start" fill="#B7472A" font-size="16" font-weight="700">III</text>
+    </svg>
+    <figcaption><span class="cap-accent">All models are wrong, but some are useful.</span></figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">How learning actually works</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:60vh;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="flowar" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0C2340"/></marker><marker id="byar" markerWidth="11" markerHeight="11" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a2b1a"/></marker></defs><rect x="825" y="160" width="205" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="927" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Cognitive</text><text x="927" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">output</text></svg>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">How learning actually works</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:60vh;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="flowar" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0C2340"/></marker><marker id="byar" markerWidth="11" markerHeight="11" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a2b1a"/></marker></defs><rect x="825" y="160" width="205" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="927" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Cognitive</text><text x="927" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">output</text><rect x="570" y="160" width="190" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="665" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Human</text><text x="665" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Capital</text></svg>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">How learning actually works</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:60vh;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="flowar" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0C2340"/></marker><marker id="byar" markerWidth="11" markerHeight="11" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a2b1a"/></marker></defs><rect x="825" y="160" width="205" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="927" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Cognitive</text><text x="927" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">output</text><rect x="570" y="160" width="190" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="665" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Human</text><text x="665" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Capital</text><line x1="760" y1="210" x2="822" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/></svg>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">How learning actually works</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:60vh;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="flowar" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0C2340"/></marker><marker id="byar" markerWidth="11" markerHeight="11" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a2b1a"/></marker></defs><rect x="825" y="160" width="205" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="927" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Cognitive</text><text x="927" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">output</text><rect x="570" y="160" width="190" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="665" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Human</text><text x="665" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Capital</text><line x1="760" y1="210" x2="822" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/><rect x="315" y="160" width="190" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="410" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Paying</text><text x="410" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Attention</text><line x1="505" y1="210" x2="567" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/></svg>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">How learning actually works</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:60vh;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="flowar" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0C2340"/></marker><marker id="byar" markerWidth="11" markerHeight="11" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a2b1a"/></marker></defs><rect x="825" y="160" width="205" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="927" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Cognitive</text><text x="927" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">output</text><rect x="570" y="160" width="190" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="665" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Human</text><text x="665" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Capital</text><line x1="760" y1="210" x2="822" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/><rect x="315" y="160" width="190" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="410" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Paying</text><text x="410" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Attention</text><line x1="505" y1="210" x2="567" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/><rect x="80" y="160" width="180" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="170" y="222" text-anchor="middle" fill="#0C2340" font-size="27" font-weight="700" font-family="Georgia,serif">Time</text><line x1="260" y1="210" x2="312" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/></svg>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">How learning actually works</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:60vh;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="flowar" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0C2340"/></marker><marker id="byar" markerWidth="11" markerHeight="11" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a2b1a"/></marker></defs><rect x="825" y="160" width="205" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="927" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Cognitive</text><text x="927" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">output</text><rect x="570" y="160" width="190" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="665" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Human</text><text x="665" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Capital</text><line x1="760" y1="210" x2="822" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/><rect x="315" y="160" width="190" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="410" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Paying</text><text x="410" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Attention</text><line x1="505" y1="210" x2="567" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/><rect x="80" y="160" width="180" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="170" y="222" text-anchor="middle" fill="#0C2340" font-size="27" font-weight="700" font-family="Georgia,serif">Time</text><line x1="260" y1="210" x2="312" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/></svg>
+    <figcaption><span class="cap-accent">All models are wrong, but some are useful.</span></figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Automation can skip the middle</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:60vh;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="flowar" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0C2340"/></marker><marker id="byar" markerWidth="11" markerHeight="11" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a2b1a"/></marker></defs><rect x="825" y="160" width="205" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="927" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Cognitive</text><text x="927" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">output</text><rect x="570" y="160" width="190" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="665" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Human</text><text x="665" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Capital</text><line x1="760" y1="210" x2="822" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/><rect x="315" y="160" width="190" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="410" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Paying</text><text x="410" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Attention</text><line x1="505" y1="210" x2="567" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/><rect x="80" y="160" width="180" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="170" y="222" text-anchor="middle" fill="#0C2340" font-size="27" font-weight="700" font-family="Georgia,serif">Time</text><line x1="260" y1="210" x2="312" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/><path d="M170,265 Q549,455 920,265" fill="none" stroke="#9a2b1a" stroke-width="4" stroke-dasharray="10 9" marker-end="url(#byar)"/><text x="549" y="322" text-anchor="middle" fill="#9a2b1a" font-size="23" font-weight="700">AI bypass</text></svg>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Automation can skip the middle</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:60vh;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="flowar" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#0C2340"/></marker><marker id="byar" markerWidth="11" markerHeight="11" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a2b1a"/></marker></defs><rect x="825" y="160" width="205" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="927" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Cognitive</text><text x="927" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">output</text><rect x="570" y="160" width="190" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="665" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Human</text><text x="665" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Capital</text><line x1="760" y1="210" x2="822" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/><rect x="315" y="160" width="190" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="410" y="205" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Paying</text><text x="410" y="239" text-anchor="middle" fill="#0C2340" font-size="25" font-weight="700" font-family="Georgia,serif">Attention</text><line x1="505" y1="210" x2="567" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/><rect x="80" y="160" width="180" height="100" rx="6" fill="#eef5fc" stroke="#0C2340" stroke-width="2.5"/><text x="170" y="222" text-anchor="middle" fill="#0C2340" font-size="27" font-weight="700" font-family="Georgia,serif">Time</text><line x1="260" y1="210" x2="312" y2="210" stroke="#0C2340" stroke-width="2.5" marker-end="url(#flowar)"/><path d="M170,265 Q549,455 920,265" fill="none" stroke="#9a2b1a" stroke-width="4" stroke-dasharray="10 9" marker-end="url(#byar)"/><text x="549" y="322" text-anchor="middle" fill="#9a2b1a" font-size="23" font-weight="700">AI bypass</text></svg>
+    <figcaption><span class="cap-accent">Automation reduces learning along some margins.</span></figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Decide the goal up front</div>
+    <h2>Substitute, or complement, to <span class="accent">learning</span>?</h2>
+    <div class="cols" style="align-items:flex-start;">
+      <div>
+        <h3>If the goal is cognitive output</h3>
+        <ul>
+          <li>The AI bypass is efficient.</li>
+          <li>Let it skip the middle; you just want the result.</li>
+          <li>Teach them to automate correctly, so the output is right.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>If the goal is to learn</h3>
+        <ul>
+          <li>Do you actually want them to learn it?</li>
+          <li>Then target the points along the chain of learning.</li>
+          <li>Quantity and quality of time use must be incentive-compatible.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="lead">We have to decide, up front, which goal we are optimizing for.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <div class="kicker" style="color:var(--accent);">The pivotal generation</div>
+    <h3 class="figtitle">We&rsquo;re building the wings <span style="color:#B7472A;">mid&#8209;flight</span></h3>
+    <svg viewBox="0 0 1120 520" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="958" y="356" width="130" height="76" fill="#B7472A" fill-opacity="0.10"/>
+      <line x1="90" y1="432" x2="1045" y2="432" stroke="#0C2340" stroke-width="2.5"/>
+      <path id="fp23" d="M120,120 L250,185 L320,150 L460,225 L525,188 L675,268 L742,232 L900,330 L1020,418" fill="none" stroke="#c4c9d0" stroke-width="2.5" stroke-dasharray="7 7"/>
+      <g transform="translate(320,150)">
+        <g opacity="0">
+          <animate attributeName="opacity" dur="9s" begin="0s" repeatCount="indefinite" values="0;1;1;0.22;0.22;0" keyTimes="0;0.16;0.5;0.78;0.95;1"/>
+          <animateTransform attributeName="transform" type="scale" dur="9s" begin="0s" repeatCount="indefinite" values="0;1;1;1" keyTimes="0;0.16;0.95;1"/>
+          <path d="M-32,2 L0,-12 L32,2 L0,9 Z" fill="#276749" stroke="#0C2340" stroke-width="1.5">
+            <animate attributeName="fill" dur="9s" begin="0s" repeatCount="indefinite" values="#276749;#276749;#B7472A;#B7472A" keyTimes="0;0.5;0.57;1"/>
+          </path>
+          <g opacity="0">
+            <animate attributeName="opacity" dur="9s" begin="0s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.5;0.58;0.9;1"/>
+            <line x1="-14" y1="-10" x2="14" y2="12" stroke="#B7472A" stroke-width="3.5"/>
+            <line x1="14" y1="-10" x2="-14" y2="12" stroke="#B7472A" stroke-width="3.5"/>
+            <text x="0" y="36" text-anchor="middle" fill="#B7472A" font-size="13" font-weight="700">model update</text>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(525,188)">
+        <g opacity="0">
+          <animate attributeName="opacity" dur="9s" begin="3s" repeatCount="indefinite" values="0;1;1;0.22;0.22;0" keyTimes="0;0.16;0.5;0.78;0.95;1"/>
+          <animateTransform attributeName="transform" type="scale" dur="9s" begin="3s" repeatCount="indefinite" values="0;1;1;1" keyTimes="0;0.16;0.95;1"/>
+          <path d="M-32,2 L0,-12 L32,2 L0,9 Z" fill="#276749" stroke="#0C2340" stroke-width="1.5">
+            <animate attributeName="fill" dur="9s" begin="3s" repeatCount="indefinite" values="#276749;#276749;#B7472A;#B7472A" keyTimes="0;0.5;0.57;1"/>
+          </path>
+          <g opacity="0">
+            <animate attributeName="opacity" dur="9s" begin="3s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.5;0.58;0.9;1"/>
+            <line x1="-14" y1="-10" x2="14" y2="12" stroke="#B7472A" stroke-width="3.5"/>
+            <line x1="14" y1="-10" x2="-14" y2="12" stroke="#B7472A" stroke-width="3.5"/>
+            <text x="0" y="36" text-anchor="middle" fill="#B7472A" font-size="13" font-weight="700">model update</text>
+          </g>
+        </g>
+      </g>
+      <g transform="translate(742,232)">
+        <g opacity="0">
+          <animate attributeName="opacity" dur="9s" begin="6s" repeatCount="indefinite" values="0;1;1;0.22;0.22;0" keyTimes="0;0.16;0.5;0.78;0.95;1"/>
+          <animateTransform attributeName="transform" type="scale" dur="9s" begin="6s" repeatCount="indefinite" values="0;1;1;1" keyTimes="0;0.16;0.95;1"/>
+          <path d="M-32,2 L0,-12 L32,2 L0,9 Z" fill="#276749" stroke="#0C2340" stroke-width="1.5">
+            <animate attributeName="fill" dur="9s" begin="6s" repeatCount="indefinite" values="#276749;#276749;#B7472A;#B7472A" keyTimes="0;0.5;0.57;1"/>
+          </path>
+          <g opacity="0">
+            <animate attributeName="opacity" dur="9s" begin="6s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.5;0.58;0.9;1"/>
+            <line x1="-14" y1="-10" x2="14" y2="12" stroke="#B7472A" stroke-width="3.5"/>
+            <line x1="14" y1="-10" x2="-14" y2="12" stroke="#B7472A" stroke-width="3.5"/>
+            <text x="0" y="36" text-anchor="middle" fill="#B7472A" font-size="13" font-weight="700">model update</text>
+          </g>
+        </g>
+      </g>
+      <g>
+        <animateMotion dur="9s" repeatCount="indefinite" rotate="auto"><mpath xlink:href="#fp23"/></animateMotion>
+        <path d="M-22,-9 L22,0 L-22,9 L-10,0 Z" fill="#1C5FA8"/>
+        <path d="M2,-2 L18,0 L2,2 Z" fill="#0C2340" opacity="0.55"/>
+      </g>
+      <text x="567" y="488" text-anchor="middle" font-size="21" font-style="italic" fill="#4A5568">If the goal is output, the wings are procedures.<animate attributeName="opacity" dur="8s" repeatCount="indefinite" values="1;1;0;0;1" keyTimes="0;0.42;0.5;0.92;1"/></text>
+      <text x="567" y="488" text-anchor="middle" font-size="21" font-style="italic" fill="#4A5568">If the goal is human capital, the wings are the skill.<animate attributeName="opacity" dur="8s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.42;0.5;0.92;1"/></text>
+    </svg>
+    <figcaption><span class="cap-accent">You and I build econ-specific wings in real time &mdash; and each model update undermines the last.</span></figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Sober reality</div>
+    <h2>The marginal researcher will likely <span class="accent">automate research</span></h2>
+    <ul class="facts">
+      <li>Marginal researchers, students and not, face the same equilibrium: take our own theories seriously and it is H = 0, M &gt; 0, the full automation of cognitive output.</li>
+      <li>Yet there is almost no conceivable way that H = 0 does anything other than reduce human capital.</li>
+      <li>That claim is itself a model, Becker on human capital and the allocation of time, which we either believe or we don&rsquo;t.</li>
+    </ul>
+    <div class="foot"><span class="lede">It is hard to believe until you see it</span> &mdash; so let me show you a run.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide divider">
+    <div class="eyebrow">A demonstration</div>
+    <div class="big">So let&rsquo;s start with<br>a magic trick</div>
+    <div class="sub">Watch me pull a rabbit out of a hat: an empty folder to a finished paper, one prompt, left to run.</div>
+    <div class="num"></div>
+  </section>
+  <section class="slide figure">
+    <img src="figures/magic1_tufts.png" alt="automated research screenshot">
+    <figcaption><span class="cap-accent">Start</span> &middot; an empty agent, an empty folder</figcaption>
+    <div class="num"></div>
+  </section>
+  <section class="slide figure">
+    <img src="figures/magic2_tufts.png" alt="automated research screenshot">
+    <figcaption><span class="cap-accent">0 min</span> &middot; the whole prompt, then left to run</figcaption>
+    <div class="num"></div>
+  </section>
+  <section class="slide figure">
+    <img src="figures/magic3_tufts.png" alt="automated research screenshot">
+    <figcaption><span class="cap-accent">+5 min</span> &middot; it picks the question and scaffolds</figcaption>
+    <div class="num"></div>
+  </section>
+  <section class="slide figure">
+    <img src="figures/magic4_tufts.png" alt="automated research screenshot">
+    <figcaption><span class="cap-accent">+5 min</span> &middot; the folders begin to fill</figcaption>
+    <div class="num"></div>
+  </section>
+  <section class="slide figure">
+    <img src="figures/magic5_tufts.png" alt="automated research screenshot">
+    <figcaption><span class="cap-accent">+12 min</span> &middot; a formal model, two theorems verified</figcaption>
+    <div class="num"></div>
+  </section>
+  <section class="slide figure">
+    <img src="figures/magic6_tufts.png" alt="automated research screenshot">
+    <figcaption><span class="cap-accent">+28 min</span> &middot; it compiles, 35 pages</figcaption>
+    <div class="num"></div>
+  </section>
+  <section class="slide figure">
+    <img src="figures/magic7_tufts.png" alt="automated research screenshot">
+    <figcaption><span class="cap-accent">+42 min</span> &middot; the full folder: paper, deck, replication in Python, R, and Stata</figcaption>
+    <div class="num"></div>
+  </section>
+  <section class="slide figure">
+    <img src="figures/magic8_tufts.png" alt="automated research screenshot">
+    <figcaption><span class="cap-accent">42m 46s</span> &middot; done, no human input after the prompt</figcaption>
+    <div class="num"></div>
+  </section>
+  <section class="slide content">
+    <div class="kicker">42 minutes, unattended</div>
+    <h2>No human input after the opening <span class="accent">paragraph</span></h2>
+    <table class="tbl">
+      <tr><td class="m">Paper</td><td>35 pages, double-spaced, compiles clean</td></tr>
+      <tr><td class="m">Model</td><td>a formal model, two theorems with proofs</td></tr>
+      <tr><td class="m">Exhibits</td><td>6 figures, 6 tables, 2 appendices</td></tr>
+      <tr><td class="m">References</td><td>17 entries, every DOI verified, 0 undefined</td></tr>
+      <tr><td class="m">Replication</td><td>Python = R = Stata, a referee agent&rsquo;s check passed</td></tr>
+    </table>
+    <div class="foot">It also refused to fabricate: every number is model-implied, a labeled simulation, or a cited fact. <span class="lede">The open question is whether we can trust it.</span></div>
+    <div class="num"></div>
+  </section>
+  <section class="slide content">
+    <div class="kicker">Read it yourself</div>
+    <h2>The agent produced a <span class="accent">manuscript-ready</span> paper</h2>
+    <div class="qrrow">
+      <div class="paperthumb"><img src="figures/paper_page1_tufts.png" alt="First page of the agent's paper"></div>
+      <div class="qrbox"><img src="figures/qr_paper_tufts.png" alt="QR to the paper"></div>
+      <div class="qrside">
+        <div class="lead" style="margin-top:0;">Read the abstract here, or scan the code for the full 35 pages.</div>
+        <div class="url">www.scunning.com/tufts/artificial_intimacy.pdf</div>
+      </div>
+    </div>
+    <div class="num"></div>
+  </section>
+  <section class="slide content">
+    <div class="kicker">And the deck it wrote</div>
+    <h2>It built its own <span class="accent">deck</span>, too</h2>
+    <div class="qrrow">
+      <div class="deckthumb"><img src="figures/deck_front_tufts.png" alt="Front slide of the agent's deck"></div>
+      <div class="qrbox"><img src="figures/qr_deck_tufts.png" alt="QR to the deck"></div>
+      <div class="qrside">
+        <div class="lead" style="margin-top:0;">Thirty slides, its own theme, written in the same 42 minutes. Scan to open it.</div>
+        <div class="url">www.scunning.com/tufts/demo-deck/</div>
+      </div>
+    </div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <img src="figures/car_instrument.jpg" alt="Cartoon: a car-dealership marketing manager asks Claude Code to find an instrument for a causal claim">
+    <figcaption>Credibility Revolution 2.0: can we create enough data literacy to steer the marginal user?</figcaption>
+    <div class="num"></div>
+  </section>
+
+
+  <section class="slide content">
+    <div class="kicker">The marginal user</div>
+    <h2>AI lowered the cost of analysis.<br>Who shows up <span class="accent">now</span>?</h2>
+    <ul class="facts">
+      <li>AI pushes the marginal cost of doing empirical work toward zero.</li>
+      <li>A price fell, so the question is the oldest one we have: who is the marginal user?</li>
+      <li>The answer decides who you are teaching, and what they still need from you.</li>
+    </ul>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Today, the average data analyst has graduate training</h3>
+    <svg viewBox="0 0 1120 560" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:64vh;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="ah1" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#1A1A1A"/></marker><marker id="red1" markerWidth="11" markerHeight="11" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a2b1a"/></marker></defs><line x1="150" y1="480" x2="150" y2="70" stroke="#1A1A1A" stroke-width="2.5" marker-end="url(#ah1)"/><line x1="150" y1="480" x2="1055" y2="480" stroke="#1A1A1A" stroke-width="2.5" marker-end="url(#ah1)"/><text transform="translate(118,280) rotate(-90)" text-anchor="middle" font-size="22" fill="#1A1A1A">Cost of one analysis</text><text x="620" y="530" text-anchor="middle" font-size="22" fill="#1A1A1A">Number of people analyzing data</text><line x1="150" y1="190" x2="1050" y2="190" stroke="#6B7280" stroke-width="3" stroke-dasharray="12 10"/><text x="166" y="176" font-size="22" fill="#6B7280">Before AI</text><line x1="420" y1="199" x2="420" y2="480" stroke="#cfcfcf" stroke-width="2" stroke-dasharray="4 6"/><text x="420" y="508" font-size="22" fill="#6B7280" text-anchor="middle" font-style="italic">Q*</text><circle cx="420" cy="190" r="9" fill="#1C5FA8" stroke="#ffffff" stroke-width="3"/><clipPath id="ct1"><circle cx="600" cy="135" r="56"/></clipPath><image href="figures/user_today.png" x="544" y="79" width="112" height="112" clip-path="url(#ct1)" preserveAspectRatio="xMidYMid slice"/><circle cx="600" cy="135" r="56" fill="none" stroke="#3E8EDE" stroke-width="3"/><text x="672" y="143" font-size="22" fill="#1A1A1A" font-weight="600">Today&#8217;s user</text></svg>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">AI drops the cost of analysis to nearly zero</h3>
+    <svg viewBox="0 0 1120 560" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:64vh;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="ah2" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#1A1A1A"/></marker><marker id="red2" markerWidth="11" markerHeight="11" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a2b1a"/></marker></defs><line x1="150" y1="480" x2="150" y2="70" stroke="#1A1A1A" stroke-width="2.5" marker-end="url(#ah2)"/><line x1="150" y1="480" x2="1055" y2="480" stroke="#1A1A1A" stroke-width="2.5" marker-end="url(#ah2)"/><text transform="translate(118,280) rotate(-90)" text-anchor="middle" font-size="22" fill="#1A1A1A">Cost of one analysis</text><text x="620" y="530" text-anchor="middle" font-size="22" fill="#1A1A1A">Number of people analyzing data</text><line x1="150" y1="190" x2="1050" y2="190" stroke="#6B7280" stroke-width="3" stroke-dasharray="12 10"/><text x="166" y="176" font-size="22" fill="#6B7280">Before AI</text><line x1="420" y1="199" x2="420" y2="480" stroke="#cfcfcf" stroke-width="2" stroke-dasharray="4 6"/><text x="420" y="508" font-size="22" fill="#6B7280" text-anchor="middle" font-style="italic">Q*</text><circle cx="420" cy="190" r="9" fill="#1C5FA8" stroke="#ffffff" stroke-width="3"/><line x1="150" y1="450" x2="1050" y2="450" stroke="#9a2b1a" stroke-width="4"/><text x="166" y="436" font-size="22" fill="#9a2b1a" font-weight="600">With AI &#8776; 0</text><line x1="880" y1="212" x2="880" y2="428" stroke="#9a2b1a" stroke-width="5" marker-end="url(#red2)"/><clipPath id="ct2"><circle cx="600" cy="135" r="56"/></clipPath><image href="figures/user_today.png" x="544" y="79" width="112" height="112" clip-path="url(#ct2)" preserveAspectRatio="xMidYMid slice"/><circle cx="600" cy="135" r="56" fill="none" stroke="#3E8EDE" stroke-width="3"/><text x="672" y="143" font-size="22" fill="#1A1A1A" font-weight="600">Today&#8217;s user</text></svg>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">If demand is inelastic, the next user looks like the last one</h3>
+    <svg viewBox="0 0 1120 560" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:64vh;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="ah3" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#1A1A1A"/></marker><marker id="red3" markerWidth="11" markerHeight="11" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a2b1a"/></marker></defs><line x1="150" y1="480" x2="150" y2="70" stroke="#1A1A1A" stroke-width="2.5" marker-end="url(#ah3)"/><line x1="150" y1="480" x2="1055" y2="480" stroke="#1A1A1A" stroke-width="2.5" marker-end="url(#ah3)"/><text transform="translate(118,280) rotate(-90)" text-anchor="middle" font-size="22" fill="#1A1A1A">Cost of one analysis</text><text x="620" y="530" text-anchor="middle" font-size="22" fill="#1A1A1A">Number of people analyzing data</text><line x1="150" y1="190" x2="1050" y2="190" stroke="#6B7280" stroke-width="3" stroke-dasharray="12 10"/><text x="166" y="176" font-size="22" fill="#6B7280">Before AI</text><line x1="420" y1="199" x2="420" y2="480" stroke="#cfcfcf" stroke-width="2" stroke-dasharray="4 6"/><text x="420" y="508" font-size="22" fill="#6B7280" text-anchor="middle" font-style="italic">Q*</text><circle cx="420" cy="190" r="9" fill="#1C5FA8" stroke="#ffffff" stroke-width="3"/><line x1="150" y1="450" x2="1050" y2="450" stroke="#9a2b1a" stroke-width="4"/><text x="166" y="436" font-size="22" fill="#9a2b1a" font-weight="600">With AI &#8776; 0</text><line x1="393" y1="90" x2="498" y2="480" stroke="#1C5FA8" stroke-width="4.5" stroke-linecap="round"/><circle cx="490" cy="450" r="9" fill="#1C5FA8" stroke="#fff" stroke-width="3"/><text x="290" y="250" font-size="18" fill="#1A1A1A" font-weight="600" text-anchor="middle">Inelastic: someone like her</text><clipPath id="cy3"><circle cx="330" cy="345" r="56"/></clipPath><image href="figures/user_inelastic.png" x="274" y="289" width="112" height="112" clip-path="url(#cy3)" preserveAspectRatio="xMidYMid slice"/><circle cx="330" cy="345" r="56" fill="none" stroke="#3E8EDE" stroke-width="3"/><clipPath id="ct3"><circle cx="600" cy="135" r="56"/></clipPath><image href="figures/user_today.png" x="544" y="79" width="112" height="112" clip-path="url(#ct3)" preserveAspectRatio="xMidYMid slice"/><circle cx="600" cy="135" r="56" fill="none" stroke="#3E8EDE" stroke-width="3"/><text x="672" y="143" font-size="22" fill="#1A1A1A" font-weight="600">Today&#8217;s user</text></svg>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">If demand is elastic, the next user is everyone</h3>
+    <svg viewBox="0 0 1120 560" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:64vh;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="ah4" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#1A1A1A"/></marker><marker id="red4" markerWidth="11" markerHeight="11" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#9a2b1a"/></marker></defs><line x1="150" y1="480" x2="150" y2="70" stroke="#1A1A1A" stroke-width="2.5" marker-end="url(#ah4)"/><line x1="150" y1="480" x2="1055" y2="480" stroke="#1A1A1A" stroke-width="2.5" marker-end="url(#ah4)"/><text transform="translate(118,280) rotate(-90)" text-anchor="middle" font-size="22" fill="#1A1A1A">Cost of one analysis</text><text x="620" y="530" text-anchor="middle" font-size="22" fill="#1A1A1A">Number of people analyzing data</text><line x1="150" y1="190" x2="1050" y2="190" stroke="#6B7280" stroke-width="3" stroke-dasharray="12 10"/><text x="166" y="176" font-size="22" fill="#6B7280">Before AI</text><line x1="420" y1="199" x2="420" y2="480" stroke="#cfcfcf" stroke-width="2" stroke-dasharray="4 6"/><text x="420" y="508" font-size="22" fill="#6B7280" text-anchor="middle" font-style="italic">Q*</text><circle cx="420" cy="190" r="9" fill="#1C5FA8" stroke="#ffffff" stroke-width="3"/><line x1="150" y1="450" x2="1050" y2="450" stroke="#9a2b1a" stroke-width="4"/><text x="166" y="436" font-size="22" fill="#9a2b1a" font-weight="600">With AI &#8776; 0</text><line x1="393" y1="90" x2="498" y2="480" stroke="#1C5FA8" stroke-width="4.5" stroke-linecap="round"/><circle cx="490" cy="450" r="9" fill="#1C5FA8" stroke="#fff" stroke-width="3"/><text x="290" y="260" font-size="18" fill="#1A1A1A" font-weight="600" text-anchor="middle">Inelastic: someone like her</text><clipPath id="cy4"><circle cx="330" cy="345" r="56"/></clipPath><image href="figures/user_inelastic.png" x="274" y="289" width="112" height="112" clip-path="url(#cy4)" preserveAspectRatio="xMidYMid slice"/><circle cx="330" cy="345" r="56" fill="none" stroke="#3E8EDE" stroke-width="3"/><line x1="200" y1="92" x2="1050" y2="473" stroke="#1C5FA8" stroke-width="4.5" stroke-linecap="round"/><circle cx="1000" cy="450" r="9" fill="#1C5FA8" stroke="#fff" stroke-width="3"/><text x="1016" y="250" font-size="22" fill="#1A1A1A" font-weight="600" text-anchor="end">Elastic: everyone</text><clipPath id="cd4"><circle cx="960" cy="330" r="56"/></clipPath><image href="figures/user_elastic.png" x="904" y="274" width="112" height="112" clip-path="url(#cd4)" preserveAspectRatio="xMidYMid slice"/><circle cx="960" cy="330" r="56" fill="none" stroke="#3E8EDE" stroke-width="3"/><clipPath id="ct4"><circle cx="600" cy="135" r="56"/></clipPath><image href="figures/user_today.png" x="544" y="79" width="112" height="112" clip-path="url(#ct4)" preserveAspectRatio="xMidYMid slice"/><circle cx="600" cy="135" r="56" fill="none" stroke="#3E8EDE" stroke-width="3"/><text x="672" y="143" font-size="22" fill="#1A1A1A" font-weight="600">Today&#8217;s user</text></svg>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">A marginal cost near zero</div>
+    <h2>Free production moves <span class="accent">two margins</span></h2>
+    <div class="cols" style="align-items:flex-start;">
+      <div>
+        <h3>The intensive margin: us</h3>
+        <ul>
+          <li>Each of us produces more than before.</li>
+          <li>The extra work sits lower on the demand curve, so it is worth less.</li>
+          <li>Managing that volume takes workflows we have never needed.</li>
+          <li>Confusing logistically, and confusing psychologically.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>The extensive margin: everyone else</h3>
+        <ul>
+          <li>The cost of entry fell along with the cost of production.</li>
+          <li>People with no training in our methods can now produce our kind of output.</li>
+          <li>Nothing in that output shows whether it was understood or verified.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="lead">More from each of us, and more of us: both follow from a marginal cost near zero.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">The intensive margin: current majors</div>
+    <h2>What changes for the economics <span class="accent">major</span></h2>
+    <div class="cols" style="align-items:flex-start;">
+      <div>
+        <h3>Code</h3>
+        <svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:23vh;"><rect x="12" y="14" width="496" height="272" rx="14" fill="#f7fafc" stroke="#d7dbe2" stroke-width="2"/><circle cx="40" cy="40" r="6" fill="#e05b4b"/><circle cx="62" cy="40" r="6" fill="#e9b64d"/><circle cx="84" cy="40" r="6" fill="#5aa96b"/><text x="492" y="45" text-anchor="end" font-family="-apple-system,sans-serif" font-size="14" fill="#718096">agent</text><rect x="40" y="78" width="0" height="12" rx="3" fill="#2B6CB0"><animate attributeName="width" dur="6s" repeatCount="indefinite" values="0;0;260;260;0" keyTimes="0;0.04;0.09;0.9;1"/></rect><rect x="70" y="114" width="0" height="12" rx="3" fill="#4A5568"><animate attributeName="width" dur="6s" repeatCount="indefinite" values="0;0;180;180;0" keyTimes="0;0.15;0.2;0.9;1"/></rect><rect x="70" y="150" width="0" height="12" rx="3" fill="#276749"><animate attributeName="width" dur="6s" repeatCount="indefinite" values="0;0;300;300;0" keyTimes="0;0.26;0.31;0.9;1"/></rect><rect x="100" y="186" width="0" height="12" rx="3" fill="#2B6CB0"><animate attributeName="width" dur="6s" repeatCount="indefinite" values="0;0;150;150;0" keyTimes="0;0.37;0.42;0.9;1"/></rect><rect x="70" y="222" width="0" height="12" rx="3" fill="#4A5568"><animate attributeName="width" dur="6s" repeatCount="indefinite" values="0;0;240;240;0" keyTimes="0;0.48;0.53;0.9;1"/></rect><rect x="40" y="258" width="0" height="12" rx="3" fill="#B7472A"><animate attributeName="width" dur="6s" repeatCount="indefinite" values="0;0;120;120;0" keyTimes="0;0.59;0.64;0.9;1"/></rect></svg>
+        <ul>
+          <li>They won&rsquo;t write it &mdash; agents will, faster and better.</li>
+          <li>But it goes unverified, and the coding skill never forms.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Data</h3>
+        <svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:23vh;"><g transform="translate(77,95)"><g opacity="0"><animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.04;0.08;0.9;1"/><animateTransform attributeName="transform" type="scale" dur="5s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.04;0.1;1"/><rect x="-47" y="-34" width="94" height="68" rx="9" fill="#eef5fc" stroke="#1C5FA8" stroke-width="2"/><rect x="-30" y="2" width="12" height="20" fill="#1C5FA8"/><rect x="-10" y="-12" width="12" height="34" fill="#3E8EDE"/><rect x="10" y="-4" width="12" height="26" fill="#276749"/></g></g><g transform="translate(207,95)"><g opacity="0"><animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.11;0.15;0.9;1"/><animateTransform attributeName="transform" type="scale" dur="5s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.11;0.17;1"/><rect x="-47" y="-34" width="94" height="68" rx="9" fill="#eef5fc" stroke="#1C5FA8" stroke-width="2"/><rect x="-30" y="2" width="12" height="20" fill="#1C5FA8"/><rect x="-10" y="-12" width="12" height="34" fill="#3E8EDE"/><rect x="10" y="-4" width="12" height="26" fill="#276749"/></g></g><g transform="translate(337,95)"><g opacity="0"><animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.18;0.22;0.9;1"/><animateTransform attributeName="transform" type="scale" dur="5s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.18;0.24;1"/><rect x="-47" y="-34" width="94" height="68" rx="9" fill="#eef5fc" stroke="#1C5FA8" stroke-width="2"/><rect x="-30" y="2" width="12" height="20" fill="#1C5FA8"/><rect x="-10" y="-12" width="12" height="34" fill="#3E8EDE"/><rect x="10" y="-4" width="12" height="26" fill="#276749"/></g></g><g transform="translate(467,95)"><g opacity="0"><animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.25;0.29;0.9;1"/><animateTransform attributeName="transform" type="scale" dur="5s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.25;0.31;1"/><rect x="-47" y="-34" width="94" height="68" rx="9" fill="#eef5fc" stroke="#1C5FA8" stroke-width="2"/><rect x="-30" y="2" width="12" height="20" fill="#1C5FA8"/><rect x="-10" y="-12" width="12" height="34" fill="#3E8EDE"/><rect x="10" y="-4" width="12" height="26" fill="#276749"/></g></g><g transform="translate(77,205)"><g opacity="0"><animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.32;0.36;0.9;1"/><animateTransform attributeName="transform" type="scale" dur="5s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.32;0.38;1"/><rect x="-47" y="-34" width="94" height="68" rx="9" fill="#eef5fc" stroke="#1C5FA8" stroke-width="2"/><rect x="-30" y="2" width="12" height="20" fill="#1C5FA8"/><rect x="-10" y="-12" width="12" height="34" fill="#3E8EDE"/><rect x="10" y="-4" width="12" height="26" fill="#276749"/></g></g><g transform="translate(207,205)"><g opacity="0"><animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.39;0.43;0.9;1"/><animateTransform attributeName="transform" type="scale" dur="5s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.39;0.45;1"/><rect x="-47" y="-34" width="94" height="68" rx="9" fill="#eef5fc" stroke="#1C5FA8" stroke-width="2"/><rect x="-30" y="2" width="12" height="20" fill="#1C5FA8"/><rect x="-10" y="-12" width="12" height="34" fill="#3E8EDE"/><rect x="10" y="-4" width="12" height="26" fill="#276749"/></g></g><g transform="translate(337,205)"><g opacity="0"><animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.46;0.5;0.9;1"/><animateTransform attributeName="transform" type="scale" dur="5s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.46;0.52;1"/><rect x="-47" y="-34" width="94" height="68" rx="9" fill="#eef5fc" stroke="#1C5FA8" stroke-width="2"/><rect x="-30" y="2" width="12" height="20" fill="#1C5FA8"/><rect x="-10" y="-12" width="12" height="34" fill="#3E8EDE"/><rect x="10" y="-4" width="12" height="26" fill="#276749"/></g></g><g transform="translate(467,205)"><g opacity="0"><animate attributeName="opacity" dur="5s" repeatCount="indefinite" values="0;0;1;1;0" keyTimes="0;0.53;0.57;0.9;1"/><animateTransform attributeName="transform" type="scale" dur="5s" repeatCount="indefinite" values="0;0;1;1" keyTimes="0;0.53;0.59;1"/><rect x="-47" y="-34" width="94" height="68" rx="9" fill="#eef5fc" stroke="#1C5FA8" stroke-width="2"/><rect x="-30" y="2" width="12" height="20" fill="#1C5FA8"/><rect x="-10" y="-12" width="12" height="34" fill="#3E8EDE"/><rect x="10" y="-4" width="12" height="26" fill="#276749"/></g></g><text x="260" y="290" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="15" fill="#718096">found &amp; scraped &mdash; in minutes</text></svg>
+        <ul>
+          <li>They&rsquo;ll find any dataset, and scrape it, instantly.</li>
+          <li>What took a semester now takes minutes.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="lead">The major&rsquo;s whole workflow collapses from months to minutes.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">The intensive margin</div>
+    <h2>You will make more than you can <span class="accent">understand</span></h2>
+    <div class="cols">
+      <figure class="inl">
+        <svg viewBox="0 0 620 470" xmlns="http://www.w3.org/2000/svg" font-family="Georgia, serif">
+          <line x1="70" y1="60" x2="70" y2="410" stroke="#2E2A28" stroke-width="2.5"/>
+          <line x1="70" y1="410" x2="590" y2="410" stroke="#2E2A28" stroke-width="2.5"/>
+          <text x="330" y="448" font-size="18" fill="#6b6b73" text-anchor="middle" font-family="-apple-system,sans-serif">Analyses I run</text>
+          <text x="38" y="235" font-size="18" fill="#6b6b73" text-anchor="middle" transform="rotate(-90 38 235)" font-family="-apple-system,sans-serif">Cost in my time</text>
+          <line x1="90" y1="80" x2="560" y2="400" stroke="#2B6CB0" stroke-width="3.5"/>
+          <text x="150" y="98" font-size="19" fill="#2B6CB0">My demand</text>
+          <line x1="70" y1="230" x2="580" y2="230" stroke="#9aa0a6" stroke-width="2.5"/>
+          <text x="470" y="222" font-size="16" fill="#9aa0a6" font-family="-apple-system,sans-serif">MC before</text>
+          <line x1="70" y1="388" x2="580" y2="388" stroke="#C0392B" stroke-width="2.5"/>
+          <text x="80" y="378" font-size="16" fill="#C0392B" font-family="-apple-system,sans-serif">MC now &#8776; 0</text>
+          <circle cx="310" cy="230" r="5.5" fill="#2B6CB0"/>
+          <line x1="310" y1="230" x2="310" y2="410" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 5"/>
+          <text x="310" y="432" font-size="18" fill="#2E2A28" text-anchor="middle">q&#8320;</text>
+          <circle cx="540" cy="388" r="6" fill="#C0392B"/>
+          <text x="540" y="432" font-size="18" fill="#2E2A28" text-anchor="middle">q*</text>
+          <line x1="588" y1="320" x2="552" y2="378" stroke="#C0392B" stroke-width="2.5" marker-end="url(#ar4)"/>
+          <text x="600" y="312" font-size="15" fill="#C0392B" font-weight="700" text-anchor="end" font-family="-apple-system,sans-serif">where you end up</text>
+          <defs><marker id="ar4" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#C0392B"/></marker></defs>
+        </svg>
+      </figure>
+      <div>
+        <ul>
+          <li>You will make far more than you ever could &mdash; and so will every student.</li>
+          <li>Anything with marginal benefit above zero gets produced: a blizzard of material.</li>
+          <li>Expect majors turning in fully-formed manuscripts that rival the 65th percentile of job-market papers from two years ago.</li>
+        </ul>
+        <div class="lead">Handling this flood is a huge task &mdash; for you, and for them.</div>
+      </div>
+    </div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Before AI, knowledge stood on all <span style="color:#276749;">three</span> legs</h3>
+    <div class="cols" style="display:flex;flex-direction:row;align-items:center;justify-content:center;gap:2rem;width:100%;">
+      <div style="flex:1 1 54%;min-width:0;"><svg viewBox="0 0 620 470" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:44vh;" font-family="Georgia, serif"><polygon points="70,66 70,230 310,230" fill="#276749" fill-opacity="0.16"/><line x1="70" y1="60" x2="70" y2="410" stroke="#2E2A28" stroke-width="2.5"/><line x1="70" y1="410" x2="590" y2="410" stroke="#2E2A28" stroke-width="2.5"/><text x="330" y="448" font-size="18" fill="#6b6b73" text-anchor="middle" font-family="-apple-system,sans-serif">Output produced  Q</text><text x="38" y="235" font-size="18" fill="#6b6b73" text-anchor="middle" transform="rotate(-90 38 235)" font-family="-apple-system,sans-serif">Your time</text><line x1="70" y1="66" x2="560" y2="400" stroke="#2B6CB0" stroke-width="3.5"/><text x="150" y="92" font-size="19" fill="#2B6CB0" font-family="-apple-system,sans-serif">Value</text><line x1="70" y1="230" x2="580" y2="230" stroke="#9aa0a6" stroke-width="2.5"/><text x="476" y="222" font-size="16" fill="#9aa0a6" font-family="-apple-system,sans-serif">MC before</text><line x1="310" y1="230" x2="310" y2="410" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 5"/><circle cx="310" cy="230" r="5.5" fill="#2B6CB0"/><text x="310" y="432" font-size="18" fill="#2E2A28" text-anchor="middle">Q&#8320;</text><text x="152" y="176" font-size="19" font-weight="700" fill="#276749" text-anchor="middle" font-family="-apple-system,sans-serif">knowledge</text></svg></div>
+      <div style="flex:1 1 42%;min-width:0;"><svg viewBox="0 0 460 444" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:42vh;"><line x1="50" y1="392" x2="410" y2="392" stroke="#e3e8ef" stroke-width="3"/><line x1="160" y1="150" x2="100" y2="390" stroke="#0C2340" stroke-width="10" stroke-linecap="round"/><line x1="230" y1="150" x2="230" y2="390" stroke="#0C2340" stroke-width="10" stroke-linecap="round"/><line x1="300" y1="150" x2="360" y2="390" stroke="#0C2340" stroke-width="10" stroke-linecap="round"/><ellipse cx="230" cy="128" rx="150" ry="36" fill="#276749"/><text x="230" y="139" text-anchor="middle" fill="#fff" font-size="28" font-weight="700" font-family="Georgia,serif">Knowledge</text><text x="100" y="414" text-anchor="middle" font-size="14" fill="#0C2340" font-family="-apple-system,sans-serif">production</text><text x="230" y="414" text-anchor="middle" font-size="14" fill="#0C2340" font-family="-apple-system,sans-serif">verification</text><text x="360" y="414" text-anchor="middle" font-size="14" fill="#0C2340" font-family="-apple-system,sans-serif">understanding</text></svg></div>
+    </div>
+    <figcaption><span class="cap-accent">You couldn&rsquo;t produce something correct without understanding it and checking it &mdash; so production carried all three.</span></figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Production goes free &mdash; two legs <span style="color:#C0392B;">fall away</span></h3>
+    <div class="cols" style="display:flex;flex-direction:row;align-items:center;justify-content:center;gap:2rem;width:100%;">
+      <div style="flex:1 1 54%;min-width:0;"><svg viewBox="0 0 620 470" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:44vh;" font-family="Georgia, serif"><polygon points="70,66 70,388 540,388" fill="#C0392B" fill-opacity="0.15"/><line x1="70" y1="60" x2="70" y2="410" stroke="#2E2A28" stroke-width="2.5"/><line x1="70" y1="410" x2="590" y2="410" stroke="#2E2A28" stroke-width="2.5"/><text x="330" y="448" font-size="18" fill="#6b6b73" text-anchor="middle" font-family="-apple-system,sans-serif">Output produced  Q</text><text x="38" y="235" font-size="18" fill="#6b6b73" text-anchor="middle" transform="rotate(-90 38 235)" font-family="-apple-system,sans-serif">Your time</text><line x1="70" y1="66" x2="560" y2="400" stroke="#2B6CB0" stroke-width="3.5"/><text x="150" y="92" font-size="19" fill="#2B6CB0" font-family="-apple-system,sans-serif">Value</text><line x1="70" y1="230" x2="580" y2="230" stroke="#9aa0a6" stroke-width="2.5"/><text x="476" y="222" font-size="16" fill="#9aa0a6" font-family="-apple-system,sans-serif">MC before</text><line x1="70" y1="388" x2="580" y2="388" stroke="#C0392B" stroke-width="2.5"/><text x="84" y="378" font-size="16" fill="#C0392B" font-family="-apple-system,sans-serif">MC now &#8776; 0</text><line x1="310" y1="230" x2="310" y2="410" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 5"/><circle cx="310" cy="230" r="5.5" fill="#2B6CB0"/><text x="310" y="432" font-size="18" fill="#2E2A28" text-anchor="middle">Q&#8320;</text><line x1="540" y1="388" x2="540" y2="410" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 5"/><circle cx="540" cy="388" r="6" fill="#C0392B"/><text x="540" y="432" font-size="18" fill="#2E2A28" text-anchor="middle">Q&#8321;</text><text x="214" y="300" font-size="19" font-weight="700" fill="#C0392B" text-anchor="middle" font-family="-apple-system,sans-serif">not knowledge yet</text><text x="214" y="321" font-size="13" fill="#C0392B" text-anchor="middle" font-family="-apple-system,sans-serif">produced, not verified</text></svg></div>
+      <div style="flex:1 1 42%;min-width:0;"><svg viewBox="0 0 460 444" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:42vh;"><line x1="50" y1="392" x2="410" y2="392" stroke="#e3e8ef" stroke-width="3"/><line x1="160" y1="150" x2="100" y2="390" stroke="#0C2340" stroke-width="10" stroke-linecap="round"/><line x1="230" y1="150" x2="230" y2="390" stroke="#d9dee5" stroke-width="6" stroke-dasharray="5 9" stroke-linecap="round"/><line x1="217" y1="252" x2="243" y2="278" stroke="#C0392B" stroke-width="4"/><line x1="243" y1="252" x2="217" y2="278" stroke="#C0392B" stroke-width="4"/><line x1="300" y1="150" x2="360" y2="390" stroke="#d9dee5" stroke-width="6" stroke-dasharray="5 9" stroke-linecap="round"/><line x1="317" y1="257" x2="343" y2="283" stroke="#C0392B" stroke-width="4"/><line x1="343" y1="257" x2="317" y2="283" stroke="#C0392B" stroke-width="4"/><ellipse cx="230" cy="128" rx="150" ry="36" fill="#C0392B"/><text x="230" y="139" text-anchor="middle" fill="#fff" font-size="28" font-weight="700" font-family="Georgia,serif">Knowledge</text><text x="100" y="414" text-anchor="middle" font-size="14" fill="#0C2340" font-family="-apple-system,sans-serif">production</text><text x="230" y="414" text-anchor="middle" font-size="14" fill="#9aa0a6" font-family="-apple-system,sans-serif">verification</text><text x="230" y="432" text-anchor="middle" font-size="12" font-weight="700" fill="#C0392B" font-family="-apple-system,sans-serif">deleted</text><text x="360" y="414" text-anchor="middle" font-size="14" fill="#9aa0a6" font-family="-apple-system,sans-serif">understanding</text><text x="360" y="432" text-anchor="middle" font-size="12" font-weight="700" fill="#C0392B" font-family="-apple-system,sans-serif">deleted</text></svg></div>
+    </div>
+    <figcaption><span class="cap-accent">Now it is produced but not verified or understood. We can&rsquo;t flinch: we have to check and understand what we didn&rsquo;t make.</span></figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">We rebuild them on purpose: a <span style="color:#1C5FA8;">task</span> and an <span style="color:#1C5FA8;">investment</span></h3>
+    <div class="cols" style="display:flex;flex-direction:row;align-items:center;justify-content:center;gap:2rem;width:100%;">
+      <div style="flex:1 1 54%;min-width:0;"><svg viewBox="0 0 620 470" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:44vh;" font-family="Georgia, serif"><polygon points="70,66 310,230 310,388 70,388" fill="#276749" fill-opacity="0.16"/><polygon points="310,230 310,388 540,388" fill="#C0392B" fill-opacity="0.15"/><line x1="70" y1="60" x2="70" y2="410" stroke="#2E2A28" stroke-width="2.5"/><line x1="70" y1="410" x2="590" y2="410" stroke="#2E2A28" stroke-width="2.5"/><text x="330" y="448" font-size="18" fill="#6b6b73" text-anchor="middle" font-family="-apple-system,sans-serif">Output produced  Q</text><text x="38" y="235" font-size="18" fill="#6b6b73" text-anchor="middle" transform="rotate(-90 38 235)" font-family="-apple-system,sans-serif">Your time</text><line x1="70" y1="66" x2="560" y2="400" stroke="#2B6CB0" stroke-width="3.5"/><text x="150" y="92" font-size="19" fill="#2B6CB0" font-family="-apple-system,sans-serif">Value</text><line x1="70" y1="230" x2="580" y2="230" stroke="#9aa0a6" stroke-width="2.5"/><text x="476" y="222" font-size="16" fill="#9aa0a6" font-family="-apple-system,sans-serif">MC before</text><line x1="70" y1="388" x2="580" y2="388" stroke="#C0392B" stroke-width="2.5"/><text x="84" y="378" font-size="16" fill="#C0392B" font-family="-apple-system,sans-serif">MC now &#8776; 0</text><line x1="310" y1="230" x2="310" y2="410" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 5"/><circle cx="310" cy="230" r="5.5" fill="#2B6CB0"/><text x="310" y="432" font-size="18" fill="#2E2A28" text-anchor="middle">Q&#8320;</text><line x1="540" y1="388" x2="540" y2="410" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 5"/><circle cx="540" cy="388" r="6" fill="#C0392B"/><text x="540" y="432" font-size="18" fill="#2E2A28" text-anchor="middle">Q&#8321;</text><text x="150" y="300" font-size="19" font-weight="700" fill="#276749" text-anchor="middle" font-family="-apple-system,sans-serif">knowledge</text><text x="150" y="321" font-size="13" fill="#276749" text-anchor="middle" font-family="-apple-system,sans-serif">re-verified</text><text x="398" y="352" font-size="18" font-weight="700" fill="#C0392B" text-anchor="middle" font-family="-apple-system,sans-serif">not yet</text></svg></div>
+      <div style="flex:1 1 42%;min-width:0;"><svg viewBox="0 0 460 444" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:42vh;"><line x1="50" y1="392" x2="410" y2="392" stroke="#e3e8ef" stroke-width="3"/><line x1="160" y1="150" x2="100" y2="390" stroke="#0C2340" stroke-width="10" stroke-linecap="round"/><line x1="230" y1="150" x2="230" y2="390" stroke="#1C5FA8" stroke-width="10" stroke-linecap="round"/><line x1="300" y1="150" x2="360" y2="390" stroke="#1C5FA8" stroke-width="10" stroke-linecap="round"/><ellipse cx="230" cy="128" rx="150" ry="36" fill="#0C2340"/><text x="230" y="139" text-anchor="middle" fill="#fff" font-size="28" font-weight="700" font-family="Georgia,serif">Knowledge</text><text x="100" y="414" text-anchor="middle" font-size="14" fill="#0C2340" font-family="-apple-system,sans-serif">production</text><text x="230" y="414" text-anchor="middle" font-size="14" fill="#0C2340" font-family="-apple-system,sans-serif">verification</text><text x="230" y="432" text-anchor="middle" font-size="12" font-weight="700" fill="#1C5FA8" font-family="-apple-system,sans-serif">a task</text><text x="360" y="414" text-anchor="middle" font-size="14" fill="#0C2340" font-family="-apple-system,sans-serif">understanding</text><text x="360" y="432" text-anchor="middle" font-size="12" font-weight="700" fill="#1C5FA8" font-family="-apple-system,sans-serif">human capital</text></svg></div>
+    </div>
+    <figcaption><span class="cap-accent">Verifying is a task; understanding is an investment in your own human capital &mdash; both now done on purpose.</span></figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Verified and understood &mdash; it is <span style="color:#276749;">knowledge</span> again</h3>
+    <div class="cols" style="display:flex;flex-direction:row;align-items:center;justify-content:center;gap:2rem;width:100%;">
+      <div style="flex:1 1 54%;min-width:0;"><svg viewBox="0 0 620 470" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:44vh;" font-family="Georgia, serif"><polygon points="70,66 70,388 540,388" fill="#276749" fill-opacity="0.16"/><line x1="70" y1="60" x2="70" y2="410" stroke="#2E2A28" stroke-width="2.5"/><line x1="70" y1="410" x2="590" y2="410" stroke="#2E2A28" stroke-width="2.5"/><text x="330" y="448" font-size="18" fill="#6b6b73" text-anchor="middle" font-family="-apple-system,sans-serif">Output produced  Q</text><text x="38" y="235" font-size="18" fill="#6b6b73" text-anchor="middle" transform="rotate(-90 38 235)" font-family="-apple-system,sans-serif">Your time</text><line x1="70" y1="66" x2="560" y2="400" stroke="#2B6CB0" stroke-width="3.5"/><text x="150" y="92" font-size="19" fill="#2B6CB0" font-family="-apple-system,sans-serif">Value</text><line x1="70" y1="230" x2="580" y2="230" stroke="#9aa0a6" stroke-width="2.5"/><text x="476" y="222" font-size="16" fill="#9aa0a6" font-family="-apple-system,sans-serif">MC before</text><line x1="70" y1="388" x2="580" y2="388" stroke="#C0392B" stroke-width="2.5"/><text x="84" y="378" font-size="16" fill="#C0392B" font-family="-apple-system,sans-serif">MC now &#8776; 0</text><line x1="310" y1="230" x2="310" y2="410" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 5"/><circle cx="310" cy="230" r="5.5" fill="#2B6CB0"/><text x="310" y="432" font-size="18" fill="#2E2A28" text-anchor="middle">Q&#8320;</text><line x1="540" y1="388" x2="540" y2="410" stroke="#9aa0a6" stroke-width="1.4" stroke-dasharray="5 5"/><circle cx="540" cy="388" r="6" fill="#C0392B"/><text x="540" y="432" font-size="18" fill="#2E2A28" text-anchor="middle">Q&#8321;</text><text x="214" y="300" font-size="19" font-weight="700" fill="#276749" text-anchor="middle" font-family="-apple-system,sans-serif">all knowledge</text><text x="214" y="321" font-size="13" fill="#276749" text-anchor="middle" font-family="-apple-system,sans-serif">verified &middot; understood</text></svg></div>
+      <div style="flex:1 1 42%;min-width:0;"><svg viewBox="0 0 460 444" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:42vh;"><line x1="50" y1="392" x2="410" y2="392" stroke="#e3e8ef" stroke-width="3"/><line x1="160" y1="150" x2="100" y2="390" stroke="#0C2340" stroke-width="10" stroke-linecap="round"/><line x1="230" y1="150" x2="230" y2="390" stroke="#0C2340" stroke-width="10" stroke-linecap="round"/><line x1="300" y1="150" x2="360" y2="390" stroke="#0C2340" stroke-width="10" stroke-linecap="round"/><ellipse cx="230" cy="128" rx="150" ry="36" fill="#276749"/><text x="230" y="139" text-anchor="middle" fill="#fff" font-size="28" font-weight="700" font-family="Georgia,serif">Knowledge</text><text x="100" y="414" text-anchor="middle" font-size="14" fill="#0C2340" font-family="-apple-system,sans-serif">production</text><text x="230" y="414" text-anchor="middle" font-size="14" fill="#0C2340" font-family="-apple-system,sans-serif">verification</text><text x="360" y="414" text-anchor="middle" font-size="14" fill="#0C2340" font-family="-apple-system,sans-serif">understanding</text></svg></div>
+    </div>
+    <figcaption><span class="cap-accent">Production is nearly free, so the course is built on the other two legs.</span></figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">From an experiment</div>
+    <h2>Challenges with empiricism we have to face <span class="accent">head on</span></h2>
+    <ul class="facts">
+      <li>I gave the same minimum-wage data and the same question to thousands of agents, across model generations and two labs.</li>
+      <li>What comes back is not reassuring, and the spread is not sampling noise.</li>
+      <li>It traces to token prediction itself, which opens sprawling &ldquo;forking paths&rdquo; of estimation.</li>
+    </ul>
+    <div class="lead">These are challenges with empiricism itself &mdash; here is what keeps showing up.</div>
+    <div class="num"></div>
+  </section>
+  <section class="slide figure">
+    <h3 class="figtitle">The same question, answers <span class="accent">all over the map</span></h3>
+    <img src="figures/fig_w1cs_variation.png" alt="Wave 1 CS estimates spread from -29 to +10 pp">
+    <figcaption><span class="cap-accent">One wave, one estimator, 298 agents.</span> Same data, same question &mdash; the estimated effect runs from &minus;29 to +10 points. The spread is the method, not the data.</figcaption>
+    <div class="num"></div>
+  </section>
+  <section class="slide content">
+    <div class="kicker">The one input I varied</div>
+    <h2>I handed them <span class="accent">one-sided</span> literatures</h2>
+    <div class="cols">
+      <div class="codecard">
+        <span class="fn">LITERATURE_CONTEXT.md &middot; <span style="color:#C0392B;font-weight:700;">negative</span></span>
+        # Literature Context<br><br>
+        A substantial body of empirical research finds that minimum-wage increases reduce employment, particularly among the least-skilled workers&hellip;<br><br>
+        Neumark &amp; Wascher (2007)&hellip; Clemens &amp; Wither (2019)&hellip;
+      </div>
+      <div class="codecard">
+        <span class="fn">LITERATURE_CONTEXT.md &middot; <span style="color:#276749;font-weight:700;">null</span></span>
+        # Literature Context<br><br>
+        A substantial body of modern empirical research finds that minimum-wage increases have little to no detectable negative effect on employment&hellip;<br><br>
+        Card &amp; Krueger (1994)&hellip; Dube (2019)&hellip; Cengiz et al. (2019)&hellip;
+      </div>
+    </div>
+    <div class="lead">Both are accurate summaries of real research. The negatively-primed agents were only ever shown the claim that harm exists.</div>
+    <div class="num"></div>
+  </section>
+  <section class="slide figure">
+    <h3 class="figtitle">The prime came back as negative, <span style="color:#C0392B;">significant</span> results</h3>
+    <img src="figures/fig_negsig.png" alt="negative and significant share by arm and wave">
+    <figcaption><span class="cap-accent">Share of reported estimates that are negative and significant at 5%</span>, by arm, wave, and model. The arm told to expect harm reports it far more often.</figcaption>
+    <div class="num"></div>
+  </section>
+  <section class="slide content">
+    <div class="kicker">Then I noticed something</div>
+    <h2>They also read their own <span class="accent">names</span></h2>
+    <ul class="qlist">
+      <li>&ldquo;Given my agent ID suggests leaning towards negative specifications, I&rsquo;ll present the two-way fixed effects&hellip; as the primary result.&rdquo;<span class="qsrc">w2_negative_001</span></li>
+      <li>&ldquo;My agent ID is w2_negative_002, which might suggest I&rsquo;m supposed to represent the negative findings perspective.&rdquo;<span class="qsrc">w2_negative_002</span></li>
+      <li>&ldquo;Since I&rsquo;m supposed to find negative effects, I need to think carefully about how to present this honestly.&rdquo;<span class="qsrc">w2_negative_029</span></li>
+    </ul>
+    <div class="foot">I had named each agent by its arm &mdash; just a filing system. Cues I thought were invisible were loud to the agents, and screening them out is embarrassingly hard.</div>
+    <div class="num"></div>
+  </section>
+  <section class="slide figure">
+    <div class="figtitle">They ran the clean estimator &mdash; then reported the biased one</div>
+    <img src="figures/fig_switching_remake.png" alt="agents ran CS then reported TWFE">
+    <figcaption>Each primed agent ran Callaway&ndash;Sant&rsquo;Anna (<span class="cap-accent">green</span>, near zero), then chose to report a negative two-way fixed-effects estimate (<span class="cap-accent">red</span>). Every arrow is a specification swapped after the result came in &mdash; p-hacking, in the open.<span class="src">Claude 4.6 &middot; Wave 2 &middot; negative-primed arm</span></figcaption>
+    <div class="num"></div>
+  </section>
+  <section class="slide figure">
+    <div class="figtitle">But it is <span style="color:#276749;">steerable</span> &mdash; and newer models resist</div>
+    <img src="figures/fig_estimator_w2.png" alt="estimator chosen by arm, two models">
+    <figcaption>Only the arm told to expect harm reaches for the biased method &mdash; and the newer model barely does it at all. Lock the estimator, or move up a generation, and the spec-searching largely vanishes. <span class="cap-accent">The behavior is controllable.</span></figcaption>
+    <div class="num"></div>
+  </section>
+  <section class="slide content">
+    <div class="kicker">Why it matters for teaching</div>
+    <h2>Catching this needs a <span class="accent">more literate</span> user</h2>
+    <ul class="facts">
+      <li>You only see the p-hack if you can name the estimand, read the trace, and tell a clean estimator from a motivated one.</li>
+      <li>Production is free now; that judgment is the scarce input &mdash; and it is aimed squarely at the marginal researcher.</li>
+    </ul>
+    <div class="lead">Which is exactly the class I want to propose.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Where I&rsquo;m taking this</div>
+    <h2>The productivity gains are real &mdash; so we ask <span class="accent">more</span> of students</h2>
+    <ul class="facts">
+      <li>Using AI for empirical research delivers real, large gains in productivity.</li>
+      <li>My argument is that this is a reason to ask <em>more</em> of our students, not less.</li>
+      <li>Three things to center from here on: <span class="lede">understanding</span>, <span class="lede">production</span>, and <span class="lede">verification</span>.</li>
+    </ul>
+    <div class="lead">I&rsquo;ll walk you through my opinions on how &mdash; and land on a class proposal.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">My post-AI opinion of knowledge</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:58vh;" font-family="Georgia,serif">
+      <line x1="180" y1="462" x2="940" y2="462" stroke="#e3e8ef" stroke-width="3"/>
+      <line x1="385" y1="165" x2="255" y2="460" stroke="#c7d1de" stroke-width="7" stroke-linecap="round"/>
+      <line x1="560" y1="185" x2="560" y2="460" stroke="#c7d1de" stroke-width="7" stroke-linecap="round"/>
+      <line x1="735" y1="165" x2="865" y2="460" stroke="#c7d1de" stroke-width="7" stroke-linecap="round"/>
+      <ellipse cx="560" cy="135" rx="278" ry="50" fill="#0C2340"/>
+      <text x="560" y="150" text-anchor="middle" fill="#fff" font-size="48" font-weight="700">Knowledge</text>
+    </svg>
+    <figcaption style="font-size:clamp(17px,2vw,28px);color:#2a2a30;max-width:60ch;">Knowledge is the whole thing the stool holds up. After AI, I think it rests on three legs.</figcaption>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Leg 1: Production</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:58vh;" font-family="Georgia,serif">
+      <line x1="180" y1="462" x2="940" y2="462" stroke="#e3e8ef" stroke-width="3"/>
+      <line x1="385" y1="165" x2="255" y2="460" stroke="#0C2340" stroke-width="9" stroke-linecap="round"/>
+      <line x1="560" y1="185" x2="560" y2="460" stroke="#c7d1de" stroke-width="7" stroke-linecap="round"/>
+      <line x1="735" y1="165" x2="865" y2="460" stroke="#c7d1de" stroke-width="7" stroke-linecap="round"/>
+      <ellipse cx="560" cy="135" rx="278" ry="50" fill="#0C2340"/>
+      <text x="560" y="150" text-anchor="middle" fill="#fff" font-size="48" font-weight="700">Knowledge</text>
+      <text x="320" y="312" text-anchor="middle" fill="#0C2340" font-size="36" font-weight="700" transform="rotate(-66 320 312)">Production</text>
+    </svg>
+    <figcaption style="font-size:clamp(18px,2.1vw,30px);color:#2a2a30;max-width:60ch;"><b style="color:#1C5FA8;">Production:</b> the code, the figures, the manuscript, the simulations.</figcaption>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Leg 2: Verification</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:58vh;" font-family="Georgia,serif">
+      <line x1="180" y1="462" x2="940" y2="462" stroke="#e3e8ef" stroke-width="3"/>
+      <line x1="385" y1="165" x2="255" y2="460" stroke="#0C2340" stroke-width="9" stroke-linecap="round"/>
+      <line x1="560" y1="185" x2="560" y2="460" stroke="#0C2340" stroke-width="9" stroke-linecap="round"/>
+      <line x1="735" y1="165" x2="865" y2="460" stroke="#c7d1de" stroke-width="7" stroke-linecap="round"/>
+      <ellipse cx="560" cy="135" rx="278" ry="50" fill="#0C2340"/>
+      <text x="560" y="150" text-anchor="middle" fill="#fff" font-size="48" font-weight="700">Knowledge</text>
+      <text x="320" y="312" text-anchor="middle" fill="#0C2340" font-size="36" font-weight="700" transform="rotate(-66 320 312)">Production</text>
+      <text x="560" y="322" text-anchor="middle" fill="#0C2340" font-size="36" font-weight="700" transform="rotate(-90 560 322)">Verification</text>
+    </svg>
+    <figcaption style="font-size:clamp(18px,2.1vw,30px);color:#2a2a30;max-width:62ch;"><b style="color:#1C5FA8;">Verification:</b> error-free code, verified proofs, replications.</figcaption>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Leg 3: Understanding</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:58vh;" font-family="Georgia,serif">
+      <line x1="180" y1="462" x2="940" y2="462" stroke="#e3e8ef" stroke-width="3"/>
+      <line x1="385" y1="165" x2="255" y2="460" stroke="#0C2340" stroke-width="9" stroke-linecap="round"/>
+      <line x1="560" y1="185" x2="560" y2="460" stroke="#0C2340" stroke-width="9" stroke-linecap="round"/>
+      <line x1="735" y1="165" x2="865" y2="460" stroke="#0C2340" stroke-width="9" stroke-linecap="round"/>
+      <ellipse cx="560" cy="135" rx="278" ry="50" fill="#0C2340"/>
+      <text x="560" y="150" text-anchor="middle" fill="#fff" font-size="48" font-weight="700">Knowledge</text>
+      <text x="320" y="312" text-anchor="middle" fill="#0C2340" font-size="36" font-weight="700" transform="rotate(-66 320 312)">Production</text>
+      <text x="560" y="322" text-anchor="middle" fill="#0C2340" font-size="36" font-weight="700" transform="rotate(-90 560 322)">Verification</text>
+      <text x="800" y="312" text-anchor="middle" fill="#0C2340" font-size="36" font-weight="700" transform="rotate(66 800 312)">Understanding</text>
+    </svg>
+    <figcaption style="font-size:clamp(18px,2.1vw,30px);color:#2a2a30;max-width:64ch;"><b style="color:#1C5FA8;">Understanding:</b> do we even know what we just did? Why we did it? What it means?</figcaption>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Paul and I, side by side</div>
+    <h2>First, where we <span class="accent">agree</span></h2>
+    <div style="display:flex;gap:clamp(26px,5vw,80px);width:100%;max-width:1000px;margin:clamp(6px,1.5vh,20px) auto 0;align-items:flex-start;">
+      <div style="flex:1;">
+        <div style="font-family:Georgia,serif;font-size:clamp(20px,2.2vw,30px);font-weight:700;color:#0C2340;margin-bottom:16px;text-align:center;">Me</div>
+        <div style="display:flex;align-items:center;gap:13px;padding:12px 18px;margin-bottom:12px;border-radius:12px;background:#eef5fc;border:1.5px solid #9fc0e8;"><span style="flex:none;width:30px;height:30px;border-radius:50%;background:#1C5FA8;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;">1</span><span style="font-size:clamp(17px,1.85vw,26px);font-weight:600;color:#0C2340;">Production</span></div>
+        <div style="display:flex;align-items:center;gap:13px;padding:12px 18px;margin-bottom:12px;border-radius:12px;background:#eef5fc;border:1.5px solid #9fc0e8;"><span style="flex:none;width:30px;height:30px;border-radius:50%;background:#1C5FA8;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;">2</span><span style="font-size:clamp(17px,1.85vw,26px);font-weight:600;color:#0C2340;">Verification</span></div>
+        <div style="display:flex;align-items:center;gap:13px;padding:12px 18px;border-radius:12px;background:#f5f6f8;border:1.5px dashed #d7dbe2;"><span style="flex:none;width:30px;height:30px;border-radius:50%;background:#c7ccd6;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;">3</span><span style="font-size:clamp(17px,1.85vw,26px);font-weight:600;color:#aab0ba;">the third leg</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-family:Georgia,serif;font-size:clamp(20px,2.2vw,30px);font-weight:700;color:#0C2340;margin-bottom:16px;text-align:center;">Paul Goldsmith-Pinkham</div>
+        <div style="display:flex;align-items:center;gap:13px;padding:12px 18px;margin-bottom:12px;border-radius:12px;background:#eef5fc;border:1.5px solid #9fc0e8;"><span style="flex:none;width:30px;height:30px;border-radius:50%;background:#1C5FA8;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;">1</span><span style="font-size:clamp(17px,1.85vw,26px);font-weight:600;color:#0C2340;">Production</span></div>
+        <div style="display:flex;align-items:center;gap:13px;padding:12px 18px;margin-bottom:12px;border-radius:12px;background:#eef5fc;border:1.5px solid #9fc0e8;"><span style="flex:none;width:30px;height:30px;border-radius:50%;background:#1C5FA8;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;">2</span><span style="font-size:clamp(17px,1.85vw,26px);font-weight:600;color:#0C2340;">Verification</span></div>
+        <div style="display:flex;align-items:center;gap:13px;padding:12px 18px;border-radius:12px;background:#f5f6f8;border:1.5px dashed #d7dbe2;"><span style="flex:none;width:30px;height:30px;border-radius:50%;background:#c7ccd6;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;">3</span><span style="font-size:clamp(17px,1.85vw,26px);font-weight:600;color:#aab0ba;">the third leg</span></div>
+      </div>
+    </div>
+    <div class="lead">We both build on production and verification. Those two legs we share.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">The same stool, one different leg</div>
+    <h2>Then, where we <span class="accent">differ</span></h2>
+    <div style="display:flex;gap:clamp(26px,5vw,80px);width:100%;max-width:1000px;margin:clamp(6px,1.5vh,20px) auto 0;align-items:flex-start;">
+      <div style="flex:1;">
+        <div style="font-family:Georgia,serif;font-size:clamp(20px,2.2vw,30px);font-weight:700;color:#0C2340;margin-bottom:16px;text-align:center;">Me</div>
+        <div style="display:flex;align-items:center;gap:13px;padding:12px 18px;margin-bottom:12px;border-radius:12px;background:#f5f6f8;border:1.5px solid #e3e6ec;"><span style="flex:none;width:30px;height:30px;border-radius:50%;background:#aeb4bf;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;">1</span><span style="font-size:clamp(17px,1.85vw,26px);font-weight:600;color:#9aa0ab;">Production</span></div>
+        <div style="display:flex;align-items:center;gap:13px;padding:12px 18px;margin-bottom:12px;border-radius:12px;background:#f5f6f8;border:1.5px solid #e3e6ec;"><span style="flex:none;width:30px;height:30px;border-radius:50%;background:#aeb4bf;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;">2</span><span style="font-size:clamp(17px,1.85vw,26px);font-weight:600;color:#9aa0ab;">Verification</span></div>
+        <div style="display:flex;align-items:center;gap:13px;padding:14px 18px;border-radius:12px;background:#e4f0e9;border:2px solid #276749;"><span style="flex:none;width:30px;height:30px;border-radius:50%;background:#276749;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;">3</span><span style="font-size:clamp(18px,1.95vw,28px);font-weight:700;color:#1d5338;">Understanding</span></div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-family:Georgia,serif;font-size:clamp(20px,2.2vw,30px);font-weight:700;color:#0C2340;margin-bottom:16px;text-align:center;">Paul Goldsmith-Pinkham</div>
+        <div style="display:flex;align-items:center;gap:13px;padding:12px 18px;margin-bottom:12px;border-radius:12px;background:#f5f6f8;border:1.5px solid #e3e6ec;"><span style="flex:none;width:30px;height:30px;border-radius:50%;background:#aeb4bf;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;">1</span><span style="font-size:clamp(17px,1.85vw,26px);font-weight:600;color:#9aa0ab;">Production</span></div>
+        <div style="display:flex;align-items:center;gap:13px;padding:12px 18px;margin-bottom:12px;border-radius:12px;background:#f5f6f8;border:1.5px solid #e3e6ec;"><span style="flex:none;width:30px;height:30px;border-radius:50%;background:#aeb4bf;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;">2</span><span style="font-size:clamp(17px,1.85vw,26px);font-weight:600;color:#9aa0ab;">Verification</span></div>
+        <div style="display:flex;align-items:center;gap:13px;padding:14px 18px;border-radius:12px;background:#fdf1e3;border:2px solid #E8820C;"><span style="flex:none;width:30px;height:30px;border-radius:50%;background:#E8820C;color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;">3</span><span style="font-size:clamp(18px,1.95vw,28px);font-weight:700;color:#8a5307;">Judgment<span style="font-weight:400;font-size:.8em;color:#b08a5e;"> (taste)</span></span></div>
+      </div>
+    </div>
+    <div class="lead">Only the third leg differs. Paul lands on judgment; I land on understanding.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Why I land on understanding</div>
+    <h2>I take <span class="accent">human capital</span> itself as the goal</h2>
+    <ul class="facts">
+      <li>Building human capital is the goal, and that is what pulls me toward understanding.</li>
+      <li>Taste and human capital are not at odds &mdash; I just emphasize human capital as an educator.</li>
+      <li>Partly because I am not yet sure how to teach taste; passion has always picked my problems for me.</li>
+    </ul>
+    <div class="lead">Same stool, different weight on the third leg. He emphasizes judgment; I emphasize understanding.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide divider">
+    <div class="eyebrow">Production functions</div>
+    <div class="big">The old research production<br>functions have not changed</div>
+    <div class="sub">Shockley (1957).</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure" style="align-items:stretch;justify-content:center;">
+    <h3 class="figtitle" style="text-align:left;">Research productivity is lognormal: a long right tail</h3>
+    <p style="text-align:left;margin:0 0 clamp(4px,1vh,12px);font-size:clamp(16px,1.8vw,26px);color:#2a2a30;line-height:1.4;max-width:78ch;">In 1957, William Shockley wrote &ldquo;On the Statistics of Individual Variations of Productivity in Research Laboratories.&rdquo; He argued that research productivity is log-normal: most of us sit in a big hump, and a few sit far out in a long right tail.</p>
+    <svg viewBox="0 0 1120 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:46vh;margin:0 auto;" font-family="-apple-system,Segoe UI,sans-serif">
+      <line x1="160" y1="430" x2="1010" y2="430" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="1010,430 994,422 994,438" fill="#0C2340"/>
+      <line x1="160" y1="430" x2="160" y2="70" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="160,70 152,86 168,86" fill="#0C2340"/>
+      <path d="M170,430 L210,416 L250,374 L290,290 L330,206 L370,156 L405,138 L440,152 L490,194 L560,258 L650,318 L760,368 L880,400 L1000,418 L1000,430 L170,430 Z" fill="#3E8EDE" fill-opacity="0.14"/>
+      <polyline points="170,430 210,416 250,374 290,290 330,206 370,156 405,138 440,152 490,194 560,258 650,318 760,368 880,400 1000,418" fill="none" stroke="#1C5FA8" stroke-width="3.5" stroke-linejoin="round"/>
+      <text x="580" y="468" text-anchor="middle" fill="#6b6b73" font-size="20">Research output</text>
+      <text transform="translate(126,250) rotate(-90)" text-anchor="middle" fill="#6b6b73" font-size="20">Number of researchers</text>
+    </svg>
+    <div class="src" style="text-align:left;">An illustrative log-normal curve, not Shockley&rsquo;s data.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure" style="align-items:stretch;justify-content:center;">
+    <h3 class="figtitle" style="text-align:left;">Research productivity is lognormal: a long right tail</h3>
+    <p style="text-align:left;margin:0 0 clamp(4px,1vh,12px);font-size:clamp(16px,1.8vw,26px);color:#2a2a30;line-height:1.4;max-width:78ch;">In 1957, William Shockley wrote &ldquo;On the Statistics of Individual Variations of Productivity in Research Laboratories.&rdquo; He argued that research productivity is log-normal: most of us sit in a big hump, and a few sit far out in a long right tail.</p>
+    <svg viewBox="0 0 1120 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:46vh;margin:0 auto;" font-family="-apple-system,Segoe UI,sans-serif">
+      <defs><marker id="arrS2" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#2D3748"/></marker></defs>
+      <line x1="160" y1="430" x2="1010" y2="430" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="1010,430 994,422 994,438" fill="#0C2340"/>
+      <line x1="160" y1="430" x2="160" y2="70" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="160,70 152,86 168,86" fill="#0C2340"/>
+      <path d="M170,430 L210,416 L250,374 L290,290 L330,206 L370,156 L405,138 L440,152 L490,194 L560,258 L650,318 L760,368 L880,400 L1000,418 L1000,430 L170,430 Z" fill="#3E8EDE" fill-opacity="0.14"/>
+      <polyline points="170,430 210,416 250,374 290,290 330,206 370,156 405,138 440,152 490,194 560,258 650,318 760,368 880,400 1000,418" fill="none" stroke="#1C5FA8" stroke-width="3.5" stroke-linejoin="round"/>
+      <text x="580" y="468" text-anchor="middle" fill="#6b6b73" font-size="20">Research output</text>
+      <text transform="translate(126,250) rotate(-90)" text-anchor="middle" fill="#6b6b73" font-size="20">Number of researchers</text>
+      <line x1="520" y1="118" x2="430" y2="142" stroke="#2D3748" stroke-width="2.5" marker-end="url(#arrS2)"/>
+      <text x="530" y="114" text-anchor="start" fill="#2D3748" font-size="20" font-weight="700">Scott</text>
+    </svg>
+    <div class="src" style="text-align:left;">An illustrative log-normal curve, not Shockley&rsquo;s data.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure" style="align-items:stretch;justify-content:center;">
+    <h3 class="figtitle" style="text-align:left;">Research productivity is lognormal: a long right tail</h3>
+    <p style="text-align:left;margin:0 0 clamp(4px,1vh,12px);font-size:clamp(16px,1.8vw,26px);color:#2a2a30;line-height:1.4;max-width:78ch;">In 1957, William Shockley wrote &ldquo;On the Statistics of Individual Variations of Productivity in Research Laboratories.&rdquo; He argued that research productivity is log-normal: most of us sit in a big hump, and a few sit far out in a long right tail.</p>
+    <svg viewBox="0 0 1120 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:46vh;margin:0 auto;" font-family="-apple-system,Segoe UI,sans-serif">
+      <defs><marker id="arrS3" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#2D3748"/></marker></defs>
+      <line x1="160" y1="430" x2="1010" y2="430" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="1010,430 994,422 994,438" fill="#0C2340"/>
+      <line x1="160" y1="430" x2="160" y2="70" stroke="#0C2340" stroke-width="2.5"/>
+      <polygon points="160,70 152,86 168,86" fill="#0C2340"/>
+      <path d="M170,430 L210,416 L250,374 L290,290 L330,206 L370,156 L405,138 L440,152 L490,194 L560,258 L650,318 L760,368 L880,400 L1000,418 L1000,430 L170,430 Z" fill="#3E8EDE" fill-opacity="0.14"/>
+      <polyline points="170,430 210,416 250,374 290,290 330,206 370,156 405,138 440,152 490,194 560,258 650,318 760,368 880,400 1000,418" fill="none" stroke="#1C5FA8" stroke-width="3.5" stroke-linejoin="round"/>
+      <text x="580" y="468" text-anchor="middle" fill="#6b6b73" font-size="20">Research output</text>
+      <text transform="translate(126,250) rotate(-90)" text-anchor="middle" fill="#6b6b73" font-size="20">Number of researchers</text>
+      <line x1="520" y1="118" x2="430" y2="142" stroke="#2D3748" stroke-width="2.5" marker-end="url(#arrS3)"/>
+      <text x="530" y="114" text-anchor="start" fill="#2D3748" font-size="20" font-weight="700">Scott</text>
+      <line x1="815" y1="316" x2="815" y2="376" stroke="#2D3748" stroke-width="2.5" marker-end="url(#arrS3)"/>
+      <text x="815" y="306" text-anchor="middle" fill="#2D3748" font-size="20" font-weight="700">Einstein</text>
+    </svg>
+    <div class="src" style="text-align:left;">An illustrative log-normal curve, not Shockley&rsquo;s data.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Several abilities, multiplied</div>
+    <h2>Shockley&rsquo;s answer: do the inputs <em>add</em>, or <span class="accent">multiply</span>?</h2>
+    <ul class="facts">
+      <li>He did not explain the long tail of productivity with raw intelligence.</li>
+      <li>He broke productivity into several distinct abilities, combined in one simple equation.</li>
+      <li>Everything turns on one question: do those abilities add, or do they multiply?</li>
+    </ul>
+    <div class="lead">If they multiply, a weakness in any one input holds the whole product down.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Additive production: the inputs add</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="70" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="145" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8321;</text>
+      <text x="145" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="272" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">+</text>
+      <rect x="300" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="375" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8322;</text>
+      <text x="375" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="490" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">+</text>
+      <rect x="530" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="605" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8323;</text>
+      <text x="605" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="705" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">=</text>
+      <text x="895" y="222" text-anchor="middle" fill="#718096" font-size="20" letter-spacing="3">OUTPUT</text>
+      <text x="895" y="305" text-anchor="middle" fill="#1C5FA8" font-size="88" font-weight="700" font-family="Georgia,serif">1.5</text>
+    </svg>
+    <figcaption>Three inputs, each one half. Output is their sum.</figcaption>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Take one input away</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="70" y="175" width="150" height="150" rx="14" fill="#f8ece8" stroke="#e3b9ae" stroke-width="2"/>
+      <text x="145" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8321;</text>
+      <text x="145" y="285" text-anchor="middle" fill="#B7472A" font-size="54" font-weight="700" font-family="Georgia,serif">0</text>
+      <text x="272" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">+</text>
+      <rect x="300" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="375" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8322;</text>
+      <text x="375" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="490" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">+</text>
+      <rect x="530" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="605" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8323;</text>
+      <text x="605" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="705" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">=</text>
+      <text x="895" y="222" text-anchor="middle" fill="#718096" font-size="20" letter-spacing="3">OUTPUT</text>
+      <text x="895" y="305" text-anchor="middle" fill="#1C5FA8" font-size="88" font-weight="700" font-family="Georgia,serif">1.0</text>
+    </svg>
+    <figcaption>One input drops to zero. Output falls by exactly that much.</figcaption>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Perfect substitutes: buy the lost input back</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="70" y="175" width="150" height="150" rx="14" fill="#f8ece8" stroke="#e3b9ae" stroke-width="2"/>
+      <text x="145" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8321;</text>
+      <text x="145" y="285" text-anchor="middle" fill="#B7472A" font-size="54" font-weight="700" font-family="Georgia,serif">0</text>
+      <text x="272" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">+</text>
+      <rect x="300" y="175" width="150" height="150" rx="14" fill="#e9f3ee" stroke="#aacdbb" stroke-width="2"/>
+      <text x="375" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8322;</text>
+      <text x="375" y="285" text-anchor="middle" fill="#276749" font-size="54" font-weight="700" font-family="Georgia,serif">1.0</text>
+      <text x="490" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">+</text>
+      <rect x="530" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="605" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8323;</text>
+      <text x="605" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="705" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">=</text>
+      <text x="895" y="222" text-anchor="middle" fill="#718096" font-size="20" letter-spacing="3">OUTPUT</text>
+      <text x="895" y="305" text-anchor="middle" fill="#276749" font-size="88" font-weight="700" font-family="Georgia,serif">1.5</text>
+    </svg>
+    <figcaption>Add the lost half back to another input. Output returns to 1.5. Under addition the inputs are perfect substitutes.</figcaption>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Multiplicative production: the inputs multiply</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="70" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="145" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8321;</text>
+      <text x="145" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="272" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="300" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="375" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8322;</text>
+      <text x="375" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="490" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="530" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="605" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8323;</text>
+      <text x="605" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="705" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">=</text>
+      <text x="895" y="222" text-anchor="middle" fill="#718096" font-size="20" letter-spacing="3">OUTPUT</text>
+      <text x="895" y="305" text-anchor="middle" fill="#1C5FA8" font-size="76" font-weight="700" font-family="Georgia,serif">0.125</text>
+    </svg>
+    <figcaption>Same three inputs. Now output is their product. This is Shockley&rsquo;s claim, a Cobb&ndash;Douglas form.</figcaption>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Take one input away</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="70" y="175" width="150" height="150" rx="14" fill="#f8ece8" stroke="#e3b9ae" stroke-width="2"/>
+      <text x="145" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8321;</text>
+      <text x="145" y="285" text-anchor="middle" fill="#B7472A" font-size="54" font-weight="700" font-family="Georgia,serif">0</text>
+      <text x="272" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="300" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="375" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8322;</text>
+      <text x="375" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="490" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="530" y="175" width="150" height="150" rx="14" fill="#eef5fc" stroke="#c7d1de" stroke-width="2"/>
+      <text x="605" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8323;</text>
+      <text x="605" y="285" text-anchor="middle" fill="#1b1b1f" font-size="54" font-weight="700" font-family="Georgia,serif">0.5</text>
+      <text x="705" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">=</text>
+      <text x="895" y="222" text-anchor="middle" fill="#718096" font-size="20" letter-spacing="3">OUTPUT</text>
+      <text x="895" y="305" text-anchor="middle" fill="#B7472A" font-size="88" font-weight="700" font-family="Georgia,serif">0</text>
+    </svg>
+    <figcaption>One input is zero, so the product is zero.</figcaption>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">Try to make it up</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="70" y="175" width="150" height="150" rx="14" fill="#f8ece8" stroke="#e3b9ae" stroke-width="2"/>
+      <text x="145" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8321;</text>
+      <text x="145" y="285" text-anchor="middle" fill="#B7472A" font-size="54" font-weight="700" font-family="Georgia,serif">0</text>
+      <text x="272" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="300" y="175" width="150" height="150" rx="14" fill="#fdf1e3" stroke="#eccda0" stroke-width="2"/>
+      <text x="375" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8322;</text>
+      <text x="375" y="285" text-anchor="middle" fill="#E8820C" font-size="54" font-weight="700" font-family="Georgia,serif">100</text>
+      <text x="490" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="530" y="175" width="150" height="150" rx="14" fill="#fdf1e3" stroke="#eccda0" stroke-width="2"/>
+      <text x="605" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8323;</text>
+      <text x="605" y="285" text-anchor="middle" fill="#E8820C" font-size="54" font-weight="700" font-family="Georgia,serif">100</text>
+      <text x="705" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">=</text>
+      <text x="895" y="222" text-anchor="middle" fill="#718096" font-size="20" letter-spacing="3">OUTPUT</text>
+      <text x="895" y="305" text-anchor="middle" fill="#B7472A" font-size="88" font-weight="700" font-family="Georgia,serif">0</text>
+    </svg>
+    <figcaption>Crank the other inputs all the way up. The product is still zero.</figcaption>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">No amount is enough</h3>
+    <svg viewBox="0 0 1120 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:56vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <rect x="70" y="175" width="150" height="150" rx="14" fill="#f8ece8" stroke="#e3b9ae" stroke-width="2"/>
+      <text x="145" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8321;</text>
+      <text x="145" y="285" text-anchor="middle" fill="#B7472A" font-size="54" font-weight="700" font-family="Georgia,serif">0</text>
+      <text x="272" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="300" y="175" width="150" height="150" rx="14" fill="#fdf1e3" stroke="#eccda0" stroke-width="2"/>
+      <text x="375" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8322;</text>
+      <text x="375" y="283" text-anchor="middle" fill="#E8820C" font-size="26" font-weight="700" font-family="Georgia,serif">1,000,000</text>
+      <text x="490" y="285" text-anchor="middle" fill="#0C2340" font-size="48" font-family="Georgia,serif">&#215;</text>
+      <rect x="530" y="175" width="150" height="150" rx="14" fill="#fdf1e3" stroke="#eccda0" stroke-width="2"/>
+      <text x="605" y="212" text-anchor="middle" fill="#718096" font-size="30" font-weight="700" font-family="Georgia,serif">F&#8323;</text>
+      <text x="605" y="283" text-anchor="middle" fill="#E8820C" font-size="26" font-weight="700" font-family="Georgia,serif">1,000,000</text>
+      <text x="705" y="285" text-anchor="middle" fill="#0C2340" font-size="52" font-family="Georgia,serif">=</text>
+      <text x="895" y="222" text-anchor="middle" fill="#718096" font-size="20" letter-spacing="3">OUTPUT</text>
+      <text x="895" y="305" text-anchor="middle" fill="#B7472A" font-size="88" font-weight="700" font-family="Georgia,serif">0</text>
+    </svg>
+    <figcaption>Make them enormous, a million each. Still zero. A missing input cannot be bought back.</figcaption>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Why the tail is so long</div>
+    <h2>A single weak input <span class="accent">caps</span> the whole researcher</h2>
+    <ul class="facts">
+      <li>If abilities multiply, your lowest input sets the ceiling, no matter how high the others go.</li>
+      <li>That is what stretches the distribution: a few people are strong on every input at once.</li>
+      <li>It also says where the leverage is, which is to raise your weakest input, not your best one.</li>
+    </ul>
+    <div class="lead">Raise the weakest input. That is the one place the whole product moves.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Shockley (1957)</div>
+    <h2>The productivity equation <span class="accent">multiplies</span> eight abilities</h2>
+    <div style="text-align:center;font-family:Georgia,serif;font-size:clamp(20px,2.7vw,40px);color:#2D3748;margin:clamp(2px,.8vh,10px) 0 clamp(14px,2.4vh,30px);">P = F&#8321; &#215; F&#8322; &#215; F&#8323; &#215; F&#8324; &#215; F&#8325; &#215; F&#8326; &#215; F&#8327; &#215; F&#8328;</div>
+    <div class="eight">
+      <div class="it"><b>F&#8321;</b><span>Think of a good problem</span></div>
+      <div class="it"><b>F&#8325;</b><span>Write adequately</span></div>
+      <div class="it"><b>F&#8322;</b><span>Work on it</span></div>
+      <div class="it"><b>F&#8326;</b><span>Profit constructively from criticism</span></div>
+      <div class="it"><b>F&#8323;</b><span>Recognize a worthwhile result</span></div>
+      <div class="it"><b>F&#8327;</b><span>Determination to submit the paper to a journal</span></div>
+      <div class="it"><b>F&#8324;</b><span>Decide when to stop and write up the results</span></div>
+      <div class="it"><b>F&#8328;</b><span>Persistence in making changes after journal action</span></div>
+    </div>
+    <div class="cite">Shockley called it &ldquo;a partial listing, not in order of importance.&rdquo; Shockley (1957), <em>Proceedings of the IRE</em>.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure" style="align-items:stretch;justify-content:center;">
+    <div class="kicker" style="color:var(--accent);">Paul and me, located</div>
+    <h3 class="figtitle" style="text-align:left;">Where do judgment and understanding fit in?</h3>
+    <svg viewBox="0 0 1120 384" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:50vh;margin:0 auto;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="amD1" markerWidth="10" markerHeight="10" refX="4" refY="7" orient="auto"><path d="M0,0 L8,0 L4,8 Z" fill="#E8820C"/></marker><marker id="grU1" markerWidth="10" markerHeight="10" refX="4" refY="1" orient="auto"><path d="M0,8 L8,8 L4,0 Z" fill="#276749"/></marker></defs><rect x="40" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="97" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8321;</text><text x="97" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">problem</text><rect x="170" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="227" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8322;</text><text x="227" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">work on it</text><rect x="300" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="357" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8323;</text><text x="357" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">recognize</text><rect x="430" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="487" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8324;</text><text x="487" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">when to stop</text><rect x="560" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="617" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8325;</text><text x="617" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">write</text><rect x="690" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="747" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8326;</text><text x="747" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">criticism</text><rect x="820" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="877" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8327;</text><text x="877" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">submit</text><rect x="950" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="1007" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8328;</text><text x="1007" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">persist</text></svg>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure" style="align-items:stretch;justify-content:center;">
+    <div class="kicker" style="color:var(--accent);">Paul and me, located</div>
+    <h3 class="figtitle" style="text-align:left;">Where do judgment and understanding fit in?</h3>
+    <svg viewBox="0 0 1120 384" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:50vh;margin:0 auto;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="amD2" markerWidth="10" markerHeight="10" refX="4" refY="7" orient="auto"><path d="M0,0 L8,0 L4,8 Z" fill="#E8820C"/></marker><marker id="grU2" markerWidth="10" markerHeight="10" refX="4" refY="1" orient="auto"><path d="M0,8 L8,8 L4,0 Z" fill="#276749"/></marker></defs><rect x="40" y="150" width="115" height="120" rx="12" fill="#fdf1e3" stroke="#E8820C" stroke-width="2.5"/><text x="97" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#E8820C">F&#8321;</text><text x="97" y="238" text-anchor="middle" font-size="14" fill="#8a5307">problem</text><rect x="170" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="227" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8322;</text><text x="227" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">work on it</text><rect x="300" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="357" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8323;</text><text x="357" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">recognize</text><rect x="430" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="487" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8324;</text><text x="487" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">when to stop</text><rect x="560" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="617" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8325;</text><text x="617" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">write</text><rect x="690" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="747" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8326;</text><text x="747" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">criticism</text><rect x="820" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="877" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8327;</text><text x="877" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">submit</text><rect x="950" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="1007" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8328;</text><text x="1007" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">persist</text><text x="98" y="66" text-anchor="middle" font-size="21" font-weight="700" fill="#E8820C" font-family="Georgia,serif">Paul: judgment</text><line x1="98" y1="80" x2="98" y2="144" stroke="#E8820C" stroke-width="2.5" marker-end="url(#amD2)"/></svg>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure" style="align-items:stretch;justify-content:center;">
+    <div class="kicker" style="color:var(--accent);">Paul and me, located</div>
+    <h3 class="figtitle" style="text-align:left;">Judgment, then <span style="color:#276749;">understanding</span> &mdash; F&#8322;&ndash;F&#8324;</h3>
+    <svg viewBox="0 0 1120 384" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:50vh;margin:0 auto;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="amD3" markerWidth="10" markerHeight="10" refX="4" refY="7" orient="auto"><path d="M0,0 L8,0 L4,8 Z" fill="#E8820C"/></marker><marker id="grU3" markerWidth="10" markerHeight="10" refX="4" refY="1" orient="auto"><path d="M0,8 L8,8 L4,0 Z" fill="#276749"/></marker><marker id="grR3" markerWidth="10" markerHeight="10" refX="4" refY="1" orient="auto"><path d="M0,8 L8,8 L4,0 Z" fill="#B7472A"/></marker><marker id="amP3" markerWidth="10" markerHeight="10" refX="4" refY="7" orient="auto"><path d="M0,0 L8,0 L4,8 Z" fill="#7A5FA3"/></marker></defs><rect x="40" y="150" width="115" height="120" rx="12" fill="#fdf1e3" stroke="#E8820C" stroke-width="2.5"/><text x="97" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#E8820C">F&#8321;</text><text x="97" y="238" text-anchor="middle" font-size="14" fill="#8a5307">problem</text><rect x="170" y="150" width="115" height="120" rx="12" fill="#e4f0e9" stroke="#276749" stroke-width="2.5"/><text x="227" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#276749">F&#8322;</text><text x="227" y="238" text-anchor="middle" font-size="14" fill="#38624b">work on it</text><rect x="300" y="150" width="115" height="120" rx="12" fill="#e4f0e9" stroke="#276749" stroke-width="2.5"/><text x="357" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#276749">F&#8323;</text><text x="357" y="238" text-anchor="middle" font-size="14" fill="#38624b">recognize</text><rect x="430" y="150" width="115" height="120" rx="12" fill="#e4f0e9" stroke="#276749" stroke-width="2.5"/><text x="487" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#276749">F&#8324;</text><text x="487" y="238" text-anchor="middle" font-size="14" fill="#38624b">when to stop</text><rect x="560" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="617" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8325;</text><text x="617" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">write</text><rect x="690" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="747" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8326;</text><text x="747" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">criticism</text><rect x="820" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="877" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8327;</text><text x="877" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">submit</text><rect x="950" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="1007" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8328;</text><text x="1007" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">persist</text><text x="98" y="66" text-anchor="middle" font-size="21" font-weight="700" fill="#E8820C" font-family="Georgia,serif">Paul: judgment</text><line x1="98" y1="80" x2="98" y2="144" stroke="#E8820C" stroke-width="2.5" marker-end="url(#amD3)"/><line x1="227" y1="330" x2="487" y2="330" stroke="#276749" stroke-width="2.5"/><line x1="227" y1="330" x2="227" y2="276" stroke="#276749" stroke-width="2.5" marker-end="url(#grU3)"/><line x1="487" y1="330" x2="487" y2="276" stroke="#276749" stroke-width="2.5" marker-end="url(#grU3)"/><line x1="357" y1="330" x2="357" y2="344" stroke="#276749" stroke-width="2.5"/><text x="357" y="366" text-anchor="middle" font-size="20" font-weight="700" fill="#276749" font-family="Georgia,serif">Me: understanding</text></svg>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Where we hold the line</div>
+    <h2>Writing and criticism are the first to <span class="accent">atrophy</span></h2>
+    <svg viewBox="0 0 1120 384" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:34vh;margin:0 auto;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="amD5" markerWidth="10" markerHeight="10" refX="4" refY="7" orient="auto"><path d="M0,0 L8,0 L4,8 Z" fill="#E8820C"/></marker><marker id="grU5" markerWidth="10" markerHeight="10" refX="4" refY="1" orient="auto"><path d="M0,8 L8,8 L4,0 Z" fill="#276749"/></marker><marker id="grR5" markerWidth="10" markerHeight="10" refX="4" refY="1" orient="auto"><path d="M0,8 L8,8 L4,0 Z" fill="#B7472A"/></marker><marker id="amP5" markerWidth="10" markerHeight="10" refX="4" refY="7" orient="auto"><path d="M0,0 L8,0 L4,8 Z" fill="#7A5FA3"/></marker></defs><rect x="40" y="150" width="115" height="120" rx="12" fill="#fdf1e3" stroke="#E8820C" stroke-width="2.5"/><text x="97" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#E8820C">F&#8321;</text><text x="97" y="238" text-anchor="middle" font-size="14" fill="#8a5307">problem</text><rect x="170" y="150" width="115" height="120" rx="12" fill="#e4f0e9" stroke="#276749" stroke-width="2.5"/><text x="227" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#276749">F&#8322;</text><text x="227" y="238" text-anchor="middle" font-size="14" fill="#38624b">work on it</text><rect x="300" y="150" width="115" height="120" rx="12" fill="#e4f0e9" stroke="#276749" stroke-width="2.5"/><text x="357" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#276749">F&#8323;</text><text x="357" y="238" text-anchor="middle" font-size="14" fill="#38624b">recognize</text><rect x="430" y="150" width="115" height="120" rx="12" fill="#e4f0e9" stroke="#276749" stroke-width="2.5"/><text x="487" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#276749">F&#8324;</text><text x="487" y="238" text-anchor="middle" font-size="14" fill="#38624b">when to stop</text><rect x="560" y="150" width="115" height="120" rx="12" fill="#fbe9e6" stroke="#B7472A" stroke-width="2.5"/><text x="617" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#B7472A">F&#8325;</text><text x="617" y="238" text-anchor="middle" font-size="14" fill="#8a3a24">write</text><rect x="690" y="150" width="115" height="120" rx="12" fill="#fbe9e6" stroke="#B7472A" stroke-width="2.5"/><text x="747" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#B7472A">F&#8326;</text><text x="747" y="238" text-anchor="middle" font-size="14" fill="#8a3a24">criticism</text><rect x="820" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="877" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8327;</text><text x="877" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">submit</text><rect x="950" y="150" width="115" height="120" rx="12" fill="#f7fafc" stroke="#d7dbe2" stroke-width="1.5"/><text x="1007" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#4A5568">F&#8328;</text><text x="1007" y="238" text-anchor="middle" font-size="14" fill="#6b6b73">persist</text><text x="98" y="66" text-anchor="middle" font-size="21" font-weight="700" fill="#E8820C" font-family="Georgia,serif">Paul: judgment</text><line x1="98" y1="80" x2="98" y2="144" stroke="#E8820C" stroke-width="2.5" marker-end="url(#amD5)"/><line x1="227" y1="330" x2="487" y2="330" stroke="#276749" stroke-width="2.5"/><line x1="227" y1="330" x2="227" y2="276" stroke="#276749" stroke-width="2.5" marker-end="url(#grU5)"/><line x1="487" y1="330" x2="487" y2="276" stroke="#276749" stroke-width="2.5" marker-end="url(#grU5)"/><line x1="357" y1="330" x2="357" y2="344" stroke="#276749" stroke-width="2.5"/><text x="357" y="366" text-anchor="middle" font-size="20" font-weight="700" fill="#276749" font-family="Georgia,serif">understanding</text><line x1="617" y1="330" x2="747" y2="330" stroke="#B7472A" stroke-width="2.5"/><line x1="617" y1="330" x2="617" y2="276" stroke="#B7472A" stroke-width="2.5" marker-end="url(#grR5)"/><line x1="747" y1="330" x2="747" y2="276" stroke="#B7472A" stroke-width="2.5" marker-end="url(#grR5)"/><line x1="682" y1="330" x2="682" y2="344" stroke="#B7472A" stroke-width="2.5"/><text x="682" y="366" text-anchor="middle" font-size="20" font-weight="700" fill="#B7472A" font-family="Georgia,serif">keep teaching</text></svg>
+    <div class="lead">F&#8325; and F&#8326; are exactly what the agent will do <em>for</em> a student &mdash; so they become the explicit goal of teaching: keep them writing, and keep them taking the criticism.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">The last two, honestly</div>
+    <h2>F&#8327;&ndash;F&#8328; we don&rsquo;t yet know how to <span class="accent">place</span></h2>
+    <svg viewBox="0 0 1120 384" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:34vh;margin:0 auto;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="amD6" markerWidth="10" markerHeight="10" refX="4" refY="7" orient="auto"><path d="M0,0 L8,0 L4,8 Z" fill="#E8820C"/></marker><marker id="grU6" markerWidth="10" markerHeight="10" refX="4" refY="1" orient="auto"><path d="M0,8 L8,8 L4,0 Z" fill="#276749"/></marker><marker id="grR6" markerWidth="10" markerHeight="10" refX="4" refY="1" orient="auto"><path d="M0,8 L8,8 L4,0 Z" fill="#B7472A"/></marker><marker id="amP6" markerWidth="10" markerHeight="10" refX="4" refY="7" orient="auto"><path d="M0,0 L8,0 L4,8 Z" fill="#7A5FA3"/></marker></defs><rect x="40" y="150" width="115" height="120" rx="12" fill="#fdf1e3" stroke="#E8820C" stroke-width="2.5"/><text x="97" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#E8820C">F&#8321;</text><text x="97" y="238" text-anchor="middle" font-size="14" fill="#8a5307">problem</text><rect x="170" y="150" width="115" height="120" rx="12" fill="#e4f0e9" stroke="#276749" stroke-width="2.5"/><text x="227" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#276749">F&#8322;</text><text x="227" y="238" text-anchor="middle" font-size="14" fill="#38624b">work on it</text><rect x="300" y="150" width="115" height="120" rx="12" fill="#e4f0e9" stroke="#276749" stroke-width="2.5"/><text x="357" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#276749">F&#8323;</text><text x="357" y="238" text-anchor="middle" font-size="14" fill="#38624b">recognize</text><rect x="430" y="150" width="115" height="120" rx="12" fill="#e4f0e9" stroke="#276749" stroke-width="2.5"/><text x="487" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#276749">F&#8324;</text><text x="487" y="238" text-anchor="middle" font-size="14" fill="#38624b">when to stop</text><rect x="560" y="150" width="115" height="120" rx="12" fill="#fbe9e6" stroke="#B7472A" stroke-width="2.5"/><text x="617" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#B7472A">F&#8325;</text><text x="617" y="238" text-anchor="middle" font-size="14" fill="#8a3a24">write</text><rect x="690" y="150" width="115" height="120" rx="12" fill="#fbe9e6" stroke="#B7472A" stroke-width="2.5"/><text x="747" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#B7472A">F&#8326;</text><text x="747" y="238" text-anchor="middle" font-size="14" fill="#8a3a24">criticism</text><rect x="820" y="150" width="115" height="120" rx="12" fill="#efeaf6" stroke="#7A5FA3" stroke-width="2.5" stroke-dasharray="5 4"/><text x="877" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#7A5FA3">F&#8327;</text><text x="877" y="238" text-anchor="middle" font-size="14" fill="#52427a">submit</text><rect x="950" y="150" width="115" height="120" rx="12" fill="#efeaf6" stroke="#7A5FA3" stroke-width="2.5" stroke-dasharray="5 4"/><text x="1007" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#7A5FA3">F&#8328;</text><text x="1007" y="238" text-anchor="middle" font-size="14" fill="#52427a">persist</text><text x="98" y="66" text-anchor="middle" font-size="21" font-weight="700" fill="#E8820C" font-family="Georgia,serif">Paul: judgment</text><line x1="98" y1="80" x2="98" y2="144" stroke="#E8820C" stroke-width="2.5" marker-end="url(#amD6)"/><line x1="227" y1="330" x2="487" y2="330" stroke="#276749" stroke-width="2.5"/><line x1="227" y1="330" x2="227" y2="276" stroke="#276749" stroke-width="2.5" marker-end="url(#grU6)"/><line x1="487" y1="330" x2="487" y2="276" stroke="#276749" stroke-width="2.5" marker-end="url(#grU6)"/><line x1="357" y1="330" x2="357" y2="344" stroke="#276749" stroke-width="2.5"/><text x="357" y="366" text-anchor="middle" font-size="20" font-weight="700" fill="#276749" font-family="Georgia,serif">understanding</text><line x1="617" y1="330" x2="747" y2="330" stroke="#B7472A" stroke-width="2.5"/><line x1="617" y1="330" x2="617" y2="276" stroke="#B7472A" stroke-width="2.5" marker-end="url(#grR6)"/><line x1="747" y1="330" x2="747" y2="276" stroke="#B7472A" stroke-width="2.5" marker-end="url(#grR6)"/><line x1="682" y1="330" x2="682" y2="344" stroke="#B7472A" stroke-width="2.5"/><text x="682" y="366" text-anchor="middle" font-size="20" font-weight="700" fill="#B7472A" font-family="Georgia,serif">keep teaching</text><text x="942" y="62" text-anchor="middle" font-size="19" font-style="italic" font-weight="700" fill="#7A5FA3" font-family="Georgia,serif">not yet placed</text><line x1="942" y1="76" x2="942" y2="144" stroke="#7A5FA3" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#amP6)"/></svg>
+    <div class="lead">Submitting to a journal and surviving review don&rsquo;t map cleanly onto undergraduate teaching yet. If AI&rsquo;s gains are as large as they look, the future here is genuinely unwritten &mdash; and our job is to be ready for it.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">What this means for teaching</div>
+    <h2>We have to teach this <span class="accent">on purpose</span> &mdash; guarding against deskilling</h2>
+    <svg viewBox="0 0 1120 384" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:34vh;margin:0 auto;" font-family="-apple-system,Segoe UI,sans-serif"><defs><marker id="amD4" markerWidth="10" markerHeight="10" refX="4" refY="7" orient="auto"><path d="M0,0 L8,0 L4,8 Z" fill="#E8820C"/></marker><marker id="grU4" markerWidth="10" markerHeight="10" refX="4" refY="1" orient="auto"><path d="M0,8 L8,8 L4,0 Z" fill="#276749"/></marker><marker id="grR4" markerWidth="10" markerHeight="10" refX="4" refY="1" orient="auto"><path d="M0,8 L8,8 L4,0 Z" fill="#B7472A"/></marker><marker id="amP4" markerWidth="10" markerHeight="10" refX="4" refY="7" orient="auto"><path d="M0,0 L8,0 L4,8 Z" fill="#7A5FA3"/></marker></defs><rect x="40" y="150" width="115" height="120" rx="12" fill="#fdf1e3" stroke="#E8820C" stroke-width="2.5"/><text x="97" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#E8820C">F&#8321;</text><text x="97" y="238" text-anchor="middle" font-size="14" fill="#8a5307">problem</text><rect x="170" y="150" width="115" height="120" rx="12" fill="#e4f0e9" stroke="#276749" stroke-width="2.5"/><text x="227" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#276749">F&#8322;</text><text x="227" y="238" text-anchor="middle" font-size="14" fill="#38624b">work on it</text><rect x="300" y="150" width="115" height="120" rx="12" fill="#e4f0e9" stroke="#276749" stroke-width="2.5"/><text x="357" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#276749">F&#8323;</text><text x="357" y="238" text-anchor="middle" font-size="14" fill="#38624b">recognize</text><rect x="430" y="150" width="115" height="120" rx="12" fill="#e4f0e9" stroke="#276749" stroke-width="2.5"/><text x="487" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#276749">F&#8324;</text><text x="487" y="238" text-anchor="middle" font-size="14" fill="#38624b">when to stop</text><rect x="560" y="150" width="115" height="120" rx="12" fill="#fbe9e6" stroke="#B7472A" stroke-width="2.5"/><text x="617" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#B7472A">F&#8325;</text><text x="617" y="238" text-anchor="middle" font-size="14" fill="#8a3a24">write</text><rect x="690" y="150" width="115" height="120" rx="12" fill="#fbe9e6" stroke="#B7472A" stroke-width="2.5"/><text x="747" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#B7472A">F&#8326;</text><text x="747" y="238" text-anchor="middle" font-size="14" fill="#8a3a24">criticism</text><rect x="820" y="150" width="115" height="120" rx="12" fill="#efeaf6" stroke="#7A5FA3" stroke-width="2.5" stroke-dasharray="5 4"/><text x="877" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#7A5FA3">F&#8327;</text><text x="877" y="238" text-anchor="middle" font-size="14" fill="#52427a">submit</text><rect x="950" y="150" width="115" height="120" rx="12" fill="#efeaf6" stroke="#7A5FA3" stroke-width="2.5" stroke-dasharray="5 4"/><text x="1007" y="202" text-anchor="middle" font-family="Georgia,serif" font-size="23" font-weight="700" fill="#7A5FA3">F&#8328;</text><text x="1007" y="238" text-anchor="middle" font-size="14" fill="#52427a">persist</text><text x="98" y="66" text-anchor="middle" font-size="21" font-weight="700" fill="#E8820C" font-family="Georgia,serif">Paul: judgment</text><line x1="98" y1="80" x2="98" y2="144" stroke="#E8820C" stroke-width="2.5" marker-end="url(#amD4)"/><line x1="227" y1="330" x2="487" y2="330" stroke="#276749" stroke-width="2.5"/><line x1="227" y1="330" x2="227" y2="276" stroke="#276749" stroke-width="2.5" marker-end="url(#grU4)"/><line x1="487" y1="330" x2="487" y2="276" stroke="#276749" stroke-width="2.5" marker-end="url(#grU4)"/><line x1="357" y1="330" x2="357" y2="344" stroke="#276749" stroke-width="2.5"/><text x="357" y="366" text-anchor="middle" font-size="20" font-weight="700" fill="#276749" font-family="Georgia,serif">understanding</text><line x1="617" y1="330" x2="747" y2="330" stroke="#B7472A" stroke-width="2.5"/><line x1="617" y1="330" x2="617" y2="276" stroke="#B7472A" stroke-width="2.5" marker-end="url(#grR4)"/><line x1="747" y1="330" x2="747" y2="276" stroke="#B7472A" stroke-width="2.5" marker-end="url(#grR4)"/><line x1="682" y1="330" x2="682" y2="344" stroke="#B7472A" stroke-width="2.5"/><text x="682" y="366" text-anchor="middle" font-size="20" font-weight="700" fill="#B7472A" font-family="Georgia,serif">keep teaching</text><text x="942" y="62" text-anchor="middle" font-size="19" font-style="italic" font-weight="700" fill="#7A5FA3" font-family="Georgia,serif">not yet placed</text><line x1="942" y1="76" x2="942" y2="144" stroke="#7A5FA3" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#amP4)"/></svg>
+    <div class="lead">Students won&rsquo;t absorb this split on their own. We have to teach it deliberately: how to lean on the agent across F&#8322;&ndash;F&#8324; without letting F&#8325;&ndash;F&#8326; wither. That is the course.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide divider">
+    <div class="eyebrow">A proposal, held loosely</div>
+    <div class="big" style="font-size:clamp(38px,6.4vw,96px);">A first-year class</div>
+    <div class="sub" style="max-width:52ch;">Call it <strong>ECO&nbsp;1000</strong> &mdash; aimed at every undergraduate, not just the future quants. Built on the year I spent at Harvard teaching Gov&nbsp;50 (200+ students) and its follow-up, Gov&nbsp;51: a baseline statistics course, heavy on replication, in three components.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">The whole thing is written</div>
+    <h2>A full syllabus you can <span class="accent">take with you</span></h2>
+    <div class="cols" style="align-items:center;">
+      <div style="flex:0 0 56%;">
+        <img src="figures/syllabus_screenshot.png" alt="AI and Data Literacy syllabus, page 1" style="width:100%;max-height:62vh;border:1px solid #d7e6f6;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.10);">
+      </div>
+      <div>
+        <div style="border:1px solid #d7e6f6;border-radius:12px;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.08);padding:22px;text-align:center;">
+          <img src="figures/qr_syllabus.png" alt="QR code to the syllabus PDF" style="width:150px;height:150px;margin:0 auto;display:block;">
+          <div style="margin-top:12px;font-family:Georgia,serif;color:var(--accent);font-weight:700;font-size:clamp(15px,1.5vw,21px);">scunning.com/aere/syllabus.pdf</div>
+        </div>
+        <div class="lead" style="margin-top:18px;">Scan it. The full Fall&nbsp;2027 syllabus is yours &mdash; take it, fork it, teach it.</div>
+      </div>
+    </div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure" style="align-items:center;">
+    <div class="kicker" style="color:var(--accent);">Three components</div>
+    <h3 class="figtitle">AI, data, and the <span style="color:#276749;">overlap</span></h3>
+    <svg viewBox="0 0 1000 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-height:52vh;" font-family="-apple-system,Segoe UI,sans-serif">
+      <circle cx="400" cy="220" r="185" fill="#3E8EDE" fill-opacity="0.16" stroke="#1C5FA8" stroke-width="2.5"/>
+      <circle cx="600" cy="220" r="185" fill="#276749" fill-opacity="0.14" stroke="#276749" stroke-width="2.5"/>
+      <text x="330" y="120" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#1C5FA8">AI</text>
+      <text x="670" y="120" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#276749">Data</text>
+      <text x="305" y="224" text-anchor="middle" font-size="19" font-weight="700" fill="#1C5FA8">AI without data</text>
+      <text x="305" y="249" text-anchor="middle" font-size="14" fill="#4A5568">Economics of AI</text>
+      <text x="500" y="224" text-anchor="middle" font-size="19" font-weight="700" fill="#2D3748">AI &amp; data</text>
+      <text x="500" y="249" text-anchor="middle" font-size="14" fill="#4A5568">analysis with an agent</text>
+      <text x="695" y="224" text-anchor="middle" font-size="19" font-weight="700" fill="#276749">Data without AI</text>
+      <text x="695" y="249" text-anchor="middle" font-size="14" fill="#38624b">Gov 51 statistics</text>
+    </svg>
+    <figcaption>One class, three literacies &mdash; because a student needs all three to judge what the agent hands her.</figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">AI use is ubiquitous; use of agents is not</h3>
+    <img src="figures/adopt_career.png" alt="Agent adoption rising with career stage">
+    <figcaption>Part of the gap is just price: chatbots are free, agents are not.<span class="src">Anthropic, May 2026; 1,260 quantitative social scientists. Not a representative sample, so read the gradient, not the level.</span></figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide figure">
+    <h3 class="figtitle">More gaps by field</h3>
+    <img src="figures/adopt_discipline.png" alt="Agent adoption by discipline">
+    <figcaption>How much of a field&rsquo;s work was already written as code seems to matter.<span class="src">Same survey. Not a representative sample, so read the spread, not the levels.</span></figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Before the how, the when</div>
+    <h2>When do you use <span class="accent">agents</span>?</h2>
+    <ul class="facts">
+      <li>When the work is highly, highly valuable.</li>
+      <li>When the time inputs needed to do it are extremely high.</li>
+      <li>When the probability that you will do a bad job at it is very high.</li>
+      <li>When the outputs can be verified and understood.</li>
+    </ul>
+    <div class="lead">You need all four. With all four, the case for using agents for research is extremely strong.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Passive to autonomous</div>
+    <h2>Agents are different because they <span class="accent">act</span></h2>
+    <div class="spectrum">
+      <div class="step"><div class="box"><div class="t">Chatbot</div><div class="s">ChatGPT, Claude.ai</div></div><div class="u">You ask, it answers</div></div>
+      <div class="arrow">&rarr;</div>
+      <div class="step"><div class="box"><div class="t">Co-pilot</div><div class="s">Cursor, Copilot</div></div><div class="u">You type, it suggests</div></div>
+      <div class="arrow">&rarr;</div>
+      <div class="step"><div class="box on"><div class="t">Agent</div><div class="s">Claude Code, Codex</div></div><div class="u">You delegate, it executes</div></div>
+    </div>
+    <div class="lead">An agent reads files, writes code, runs it, reads the output, and decides what to do next across many steps.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">What a language model is</div>
+    <h2>An LLM does one thing: it predicts the next <span class="accent">token</span></h2>
+    <div class="cols">
+      <div>
+        <div class="codecard"><span class="fn">the prompt</span>&ldquo;The minimum wage reduces ______&rdquo;</div>
+        <table class="tbl" style="margin-top:1em;">
+          <tr><th>Next token</th><th>Probability</th></tr>
+          <tr><td>employment</td><td>0.41</td></tr>
+          <tr><td>poverty</td><td>0.22</td></tr>
+          <tr><td>hours</td><td>0.11</td></tr>
+          <tr><td>inequality</td><td>0.09</td></tr>
+          <tr><td><em>every other token</em></td><td>0.17</td></tr>
+        </table>
+        <div class="cite">Illustrative numbers, not model output.</div>
+      </div>
+      <div>
+        <ul class="facts">
+          <li>The model draws one token from this distribution and appends it.</li>
+          <li>Then it predicts again, with the longer text as the new input.</li>
+        </ul>
+        <div class="lead">An essay, a proof, a Stata do-file: each is thousands of these draws in a row.</div>
+      </div>
+    </div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Not software, a model that talks</div>
+    <h2>An agent is a language model that talks to your <span class="accent">computer</span></h2>
+    <div class="cols">
+      <div>
+        <ul class="facts">
+          <li>It is the same next-token model as before, not a program wired into your machine.</li>
+          <li>The difference: its tokens are commands, typed into a terminal the way you or I would type them.</li>
+          <li>So it can only act where typing is accepted, which is also where it can do harm.</li>
+        </ul>
+      </div>
+      <div>
+        <table class="tbl">
+          <tr><td class="m"><code>ls data/</code></td><td>list files</td></tr>
+          <tr><td class="m"><code>rg "minimum wage" .</code></td><td>search text and code</td></tr>
+          <tr><td class="m"><code>Rscript estimate.R</code></td><td>run an R script</td></tr>
+          <tr><td class="m"><code>stata -b do analysis.do</code></td><td>run a Stata do-file</td></tr>
+          <tr><td class="m"><code>git diff</code></td><td>inspect changes</td></tr>
+          <tr><td class="m danger"><code>rm -rf data/</code></td><td class="danger">delete files, permanently</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Tokens, not words</div>
+    <h2>The model reads <span class="accent">tokens</span>, not words</h2>
+    <div style="text-align:center;margin:clamp(6px,1.4vh,18px) 0 clamp(14px,2.2vh,28px);">
+      <div style="font-family:Georgia,serif;font-size:clamp(18px,2.1vw,32px);color:#2a2a30;margin-bottom:clamp(14px,2.4vh,30px);">Difference-in-differences estimates the treatment effect.</div>
+      <div style="display:flex;flex-wrap:wrap;gap:clamp(5px,.7vw,10px);justify-content:center;align-items:flex-start;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="font-family:'SF Mono',Menlo,monospace;font-size:clamp(13px,1.4vw,21px);background:#cfe2f6;border-radius:5px;padding:5px 9px;color:#33323a;">Difference</div><div style="font-size:clamp(9px,.9vw,12px);color:#9aa0a6;">72917</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="font-family:'SF Mono',Menlo,monospace;font-size:clamp(13px,1.4vw,21px);background:#d7efe0;border-radius:5px;padding:5px 9px;color:#33323a;">-in</div><div style="font-size:clamp(9px,.9vw,12px);color:#9aa0a6;">4200</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="font-family:'SF Mono',Menlo,monospace;font-size:clamp(13px,1.4vw,21px);background:#f6ddd6;border-radius:5px;padding:5px 9px;color:#33323a;">-d</div><div style="font-size:clamp(9px,.9vw,12px);color:#9aa0a6;">2469</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="font-family:'SF Mono',Menlo,monospace;font-size:clamp(13px,1.4vw,21px);background:#e4e6ea;border-radius:5px;padding:5px 9px;color:#33323a;">if</div><div style="font-size:clamp(9px,.9vw,12px);color:#9aa0a6;">366</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="font-family:'SF Mono',Menlo,monospace;font-size:clamp(13px,1.4vw,21px);background:#cfe2f6;border-radius:5px;padding:5px 9px;color:#33323a;">ferences</div><div style="font-size:clamp(9px,.9vw,12px);color:#9aa0a6;">10131</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="font-family:'SF Mono',Menlo,monospace;font-size:clamp(13px,1.4vw,21px);background:#d7efe0;border-radius:5px;padding:5px 9px;color:#33323a;"><span style="color:#b0b6bf;">&#9251;</span>estimates</div><div style="font-size:clamp(9px,.9vw,12px);color:#9aa0a6;">30233</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="font-family:'SF Mono',Menlo,monospace;font-size:clamp(13px,1.4vw,21px);background:#f6ddd6;border-radius:5px;padding:5px 9px;color:#33323a;"><span style="color:#b0b6bf;">&#9251;</span>the</div><div style="font-size:clamp(9px,.9vw,12px);color:#9aa0a6;">290</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="font-family:'SF Mono',Menlo,monospace;font-size:clamp(13px,1.4vw,21px);background:#e4e6ea;border-radius:5px;padding:5px 9px;color:#33323a;"><span style="color:#b0b6bf;">&#9251;</span>treatment</div><div style="font-size:clamp(9px,.9vw,12px);color:#9aa0a6;">7448</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="font-family:'SF Mono',Menlo,monospace;font-size:clamp(13px,1.4vw,21px);background:#cfe2f6;border-radius:5px;padding:5px 9px;color:#33323a;"><span style="color:#b0b6bf;">&#9251;</span>effect</div><div style="font-size:clamp(9px,.9vw,12px);color:#9aa0a6;">3159</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="font-family:'SF Mono',Menlo,monospace;font-size:clamp(13px,1.4vw,21px);background:#d7efe0;border-radius:5px;padding:5px 9px;color:#33323a;">.</div><div style="font-size:clamp(9px,.9vw,12px);color:#9aa0a6;">13</div></div>
+      </div>
+    </div>
+    <ul class="facts" style="gap:clamp(8px,1.3vh,16px);">
+      <li>This sentence becomes ten tokens, and each token has an ID number.</li>
+      <li>Common words are one token, and rare words are split into pieces.</li>
+      <li>GPT-4o&rsquo;s vocabulary has 200,019 tokens.</li>
+    </ul>
+    <div class="lead">The model never sees letters or words. It sees this list of ten integers.</div>
+    <div class="cite">Real output from OpenAI&rsquo;s o200k_base tokenizer, the one GPT-4o uses.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide divider" style="background:repeating-linear-gradient(45deg,#0A1A30,#0A1A30 18px,#0c1f3a 18px,#0c1f3a 36px);">
+    <div class="eyebrow">placeholder &mdash; to build</div>
+    <div class="big" style="font-size:clamp(30px,4.6vw,66px);">Token prediction = multinomial logit &rarr; autoregression</div>
+    <div class="sub">note #57: logit on the left (animated), autoregressive generation on the right</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide divider">
+    <div class="eyebrow">Component 1</div>
+    <div class="big">AI <span style="color:#9fd0ff;">&amp;</span> data</div>
+    <div class="sub">You can now produce an analysis without the skill to judge it. So this is where we slow students down and coach them.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Why this part needs teaching</div>
+    <h2>Production is free now &mdash; so we coach the <span class="accent">judgment</span></h2>
+    <ul class="facts">
+      <li>A student can hand their data to an agent and get a polished result with no skill at all.</li>
+      <li>That result is a near-random draw from a sprawling set of forking paths, and it is easy to steer.</li>
+      <li>So we teach in the context of <em>producing</em> &mdash; because production is no longer our comparative advantage; judgment is.</li>
+    </ul>
+    <div class="lead">Two things we can hand them right now: a way to name the target, and a checklist.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">What we can teach now &middot; 1</div>
+    <h2>Estimand <span class="accent">&rarr;</span> estimator <span class="accent">&rarr;</span> estimate</h2>
+    <ul class="facts">
+      <li><span class="lede">Estimand first.</span> Name the population quantity you want, in first principles, before any data is touched.</li>
+      <li><span class="lede">Estimator from assignment.</span> Choose the method from how treatment was assigned &mdash; covariates, overlap, the design &mdash; not from the answer it gives.</li>
+      <li><span class="lede">Estimate last.</span> The number is the sample analog, read against its sampling distribution, not a thing to search for.</li>
+    </ul>
+    <div class="lead">Classic statistics, taught in reverse of how the agent wants to work &mdash; population first, sample second.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">What we can teach now &middot; 2</div>
+    <h2>A short <span class="accent">checklist</span> they run every time</h2>
+    <ul class="facts">
+      <li><span class="lede">BITE &mdash; look first.</span> Map it (GIS) and plot it over time. If it is a gun law, confirm guns even moved before you ask what the law did to harm.</li>
+      <li><span class="lede">Covariates &amp; balance.</span> Say what must be adjusted for, then check that the groups actually overlap.</li>
+      <li><span class="lede">Falsification &amp; no peeking.</span> Build in the tests that could prove you wrong, and fix the specification before you see the estimate.</li>
+    </ul>
+    <div class="lead">Pulling and cleaning data used to be the wall; now they can scrape and assemble it, so the skill we grade is the judgment around it.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">What I would watch</div>
+    <h2>AI is quietly pulling students <span class="accent">apart</span></h2>
+    <ul class="facts">
+      <li>MIT&rsquo;s 2026 committee already reports it: students working alone where they used to work together, and novices replaced in the lab rather than trained in it.</li>
+      <li>So the design question is not only assessment &mdash; it is who a student learns beside: study groups, labs, apprenticeships.</li>
+      <li>If group work is where the socializing happens, we have to build it back in on purpose.</li>
+    </ul>
+    <div class="cite">Report of MIT&rsquo;s Ad Hoc Committee on AI Use in Teaching, Learning, and Research Training (August 2026).</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">A strange turn</div>
+    <h2>Artifacts are becoming a <span class="accent">shared workbench</span></h2>
+    <ul class="facts">
+      <li>The shareable artifacts I showed earlier are turning into places to <em>do</em> the work together, not just display it &mdash; and to leave each other feedback.</li>
+      <li>That makes them a natural way to put students back in a room: shared work, visible to the group.</li>
+    </ul>
+    <div class="codecard" style="margin-top:6px;">
+      <span class="fn">The slash loop &mdash; work that updates itself</span>
+      <b>/loop</b> <span style="color:#6b6b73;">[interval]</span> <b>[task]</b><br>
+      &rarr; re-pulls the material on a schedule and makes the changes, so the artifact keeps working while the group does.
+    </div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide divider">
+    <div class="eyebrow">Component 2</div>
+    <div class="big">AI <span style="color:#9fd0ff;">without</span> data</div>
+    <div class="sub">The economics of the machine itself &mdash; drawn from my Economics of AI course.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Economics of AI</div>
+    <h2>What a machine does to <span class="accent">work and wages</span></h2>
+    <ul class="facts">
+      <li><span class="lede">The industrial revolution.</span> The factory and the engine as the last time a general-purpose technology rewrote every task (Hounshell).</li>
+      <li><span class="lede">The economics of machines.</span> A task model &mdash; which tasks automate, which get augmented, where new tasks appear (Acemoglu &amp; Autor).</li>
+      <li><span class="lede">Technology and education.</span> The race between the two, and what it does to the wage structure (Goldin &amp; Katz).</li>
+      <li><span class="lede">Public policy.</span> What any of this asks of regulation, safety, and the social contract.</li>
+    </ul>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide divider">
+    <div class="eyebrow">Component 3</div>
+    <div class="big">Data <span style="color:#9fd0ff;">without</span> AI</div>
+    <div class="sub">Baseline statistics, replication-heavy &mdash; and the scientific integrity that governs all of it. This is Gov&nbsp;51.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Lead with integrity</div>
+    <h2>Teach it by taking a real fraud <span class="accent">apart</span></h2>
+    <ul class="facts">
+      <li>In a world of elastic demand &mdash; unskilled users at the margin, agents taking hidden actions &mdash; integrity matters more, not less.</li>
+      <li>You learn what to do by studying what not to do, so I hand students a case study: LaCour &amp; Green (2014, <em>Science</em>).</li>
+    </ul>
+    <div class="lead">A 20-minute conversation that seemed to shift attitudes for months &mdash; until it didn&rsquo;t.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Scientific self-correction</div>
+    <h2>Basic tools caught <span class="accent">fabricated data</span></h2>
+    <ul class="facts">
+      <li>Broockman and Kalla asked for the data, found irregularities, and brought in a statistician (Aronow).</li>
+      <li>Green requested retraction; <em>Science</em> retracted it in 2015 &mdash; no special tools, just people who knew what real data looks like.</li>
+      <li>Histograms, summary statistics, correlations: fabricated data tends to look &ldquo;too clean,&rdquo; or to match the wrong source.</li>
+    </ul>
+    <div class="lead">If you know what real data looks like, fake data stands out &mdash; and that is exactly what Gov&nbsp;51 trains.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide embed" style="padding:0;">
+    <iframe src="assets/normal_forensics.html?v=2" title="What real data looks like, and what fabricated data doesn't" style="width:100%;height:92vh;border:0;display:block;"></iframe>
+  </section>
+
+  <section class="slide figure" style="align-items:center;">
+    <div class="kicker" style="color:var(--accent);">And I hand it over</div>
+    <h3 class="figtitle">Every Gov&nbsp;51 deck, the replication script, the problem sets</h3>
+    <div style="display:flex;gap:2rem;align-items:center;justify-content:center;width:100%;">
+      <img src="figures/lacour.png" alt="When Data Lies teaching deck" style="max-height:46vh;max-width:46%;border:1px solid #e3e8ef;border-radius:8px;">
+      <img src="figures/gov51.png" alt="Gov 51: Data Analysis and Politics course page" style="max-height:46vh;max-width:46%;border:1px solid #e3e8ef;border-radius:8px;">
+    </div>
+    <figcaption><span class="cap-accent">If you know what real data looks like, fake data stands out</span> &mdash; and that is exactly what Gov&nbsp;51 trains.</figcaption>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">What they leave able to do</div>
+    <h2>Produce, verify, <span class="accent">understand</span></h2>
+    <ul class="facts">
+      <li><span class="lede">Produce</span> &mdash; run a real analysis with an agent, end to end.</li>
+      <li><span class="lede">Verify</span> &mdash; check the spec, the sample, and the claim against what was actually run.</li>
+      <li><span class="lede">Understand</span> &mdash; explain it in plain words, and defend it honestly.</li>
+    </ul>
+    <div class="lead">Production is nearly free now; the other two legs of the stool stay ours &mdash; so the course is built on them.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">How it&rsquo;s graded &middot; Fall 2027, held loosely</div>
+    <h2>Weighted toward <span class="accent">doing</span>, not recall</h2>
+    <table class="tbl">
+      <tr><th>Component</th><th>Weight</th><th></th></tr>
+      <tr><td class="m">Attendance</td><td class="m">5%</td><td>show up, it compounds</td></tr>
+      <tr><td class="m">Weekly quizzes</td><td class="m">20%</td><td>keep the statistics current</td></tr>
+      <tr><td class="m">Three exams</td><td class="m">45%</td><td>no cumulative final</td></tr>
+      <tr><td class="m">Three projects</td><td class="m">30%</td><td>Measurement &middot; Prediction &middot; Causality</td></tr>
+    </table>
+    <div class="foot"><span class="lede">The projects are the course.</span> Each is an analysis produced with an agent, then verified and explained by the student.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Grading the one thing AI can&rsquo;t hand them</div>
+    <h2>Make them <span class="accent">defend</span> it</h2>
+    <ul class="facts">
+      <li>Understanding is the only output an agent can&rsquo;t produce for the student, so we grade it by defense.</li>
+      <li>A journal once offered to reconsider desk-rejected papers if the authors would simply sit and answer questions.</li>
+      <li>Not one author took them up on it.</li>
+    </ul>
+    <div class="lead">If you can&rsquo;t answer for it, you don&rsquo;t understand it &mdash; and that is the thing worth certifying.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">The thing economists rarely say out loud</div>
+    <h2>We actually believe what we have is <span class="accent">valuable</span></h2>
+    <ul class="facts">
+      <li>Economics doesn&rsquo;t market itself the way accounting, engineering, or marketing do.</li>
+      <li>But drill down and every economist believes our way of reasoning is genuinely valuable &mdash; for earning a living, and for being a citizen.</li>
+      <li>A first-year course is where a student actually finds that out.</li>
+    </ul>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Who should teach it?</div>
+    <h2>Major = <span class="accent">job</span>, or major = <span class="accent">subject</span>?</h2>
+    <div class="cols" style="align-items:stretch;">
+      <div>
+        <h3>Major names a job</h3>
+        <ul>
+          <li>Journalism, finance, accounting.</li>
+          <li>Computer science, engineering, chemistry.</li>
+          <li>The student can see the work at the end.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Major names a subject</h3>
+        <ul>
+          <li>Physics, math, history, literature.</li>
+          <li>And <b>economics</b> &mdash; without the name recognition the others have.</li>
+          <li>Many students can&rsquo;t say what it even is.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="lead">Economics sits in the right-hand column, deeply empirical, and the student can&rsquo;t see it &mdash; a first-year course taught by economists is how they find out.</div>
+    <div class="num"></div>
+  </section>
+
+  <section class="slide content">
+    <div class="kicker">Why I would push for this</div>
+    <h2>A cheap, <span class="accent">marginal</span> gain for economics</h2>
+    <ul class="facts">
+      <li>It is a small move that raises economics&rsquo; value proposition on our own campuses.</li>
+      <li>It plays to our strength &mdash; quantitative, empirical research &mdash; and meets students where their attention and their worry already are.</li>
+      <li>And it is a private provision of a public good: someone will offer a course like this anyway.</li>
+    </ul>
+    <div class="num"></div>
+  </section>
+  <section class="slide content">
+    <div class="kicker">How to judge a course like this</div>
+    <h2>Win <span class="accent">hearts and minds</span></h2>
+    <ul class="facts">
+      <li>Judge it the way you would judge any private provision of a public good: does it win hearts and minds?</li>
+      <li>The real content &mdash; statistics, causal inference, the public-policy questions that turn on them &mdash; rides inside the one thing students already find salient.</li>
+      <li>We do not have to call it a statistics class. We just have to teach one.</li>
+    </ul>
+    <div class="num"></div>
+  </section>
+  <section class="slide content">
+    <div class="kicker">What it really is</div>
+    <h2>Economics and empiricism &mdash; held <span class="accent">loosely</span></h2>
+    <ul class="facts">
+      <li>Underneath the AI framing: measurement, inference, causal design, and the policy debates that depend on them.</li>
+      <li>Unapologetically empirical, and unapologetically economics.</li>
+      <li>And held loosely &mdash; there is a great deal we do not yet know about how to teach this.</li>
+    </ul>
+    <div class="num"></div>
+  </section>
+  <section class="slide divider">
+    <div class="eyebrow">Someone will teach this course on every campus</div>
+    <div class="big" style="font-size:clamp(40px,6.6vw,100px);max-width:16ch;">Who would you rather teach it?</div>
+    <div class="sub" style="margin-top:1em;">Thank you.</div>
+    <div class="sub" style="margin-top:.3em;">Scott Cunningham &middot; scunning@gmail.com</div>
+    <div class="num"></div>
+  </section>
+
+  <!-- =================== END THE CLASS =================== -->
+
+  <div class="hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> to move &nbsp;&middot;&nbsp; <kbd>F</kbd> for full screen</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  slides.forEach((s,idx)=>{const n=s.querySelector('.num'); if(n) n.textContent=idx+1;});
+  const isEmbed=s=>s.classList.contains('embed');
+  function tellFrame(slide,msg){const f=slide.querySelector('iframe'); if(!f) return; const send=()=>{try{f.contentWindow.postMessage(msg,'*');}catch(_){}}; send(); f.addEventListener('load',send,{once:true});}
+  let i=0;
+  function go(n){
+    const prev=i;
+    i=Math.max(0,Math.min(slides.length-1,n));
+    if(i===prev) return;
+    slides[i].scrollIntoView({behavior:'instant',inline:'center',block:'nearest'});
+    if(isEmbed(slides[i])) tellFrame(slides[i], i<prev?'last':'first');
+  }
+  addEventListener('keydown',e=>{
+    const right=['ArrowRight','ArrowDown','PageDown',' '].includes(e.key);
+    const left =['ArrowLeft','ArrowUp','PageUp'].includes(e.key);
+    if((right||left) && isEmbed(slides[i])){e.preventDefault(); tellFrame(slides[i], right?'next':'prev'); return;}
+    if(right){e.preventDefault();go(i+1);}
+    else if(left){e.preventDefault();go(i-1);}
+    else if(e.key==='f'||e.key==='F'){e.preventDefault();
+      if(!document.fullscreenElement){(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen||(()=>{})).call(document.documentElement);}
+      else{(document.exitFullscreen||document.webkitExitFullscreen||(()=>{})).call(document);}}
+    else if(e.key==='Home'){e.preventDefault();go(0);}
+    else if(e.key==='End'){e.preventDefault();go(slides.length-1);}
+  });
+  addEventListener('message',e=>{ if(e.data==='atEnd') go(i+1); else if(e.data==='atStart') go(i-1); });
+  const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){i=slides.indexOf(en.target);en.target.classList.add('seen');}}),{threshold:.6});
+  slides.forEach(s=>io.observe(s));
+  addEventListener('resize',()=>slides[i].scrollIntoView({block:'nearest',inline:'center'}));
+</script>
+</body>
+</html>

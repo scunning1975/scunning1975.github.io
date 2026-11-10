@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two Literacies Converge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FBFAF7; --green: #154734; --gold: #FFB81C; --ink: #1A1A1A;
+    --warm: #6B7280; --brick: #9B2C2C; --pale: #D8D4CB;
+  }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--cream); }
+  body { cursor: pointer; user-select: none; -webkit-user-select: none; }
+  #stage { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+  svg text { font-family: "Fira Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<svg id="stage" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="1600" height="900" fill="#FBFAF7"/>
+
+  <!-- Title -->
+  <text id="title" x="80" y="98" font-size="56" font-weight="700" fill="#154734" style="transition: opacity .35s ease;"></text>
+  <rect x="80" y="122" width="146" height="3" fill="#FFB81C"/>
+
+  <!-- Diagram -->
+  <g id="plot"></g>
+
+  <!-- Step counter -->
+  <text id="counter" x="1565" y="882" font-size="18" fill="#D8D4CB" text-anchor="end"></text>
+</svg>
+
+<script>
+(() => {
+  const NS = 'http://www.w3.org/2000/svg';
+  const plot = document.getElementById('plot');
+  const el = (tag, attrs, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    (parent || plot).appendChild(e);
+    return e;
+  };
+  const txt = (s, attrs, parent) => { const t = el('text', attrs, parent); t.textContent = s; return t; };
+
+  // Geometry
+  const CX = 800, CY = 520, R = 230, RING = 7;   // RING: gold stroke sits just outside green when fused
+  const HALF = [340, 200, 0];            // half center-distance per step (gap, slight overlap, fused)
+  const GREEN = '#154734', GOLDDK = '#9A6B00', INK = '#2E2A25', DEEP = '#0C2E21', WARM = '#6B7280';
+
+  // Ghost outlines (starting spots)
+  const ghostG = el('g', { opacity: 0 });
+  el('circle', { cx: CX - HALF[0], cy: CY, r: R, fill: 'none', stroke: '#D8D4CB', 'stroke-width': 3, 'stroke-dasharray': '10 10' }, ghostG);
+  el('circle', { cx: CX + HALF[0], cy: CY, r: R, fill: 'none', stroke: '#D8D4CB', 'stroke-width': 3, 'stroke-dasharray': '10 10' }, ghostG);
+
+  // Circles: fills first, then strokes on top
+  const lFill = el('circle', { cy: CY, r: R, fill: GREEN, 'fill-opacity': 0.12 });
+  const rFill = el('circle', { cy: CY, r: R, fill: '#FFB81C', 'fill-opacity': 0.22 });
+  const lLine = el('circle', { cy: CY, r: R, fill: 'none', stroke: GREEN, 'stroke-width': 3.5 });
+  const rLine = el('circle', { cy: CY, r: R, fill: 'none', stroke: GOLDDK, 'stroke-width': 3.5 });
+
+  // Lists (name + items + italic note), centered in each circle
+  const NAME = 42, ITEM = 34, NOTE = 26, GAP = 48, NAMEGAP = 62, NOTEGAP = 52;
+  // Halo in the circle's own blended tint, so the ghost dashes break cleanly around the words
+  const list = (name, items, color, halo) => {
+    const g = el('g', { stroke: halo, 'stroke-width': 18, 'stroke-linejoin': 'round', 'paint-order': 'stroke' });
+    const h = NAMEGAP + GAP * (items.length - 1) + NOTEGAP;
+    let y = -h / 2 + 12;
+    txt(name, { x: 0, y, 'font-size': NAME, 'font-weight': 700, fill: color, 'text-anchor': 'middle' }, g);
+    y += NAMEGAP;
+    items.forEach((s, i) => { txt(s, { x: 0, y, 'font-size': ITEM, fill: INK, 'text-anchor': 'middle' }, g); if (i < items.length - 1) y += GAP; });
+    txt('specialists only', { x: 0, y: y + NOTEGAP, 'font-size': NOTE, 'font-style': 'italic', fill: WARM, 'text-anchor': 'middle' }, g);
+    return g;
+  };
+  const lList = list('AI', ['Computer science', 'Machine learning', 'Robotics'], GREEN, '#DFE4E0');
+  const rList = list('Data analysis', ['Statistics', 'Econometrics', 'Survey research'], GOLDDK, '#FCEBC7');
+
+  // Fused label (step 3)
+  const fused = el('g', { opacity: 0 });
+  txt('AI and', { x: CX, y: CY - 10, 'font-size': 56, 'font-weight': 700, fill: DEEP, 'text-anchor': 'middle' }, fused);
+  txt('Data Literacy', { x: CX, y: CY + 56, 'font-size': 56, 'font-weight': 700, fill: DEEP, 'text-anchor': 'middle' }, fused);
+
+  // ---- State per step ----
+  const STATES = [
+    { half: HALF[0], ring: 0, list: 1, ghost: 0, fused: 0 },
+    { half: HALF[1], ring: 0, list: 1, ghost: 1, fused: 0 },
+    { half: HALF[2], ring: RING, list: 0, ghost: 0, fused: 1 },
+  ];
+  const clamp = v => Math.max(0, Math.min(1, v));
+  const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  // Fades: fade-outs happen early, fade-ins late, so text never crosses the moving strokes
+  const fade = (a, b, t) => b < a ? a + (b - a) * ease(clamp(t / 0.25)) : a + (b - a) * ease(clamp((t - 0.6) / 0.4));
+
+  let cur = { ...STATES[0] };
+  const draw = s => {
+    const lx = CX - s.half, rx = CX + s.half;
+    lFill.setAttribute('cx', lx); lLine.setAttribute('cx', lx);
+    rFill.setAttribute('cx', rx); rLine.setAttribute('cx', rx);
+    rFill.setAttribute('r', R + s.ring); rLine.setAttribute('r', R + s.ring);
+    lList.setAttribute('transform', `translate(${lx},${CY})`); lList.setAttribute('opacity', s.list);
+    rList.setAttribute('transform', `translate(${rx},${CY})`); rList.setAttribute('opacity', s.list);
+    ghostG.setAttribute('opacity', s.ghost);
+    fused.setAttribute('opacity', s.fused);
+  };
+
+  let raf = null;
+  const animate = to => {
+    cancelAnimationFrame(raf);
+    const from = { ...cur }, t0 = performance.now(), DUR = 1200;
+    const tick = now => {
+      const t = clamp((now - t0) / DUR);
+      cur = {
+        half: from.half + (to.half - from.half) * ease(t),
+        list: fade(from.list, to.list, t),
+        ghost: fade(from.ghost, to.ghost, t),
+        ring: from.ring + (to.ring - from.ring) * ease(t),
+        fused: fade(from.fused, to.fused, t),
+      };
+      draw(cur);
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+  };
+
+  // ---- Steps ----
+  const TITLES = [
+    'AI and data analysis were separate, specialized fields',
+    'Language models pulled them together',
+    'Now they are fused; neither can be separated'
+  ];
+  const N = TITLES.length;
+  const titleEl = document.getElementById('title');
+  const counter = document.getElementById('counter');
+  let step = 0, first = true;
+
+  function render() {
+    counter.textContent = `${step + 1} / ${N}`;
+    if (first) { titleEl.textContent = TITLES[step]; first = false; draw(cur); return; }
+    titleEl.style.opacity = 0;
+    setTimeout(() => { titleEl.textContent = TITLES[step]; titleEl.style.opacity = 1; }, 350);
+    animate(STATES[step]);
+  }
+
+  const go = d => { const n = Math.max(0, Math.min(N - 1, step + d)); if (n !== step) { step = n; render(); } };
+  document.addEventListener('click', () => go(1));
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight', ' ', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); go(1); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); go(-1); }
+    else if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    }
+  });
+  window.__go = n => { step = n; render(); };
+  render();
+})();
+</script>
+</body>
+</html>
