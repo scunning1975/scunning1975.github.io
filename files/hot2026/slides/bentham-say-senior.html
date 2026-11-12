@@ -382,18 +382,8 @@ txt('Bentham the reformer: a pound is worth less to a rich man','HL pp. 133–13
  'So moving money down raises total happiness.',
  'HL p. 134: the same psychology that makes everyone an egoist makes the legislator one too, so ask whom he gains more by serving.']);
 
-// 9 Say
-scene('Say: “This is an error”','A Treatise on Political Economy; HL pp. 134–137',5,(g,k)=>{
-  const rows=[['What makes value','labor embodied, tools as past labor','utility; price is its index (p. 135)'],
-   ['Who produces','labor, transforming nature','labor, capital, and land, “coequally” (p. 135)'],
-   ['Profit is','a deduction from what labor made','pay for frugality, a title to property (p. 136)'],
-   ['Distribution','subsistence and productivity set it','each agency paid for the utility it adds (p. 136)']];
-  tbl(g,{x:90,y:230,heads:['','Ricardo','Say'],rows:rows.slice(0,Math.min(k,4)),colW:[260,560,600],fs:24,rowH:84});
-  if(k>=4)note(g,'“To the labour of man alone he ascribes the power of producing values. This is an error.” (HL p. 134). Once owning capital is a sacrifice like working, “rich and poor ... are not opposed to each other, and ... all rivalships are mere folly.” (p. 137)',740);
-});
-
 // 10pre: the present first
-txt('Now Say, but first the present','Two schools of macroeconomics, both decorated with Nobel prizes, named for where their universities sit',[
+txt('Next is Say, but first the present','Two schools of macroeconomics, both decorated with Nobel prizes, named for where their universities sit',[
  'Macroeconomists have argued for fifty years about why recessions happen and what, if anything, a government should do about them.',
  'Robert Hall named the camps in 1976: freshwater for the Great Lakes schools, saltwater for the coasts.',
  'Each side has Nobel prizes, and both now write the same kind of model, so the fight is over assumptions.',
@@ -483,6 +473,16 @@ txt('Say: the major works','The Treatise was the textbook of its century',[
  'Catéchisme d\'économie politique, 1815, the same doctrine in question and answer for a general reader.',
  'Lettres à M. Malthus, 1820, where the law of markets is argued out against the one man who denied it.',
  'Cours complet d\'économie politique pratique, 1828–1829, his lectures in six volumes.']);
+
+// 9 Say
+scene('Say: “This is an error”','A Treatise on Political Economy; HL pp. 134–137',5,(g,k)=>{
+  const rows=[['What makes value','labor embodied, tools as past labor','utility; price is its index (p. 135)'],
+   ['Who produces','labor, transforming nature','labor, capital, and land, “coequally” (p. 135)'],
+   ['Profit is','a deduction from what labor made','pay for frugality, a title to property (p. 136)'],
+   ['Distribution','subsistence and productivity set it','each agency paid for the utility it adds (p. 136)']];
+  tbl(g,{x:90,y:230,heads:['','Ricardo','Say'],rows:rows.slice(0,Math.min(k,4)),colW:[260,560,600],fs:24,rowH:84});
+  if(k>=4)note(g,'“To the labour of man alone he ascribes the power of producing values. This is an error.” (HL p. 134). Once owning capital is a sacrifice like working, “rich and poor ... are not opposed to each other, and ... all rivalships are mere folly.” (p. 137)',740);
+});
 
 txt('Where it came from, with the overstatement marked','The glut controversy, 1815–1825',[
  'After the Napoleonic wars Britain had unsold goods and idle workers, and economists split over why.',
