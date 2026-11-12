@@ -325,13 +325,33 @@ txt('Say: the major works','The Treatise was the textbook of its century',[
 
 // 9 Say
 scene('Say: “This is an error”','A Treatise on Political Economy; HL pp. 134–137',5,(g,k)=>{
-  const rows=[['What makes value','labor embodied, tools as past labor','utility; price is its index (p. 135)'],
-   ['Who produces','labor, transforming nature','labor, capital, and land, “coequally” (p. 135)'],
-   ['Profit is','a deduction from what labor made','pay for frugality, a title to property (p. 136)'],
-   ['Distribution','subsistence and productivity set it','each agency paid for the utility it adds (p. 136)']];
-  tbl(g,{x:90,y:230,heads:['','Ricardo','Say'],rows:rows.slice(0,Math.min(k,4)),colW:[260,560,600],fs:24,rowH:84});
-  if(k>=4)note(g,'“To the labour of man alone he ascribes the power of producing values. This is an error.” (HL p. 134). Once owning capital is a sacrifice like working, “rich and poor ... are not opposed to each other, and ... all rivalships are mere folly.” (p. 137)',740);
-});
+  cols2(g,k,{hl:'Ricardo',hr:'Say',xl:100,xm:330,xr:900,mcl:40,mcr:48,fs:22,rows:[
+   ['what makes value','labor embodied, tools as past labor','utility, and price is its index (p. 135)'],
+   ['who produces','labor, transforming nature','labor, capital, and land, “coequally” (p. 135)'],
+   ['profit is','a deduction from what labor made','pay for frugality, that is for not consuming what one could have consumed, which Say says gives a title to the property (p. 136)'],
+   ['distribution','subsistence and productivity set it','each agency paid for the utility it adds (p. 136)']]});
+  if(k>=4)note(g,'“To the labour of man alone he ascribes the power of producing values. This is an error.” (HL p. 134). Once owning capital is a sacrifice like working, “rich and poor ... are not opposed to each other, and ... all rivalships are mere folly.” (p. 137)',720);
+  sweep();});
+
+txt('Frugality is a title to property','Why owning counts as a sacrifice, HL p. 136',[
+ 'Frugality, in Say, is forbearing to consume what you could have consumed, so that it survives as capital.',
+ 'Capital “is the mere result of human frugality and forbearance to exercise the faculty of consuming,” and only “he who has practised this self-denial” can claim it.',
+ '“Frugality is next of kin to the actual creation of products, which confers the most unquestionable of all titles to the property in them.”',
+ 'Why it matters: owning now costs something, so profit is pay for a sacrifice, like wages, and the deduction has nowhere left to be.',
+ '> Senior will rename it abstinence and insist that it hurts (p. 147).',
+ '> Later economics calls it waiting, or time preference, and it is the r on every advance in Ricardo\'s own price equation.']);
+
+txt('Each agency paid for the utility it adds','Say\'s theory of distribution, HL pp. 135–136',[
+ 'Production is “human industry, with the aid of capital and of natural agents,” three agencies “coequally” making utility.',
+ 'Each is paid according to “the importance of its co-operation in the business of production,” so wages and profits are prices of services, not shares.',
+ 'This reverses Smith and Ricardo, for whom wages came from subsistence, profit was the residual, and prices followed from both.',
+ 'It is the ancestor of marginal productivity theory, Clark 1899 (HL ch. 11): the w = MPL and r = MPK of every micro course, and its claim that each is paid what it contributed.']);
+
+txt('Ricardo\'s question, Say\'s answer','Why distribution was the whole fight',[
+ 'Ricardo, Preface, 1817: “To determine the laws which regulate this distribution, is the principal problem in Political Economy.”',
+ 'For Ricardo the product is a fixed number of hours and distribution is who gets which share, so the question has teeth.',
+ 'For Say distribution is not a separate problem: each agency\'s income is the price of its service, settled in the same act as production.',
+ 'So Say answers Ricardo\'s principal problem by dissolving it, and “all rivalships are mere folly” (p. 137) is the conclusion, not an aside.']);
 
 txt('Where it came from, with the overstatement marked','The glut controversy, 1815–1825',[
  'After the Napoleonic wars Britain had unsold goods and idle workers, and economists split over why.',
