@@ -231,26 +231,28 @@ function rbul(g,lines,x,y,fs,mc,nshow){const wrap=(t,m)=>{const w=t.split(' ');l
     el('text',{x:xx-26,y,'font-size':f,fill:sub?C.warm:C.gold,'font-weight':700},g,sub?'–':'•');rows.forEach((r,q)=>el('text',{x:xx,y:y+q*lh,'font-size':f,fill:sub?C.warm:C.ink,class:'fade'},g,r));
     const nextSub=lines[i+1]&&lines[i+1].startsWith('>');y+=rows.length*lh+Math.round(f*(nextSub?0.4:0.9));});}
 
-scene('Freshwater, in plain terms','The long-run model in every intermediate textbook',5,(g,k)=>{
+scene('Freshwater, in plain terms','Built one line at a time; the word that matters is “aggregate”',7,(g,k)=>{
   const a=adas(g,{x:120,y:230,w:600,h:420});const xs=a.X+330,m=0.8,P0=a.Y+200;
   const AD=x=>P0+m*(x-xs),AD2=x=>P0+m*(x-xs+90);
-  el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.green,'stroke-width':5},g);T(g,xs+10,a.Y+34,'LRAS',{'font-size':20,fill:C.green,'font-weight':700});a.xtick(xs,'Y*',C.green);
-  a.curve(AD,C.ink,'AD');a.dot(xs,P0,C.ink);a.ytick(P0,'P',C.ink);
-  if(k>=1){a.curve(AD2,C.brick,'AD′');a.drop(xs,AD2(xs),C.brick);a.dot(xs,AD2(xs),C.brick);a.ytick(AD2(xs),'P′',C.brick);T(g,a.X+10,a.Y+a.H+62,'spending falls: the price level falls from P to P′, output stays at Y*',{'font-size':19,fill:C.brick});}
-  if(k>=2){const x2=xs-110;el('line',{x1:x2,y1:a.Y+20,x2:x2,y2:a.Y+a.H,stroke:C.green,'stroke-width':5,'stroke-dasharray':'10 7'},g);T(g,x2-74,a.Y+34,'LRAS′',{'font-size':20,fill:C.green,'font-weight':700});a.dot(x2,AD(x2),C.green);a.drop(x2,AD(x2),C.green);a.xtick(x2,'Y′',C.green);T(g,a.X+10,a.Y+a.H+92,'a real shock moves the vertical line to Y′: that is a recession',{'font-size':19,fill:C.green});}
-  rbul(g,['People and firms see what is coming and act on it, so a policy everyone anticipates changes prices, not output.','Markets clear: if wages are too high they fall until everyone who wants work at the going wage has it.','A recession is therefore a real event, a bad harvest for the whole economy: an oil shock, a technology that stalls.','Where you met it: the long-run chapters, the vertical supply curve, the classical dichotomy, money neutrality.'],850,270,22,46,Math.min(k+1,4));
+  if(k>=1)a.curve(AD,C.ink,'AD');
+  if(k>=2){el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.green,'stroke-width':5},g);T(g,xs+10,a.Y+34,'LRAS',{'font-size':20,fill:C.green,'font-weight':700});a.xtick(xs,'Y*',C.green);}
+  if(k>=3){a.dot(xs,P0,C.ink);a.ytick(P0,'P',C.ink);a.drop(xs,P0,C.pale);}
+  if(k>=4){a.curve(AD2,C.brick,'AD′');a.dot(xs,AD2(xs),C.brick);a.ytick(AD2(xs),'P′',C.brick);a.drop(xs,AD2(xs),C.brick);}
+  if(k>=5){const x2=xs-110;el('line',{x1:x2,y1:a.Y+20,x2:x2,y2:a.Y+a.H,stroke:C.green,'stroke-width':5,'stroke-dasharray':'10 7'},g);T(g,x2-74,a.Y+34,'LRAS′',{'font-size':20,fill:C.green,'font-weight':700});a.dot(x2,AD(x2),C.green);a.drop(x2,AD(x2),C.green);a.xtick(x2,'Y′',C.green);}
+  rbul(g,['Axes: Y is real GDP, every final good and service produced in the United States in a year, and P is the price level, the CPI or the GDP deflator.','AD is aggregate demand, C + Iᵖ + G + NX: total planned spending at each price level, everyone\'s spending added up, not one market.','LRAS is long-run aggregate supply: potential output Y*, what the economy makes with its workers and machines fully used.','Equilibrium: the price level settles where total spending equals what the economy can make, and in the long run output is Y* whatever P is.','Spending falls to AD′: the price level falls, output does not. Money is neutral, and freshwater lives here.','A real shock moves the vertical line to Y′: that is a recession, and nothing on the demand side can undo it.','Where you met it: the long-run chapters, the vertical supply curve, the classical dichotomy, money neutrality.'],850,262,20,48,Math.min(k+1,7));
+  if(k===0)T(g,a.X+10,a.Y+a.H+66,'not the micro graph: every curve here is a total for the whole economy',{'font-size':19,fill:C.warm});
   sweep();});
 
-scene('Saltwater, in plain terms','The short-run model in the same textbook, a few chapters later',5,(g,k)=>{
+scene('Saltwater, in plain terms','Same axes, same AD, one new line',7,(g,k)=>{
   const a=adas(g,{x:120,y:230,w:600,h:420});const xs=a.X+330;
   const SR=x=>(a.Y+a.H-60)-0.6*(x-(a.X+40));const P0=SR(xs);const m=0.8;const AD=x=>P0+m*(x-xs),AD2=x=>P0+m*(x-xs+110);
-  a.curve(SR,C.green,'SRAS');el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.pale,'stroke-width':3,'stroke-dasharray':'6 6'},g);a.xtick(xs,'Y*',C.warm);
-  a.curve(AD,C.ink,'AD');a.dot(xs,P0,C.ink);a.ytick(P0,'P',C.ink);
-  // AD' meets SRAS where P0+m(x-xs+110) = SR(x)
   const x1=xs-m*110/(m+0.6);const y1=SR(x1);
-  if(k>=1){a.curve(AD2,C.brick,'AD′');a.drop(x1,y1,C.brick);a.dot(x1,y1,C.brick);a.xtick(x1,'Y′',C.brick);a.ytick(y1,'P′',C.brick);T(g,a.X+10,a.Y+a.H+62,'spending falls: output falls from Y* to Y′, and people are laid off',{'font-size':19,fill:C.brick});}
-  if(k>=2){const dx=xs-x1,dy=P0-y1,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L;const ax=x1+ux*14,ay=y1+uy*14,bx=xs-ux*16,by=P0-uy*16;el('line',{x1:ax,y1:ay,x2:bx,y2:by,stroke:C.green,'stroke-width':5},g);el('polygon',{points:`${xs-ux*10},${P0-uy*10} ${bx-uy*9},${by+ux*9} ${bx+uy*9},${by-ux*9}`,fill:C.green},g);T(g,(x1+xs)/2+30,(y1+P0)/2+30,'policy',{'text-anchor':'middle','font-size':18,fill:C.green,'font-weight':700});T(g,a.X+10,a.Y+a.H+92,'a central bank or a treasury can push AD back to Y*: that is the policy',{'font-size':19,fill:C.green});}
-  rbul(g,['Prices and wages are slow to change, so when spending falls, firms sell less and lay people off instead of cutting prices.','Unemployment in a slump is involuntary: people want work at the going wage and cannot find it.','A recession is therefore a shortfall of demand, and a central bank or a government that spends can shorten it.','Where you met it: the short-run chapters, the upward-sloping supply curve, the Keynesian cross, the Phillips curve.'],850,270,22,46,Math.min(k+1,4));
+  if(k>=1)a.curve(AD,C.ink,'AD');
+  if(k>=2){a.curve(SR,C.green,'SRAS');el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.pale,'stroke-width':3,'stroke-dasharray':'6 6'},g);a.xtick(xs,'Y*',C.warm);}
+  if(k>=3){a.dot(xs,P0,C.ink);a.ytick(P0,'P',C.ink);}
+  if(k>=4){a.curve(AD2,C.brick,'AD′');a.drop(x1,y1,C.brick);a.dot(x1,y1,C.brick);a.xtick(x1,'Y′',C.brick);a.ytick(y1,'P′',C.brick);}
+  if(k>=5){const dx=xs-x1,dy=P0-y1,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L;const ax=x1+ux*14,ay=y1+uy*14,bx=xs-ux*16,by=P0-uy*16;el('line',{x1:ax,y1:ay,x2:bx,y2:by,stroke:C.green,'stroke-width':5},g);el('polygon',{points:`${xs-ux*10},${P0-uy*10} ${bx-uy*9},${by+ux*9} ${bx+uy*9},${by-ux*9}`,fill:C.green},g);T(g,(x1+xs)/2+30,(y1+P0)/2+30,'policy',{'text-anchor':'middle','font-size':18,fill:C.green,'font-weight':700});}
+  rbul(g,['Axes as before: Y is real GDP, P is the price level.','AD as before: total planned spending, C + Iᵖ + G + NX, at each price level.','SRAS is short-run aggregate supply, and it slopes up because prices and wages adjust slowly, so when spending rises firms make more rather than only charge more.','Equilibrium at Y*: spending equals what is made, at the going prices.','Spending falls to AD′: output falls to Y′ and people are laid off, because prices did not fall enough to clear what was made.','A central bank or a treasury pushes AD back to Y*: that is the policy, and saltwater lives here.','Where you met it: the short-run chapters, the upward-sloping supply curve, the Keynesian cross, the Phillips curve.'],850,262,20,48,Math.min(k+1,7));
   sweep();});
 
 // one picture with both camps
