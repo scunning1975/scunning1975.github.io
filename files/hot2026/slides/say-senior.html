@@ -341,7 +341,7 @@ txt('Frugality is a title to property','Why owning counts as a sacrifice, HL p. 
  '> Only “he who has practised this self-denial” can claim the result.',
  'HL\'s test (p. 150): if nobody could have eaten the factory, the forgone consumption is zero and the sacrifice has been defined into existence.',
  '> Senior fills the hole by insisting that abstinence hurts (p. 147).',
- '> Thompson, Hodgskin, and Marx push on exactly this spot.']);
+ '> Marx pushes on exactly this spot (ch. 9).']);
 
 txt('Each agency paid for the utility it adds','Say\'s theory of distribution, HL pp. 135–136',[
  'Production is “human industry, with the aid of capital and of natural agents,” three agencies “coequally” making utility.',
@@ -485,6 +485,22 @@ scene('The four propositions','HL pp. 143–144',5,(g,k)=>{
   if(k>=4)note(g,'HL p. 143: each premise carries a moral. We take them in turn.',720);
 });
 
+// 13b the propositions today
+scene('Senior\'s four propositions, in today\'s textbooks','Each one has a chapter you have already taken',6,(g,k)=>{
+  const y=cols2(g,k,{hl:'in micro today',hr:'in macro today',xl:100,xm:330,xr:950,mcl:46,mcr:44,fs:21,rows:[
+   ['1  more wealth, least sacrifice','utility maximization and “more is better,” cost minimization; the first chapters of any micro text','the optimizing household and firm inside every modern model, the freshwater ones from this morning included'],
+   ['2  population checked by evil or by fear of want','labor supply and work incentives; the argument that relief blunts the incentive to work','population growth n in the Solow model; the Malthusian chapter of every growth text'],
+   ['3  products used as means of further production','investment and the saving decision; consumption now against consumption later (Fisher)','capital accumulation, ΔK = sY − δK; endogenous growth when returns to capital do not fall'],
+   ['4  diminishing returns on a given district of land','the law of diminishing marginal returns: MPL falls as L rises with K fixed','diminishing returns to capital, the reason Solow growth stops without technology']]});
+  if(k>=4)note(g,'Read 1 as an optimizing agent and 2, 3, 4 as its constraints, and you have the skeleton of the Solow model and of the freshwater models from this morning. Senior wrote the axioms in 1836; the models arrived a century later.',Math.max(y+20,700));
+  sweep();});
+
+txt('Senior and the claim to be a science','Who pushed for an explicit scientific basis, and how far it goes',[
+ 'Senior is the first English economist to say the subject is “not Happiness, but Wealth,” a few propositions and deduction, with no advice attached (HL p. 141).',
+ 'That is the positive-normative split in chapter 1 of every principles text, Robbins\'s 1932 definition of economics, and Friedman\'s 1953 “positive economics.”',
+ 'He was not alone: Say had already called the subject a science of observed facts, and J. S. Mill wrote the companion essay on method the same year, 1836.',
+ 'HL\'s reply stands: choosing which few propositions matter is already a value, and the man who wrote the Poor Law knew which problem he was choosing.']);
+
 // 14 Senior on value
 txt('Senior on value: against Bentham','HL pp. 144–145',[
  'Wealth is “the power, direct or indirect, of producing pleasure,” so maximizing wealth is maximizing utility.',
@@ -498,7 +514,7 @@ txt('Senior on value: as if nature supplied everything','HL pp. 145–146',[
 
 // 15 abstinence
 txt('Abstinence: profit is pay for pain','HL pp. 146–148',[
- 'Thompson and Hodgskin (ch. 7) had said: labor is a real human cost, owning capital is only a legal relation, so wages are earned and profits are not.',
+ 'The socialist pamphleteers of the 1820s had said: labor is a real human cost, owning capital is only a legal relation, so wages are earned and profits are not.',
  'Senior\'s answer needs a cost of owning: “To this conduct we have already given the name of Abstinence.”',
  '“To abstain from the enjoyment which is in our power, or to seek distant rather than immediate results, are among the most painful exertions of the human will.”',
  'So profit stands on the same footing as wages, and the nation\'s prosperity rests on the abstinence of its capitalists.']);
@@ -537,7 +553,7 @@ scene('Scorecard: harmony or conflict','The question every week answers',6,(g,k)
    ['general gluts','impossible','possible: hoarding','impossible: Say\'s law','impossible: no satiety'],
    ['the market','conceals a conflict','harmony, with repair','harmony','harmony']];
   tbl(g,{x:90,y:220,heads:['','Ricardo','Bentham','Say','Senior'],rows:rows.slice(0,Math.min(k,5)),colW:[220,300,300,300,300],fs:23,rowH:76});
-  if(k>=5)note(g,'HL p. 150 concede one point: by 1850 the rent/profit line had blurred. What critics keep is the line between income from working and income from owning. Chapter 7 and Marx start there.',720);
+  if(k>=5)note(g,'HL p. 150 concede one point: by 1850 the rent/profit line had blurred. What critics keep is the line between income from working and income from owning. Mill hesitates over it and Marx starts there.',720);
 });
 
 // 19 exam
@@ -545,7 +561,7 @@ txt('What to take out the door','Three sentences, one per writer  ·  who-gets-p
  'Bentham: value is utility, a quantity of pleasure you can add across people, and the market can hoard and can be improved.',
  'Say: labor, capital, and land coequally make utility and are each paid their contribution, so profit is earned the way wages are, and supply creates its own demand.',
  'Senior: nobody is ever satisfied, so no comparing persons and no general glut; profit is pay for abstinence; every income is partly rent, so classes blur.',
- 'Next, Thompson and Hodgskin (HL ch. 7) put the line between working and owning back.']);
+ 'Next, Bastiat and Mill (HL ch. 8): harmony as comedy, and the one classical who hesitated.']);
 
 // ---------------- engine ----------------
 let i=0,k=0;
