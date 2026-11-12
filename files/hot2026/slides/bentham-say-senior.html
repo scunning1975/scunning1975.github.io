@@ -392,15 +392,72 @@ scene('Say: “This is an error”','A Treatise on Political Economy; HL pp. 134
   if(k>=4)note(g,'“To the labour of man alone he ascribes the power of producing values. This is an error.” (HL p. 134). Once owning capital is a sacrifice like working, “rich and poor ... are not opposed to each other, and ... all rivalships are mere folly.” (p. 137)',740);
 });
 
-// 10 Say's law
-scene('Say\'s Law: produce opens a vent for produce','HL pp. 137–138',5,(g,k)=>{
-  const X=140,B=560;
-  const bar=(key,x,h,fill,lab)=>{abar(g,key,x,B-h,220,h,fill,{label:lab,fs:22});};
-  if(k>=0){T(g,X,240,'cloth',{'font-size':28,'font-weight':500});T(g,X+420,240,'corn',{'font-size':28,'font-weight':500});}
-  const glut=k<2;bar('c',X,glut?300:200,C.earth,glut?'unsold':'sold');bar('k',X+420,glut?100:200,C.gold,glut?'short':'sold');
-  if(k>=1&&k<2)T(g,X+700,320,'prices fall here, rise there',{'font-size':24,fill:C.brick});
-  if(k>=2)T(g,X+700,320,'capital moves from cloth to corn until both pay alike',{'font-size':24,fill:C.green});
-  bullets(g,['No one produces except to exchange, and money is only the medium, so “a supply creates a demand of the same magnitude.” True of each producer, so true of the sum.','An overstock of some goods only means others were not produced enough; migration of capital fixes it. Gluts are partial and temporary, never general.','Malthus, Bentham, Marx, and Keynes all reject it. What it leaves out: money that leaves circulation.'],640,24,Math.max(0,k-1));
+// 10 Say's law: the claim
+txt('Say\'s Law: the claim','HL pp. 137–138',[
+ 'A free market adjusts by itself to full employment of labor and of capacity.',
+ 'Smith, Ricardo, and the early Bentham all held it, and the name stuck to Say.',
+ 'Malthus, the later Bentham, Marx, and Keynes rejected it.',
+ 'HL: these conclusions “are still accepted by many economists, and policy makers, today.”']);
+
+// 10b the argument
+scene('Say\'s Law: the argument, from the letters to Malthus','Money is only the medium, so every sale is a purchase waiting to happen',5,(g,k)=>{
+  const box=(x,lab,sub,fill)=>{el('rect',{x,y:215,width:380,height:110,rx:12,fill},g);T(g,x+190,262,lab,{'text-anchor':'middle','font-size':28,'font-weight':700,fill:C.cream});T(g,x+190,300,sub,{'text-anchor':'middle','font-size':20,fill:C.cream,opacity:0.85});};
+  if(k>=0)box(110,'produce','cloth worth 100',C.earth);
+  if(k>=1){T(g,520,282,'→',{'font-size':48,fill:C.warm});box(610,'sell','100 of income',C.green);}
+  if(k>=2){T(g,1020,282,'→',{'font-size':48,fill:C.warm});box(1110,'buy','100 of corn, hats, bread',C.golddeep);}
+  if(k>=2){el('path',{d:'M1300 335 C1300 420, 300 420, 300 335',fill:'none',stroke:C.warm,'stroke-width':3,'stroke-dasharray':'8 6'},g);T(g,800,430,'and the corn, hats, and bread were produced in order to buy the cloth',{'text-anchor':'middle','font-size':21,fill:C.warm});}
+  bullets(g,['Money has no importance of its own and is only a means of exchange.','No one produces except to exchange it for someone else\'s production.','So “a supply creates a demand of the same magnitude,” and “produce opens a vent for produce.”','True of each producer, so true of the sum: aggregate supply equals aggregate demand.'],500,26,Math.min(k+1,4));
+  sweep();});
+
+// 10c the model
+scene('A model: two goods, one income','Everything produced is paid to someone, and everything paid is spent',5,(g,k)=>{
+  const rows=[['value of output','100','100','200'],['paid out as wages, profit, rent','100','100','200'],['spent','100','100','200'],['glut: output − spending','0','0','0']];
+  tbl(g,{x:160,y:230,heads:['','cloth','corn','total'],rows:rows.slice(0,Math.min(k+1,4)),colW:[520,240,240,260],fs:27,rowH:66,bold:(i,j)=>j===3,color:(i,j)=>i===3?C.green:null});
+  if(k>=4)bullets(g,['Every dollar of output becomes someone\'s income, so income is 200 by construction.','Every dollar of income is spent, so demand is 200 before anyone decides what to buy.'],640,27,2);
+  sweep();});
+
+// 10d tastes shift
+scene('The model when tastes shift','Spending moves from cloth to corn; output has not caught up yet',6,(g,k)=>{
+  const rows=[['value of output','100','100','200'],['spent','80','120','200'],['glut: output − spending','+20','−20','0'],['price','falls','rises',''],['profit','low','high',''],['next period\'s output','80','120','200']];
+  tbl(g,{x:160,y:215,heads:['','cloth','corn','total'],rows:rows.slice(0,Math.min(k+1,6)),colW:[520,240,240,260],fs:26,rowH:58,hl:k>=2?[2]:[],bold:(i,j)=>j===3,color:(i,j)=>i===2?(j===1?C.brick:j===2?C.green:C.ink):null});
+  if(k>=3)bullets(g,['The gluts cancel in the aggregate, so there is no general glut.','Capitalists leave cloth for corn until “the productive services are equally paid by both” (p. 138).','An overstock of cloth only means corn “was not produced in sufficient quantities” (p. 138).'],650,25,Math.min(k-2,3));
+  sweep();});
+
+// 10e the mechanism is old
+txt('The mechanism is Smith\'s and Ricardo\'s own','What Say adds is the word “aggregate”',[
+ 'Capital migrating toward the higher profit is Smith\'s natural price (ch. 3).',
+ 'A uniform rate of profit across trades is Ricardo\'s competition (ch. 5, p. 93).',
+ 'Say adds nothing to the mechanism and asserts that it holds for the sum.',
+ 'The one assumption that makes the sum work is that all income is spent.']);
+
+// 10f the chest
+scene('The objection: a chest','Twenty of income goes into a chest instead of the shops',6,(g,k)=>{
+  const rows=[['value of output','100','100','200'],['paid out as income','100','100','200'],['put in a chest','','','20'],['spent','90','90','180'],['glut: output − spending','+10','+10','+20']];
+  tbl(g,{x:160,y:215,heads:['','cloth','corn','total'],rows:rows.slice(0,Math.min(k+1,5)),colW:[520,240,240,260],fs:26,rowH:60,hl:k>=4?[4]:[],bold:(i,j)=>j===3,color:(i,j)=>i===4?C.brick:(i===2?C.brick:null)});
+  if(k>=4)bullets(g,['Both goods are in glut at once, and migration cannot fix it because there is nowhere to go.','Prices fall, then profits, then investment, which is Bentham\'s chest (p. 133) and Malthus\'s effectual demand (ch. 4).'],610,25,Math.min(k-3,2));
+  if(k>=5)note(g,'The sum of the gluts equals what went into the chest. That is the whole dispute in one line: Say\'s identity holds only when the chest is empty.',760);
+  sweep();});
+
+// 10g what each side needs
+txt('What each side needs to be true','Say, Malthus, and the door Senior will close',[
+ 'Say needs money to be a veil, held only for a moment on the way to the next purchase.',
+ 'Malthus needs someone who can earn without spending, a landlord who hoards or a capitalist who will not invest.',
+ 'Senior will close the door harder: a general glut would require “general satiety,” which nobody feels (p. 145).',
+ 'Marx and Keynes reopen it, each by naming who holds the money and why.']);
+
+// 10g2 what Say is getting at
+txt('What Say is getting at: a slump is never a shortage of demand','The claim is about recessions, and it has a policy attached',[
+ 'A general glut, unsold goods everywhere at once, cannot happen, so a slump is never a failure of demand.',
+ 'What can happen is misallocation, too much cloth and too little corn, which prices and migrating capital correct on their own.',
+ '> Money is neutral and fluctuations have real causes, which is the frame real business cycle theory later keeps and builds a model inside.',
+ '> Keynes named “Say\'s Law” as the thing the General Theory set out to overturn.',
+ 'The policy follows: encourage production, not consumption, and no spending by landlords or governments can cure a slump.',
+ 'Ricardo held this against Malthus to the end; his one concession, in the 1821 edition, was that machinery can displace workers, not that demand can fail.']);
+
+// 10h you drive
+scene('You drive: Say\'s Law on paper','Output: cloth 150, corn 50. Tastes: 60 percent of spending goes to cloth.',3,(g,k)=>{
+  bullets(g,['Case 1, all 200 of income is spent: find the glut in each good and their sum.','Case 2, 20 goes into a chest: find the glut in each good and their sum.','Say in one sentence what the sum of the gluts equals in each case, and why Say is right in one and wrong in the other.'],230,28,Math.min(k+1,3));
+  if(k>=2)note(g,'Answers. Case 1: spending 120 and 80, gluts +30 and −30, sum 0. Case 2: spending 108 and 72, gluts +42 and −22, sum +20, which is the chest. Partial gluts cancel; a general glut is exactly the money that left circulation.',640);
   sweep();});
 
 // 11 Senior turns
