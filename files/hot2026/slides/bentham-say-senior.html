@@ -392,6 +392,24 @@ scene('Say: “This is an error”','A Treatise on Political Economy; HL pp. 134
   if(k>=4)note(g,'“To the labour of man alone he ascribes the power of producing values. This is an error.” (HL p. 134). Once owning capital is a sacrifice like working, “rich and poor ... are not opposed to each other, and ... all rivalships are mere folly.” (p. 137)',740);
 });
 
+// 10a Say's law: the words
+txt('Say\'s Law: “supply creates its own demand”','Three phrasings of one claim',[
+ '“Supply creates its own demand” is Keynes\'s six-word summary from 1936, not a sentence Say wrote.',
+ 'Say, 1803: a product is “no sooner created than it, from that instant, affords a market for other products to the full extent of its own value.”',
+ 'Say to Malthus, 1820: “a supply creates a demand of the same magnitude,” and “produce opens a vent for produce” (HL p. 137).',
+ 'Read “own” carefully: the demand a product creates is for other products, to the amount of its value.']);
+
+// 10a2 what people hear vs what he meant
+scene('What people hear, and what Say meant','The sentence out of context says one thing, and he said another',6,(g,k)=>{
+  const rows=[['make it and buyers will appear for it','making it gives its maker income to the amount of its value, which is demand for other things'],
+   ['a claim about one good','a claim about the sum of all goods'],
+   ['a producer can always sell what he made','a producer can fail to sell, but only because something else was not made in enough quantity'],
+   ['a slogan: help producers and demand follows','an identity: income is spent, so the sum of demand cannot fall short of the sum of supply'],
+   ['a theory of growth','a denial that a general glut, a slump of everything at once, can happen']];
+  tbl(g,{x:90,y:225,heads:['what people hear','what he meant'],rows:rows.slice(0,Math.min(k+1,5)),colW:[560,860],fs:23,rowH:78,color:(i,j)=>j===0?C.brick:C.green});
+  if(k>=5)note(g,'The test is simple. A glut of cloth is not a counterexample; Say predicts those. A glut of everything would be. The next scenes build the sum and then try to break it.',740);
+  sweep();});
+
 // 10 Say's law: the claim
 txt('Say\'s Law: the claim','HL pp. 137–138',[
  'A free market adjusts by itself to full employment of labor and of capacity.',
