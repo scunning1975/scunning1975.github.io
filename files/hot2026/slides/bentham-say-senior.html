@@ -400,13 +400,13 @@ txt('Say\'s Law: “supply creates its own demand”','Three phrasings of one cl
  'Read “own” carefully: the demand a product creates is for other products, to the amount of its value.']);
 
 // 10a2 what people hear vs what he meant
-scene('What people hear, and what Say meant','The sentence out of context says one thing, and he said another',6,(g,k)=>{
-  const rows=[['make it and buyers will appear for it','making it gives its maker income to the amount of its value, which is demand for other things'],
-   ['a claim about one good','a claim about the sum of all goods'],
+scene('What people hear, and what Say meant','Out of context it sounds like microeconomics; the claim is macroeconomics',6,(g,k)=>{
+  const rows=[['a claim about one good, in one market','a claim about all goods at once, the sum across every market'],
+   ['make it and buyers will appear for it','making it gives its maker income to the amount of its value, which is demand for other things'],
    ['a producer can always sell what he made','a producer can fail to sell, but only because something else was not made in enough quantity'],
    ['a slogan: help producers and demand follows','an identity: income is spent, so the sum of demand cannot fall short of the sum of supply'],
    ['a theory of growth','a denial that a general glut, a slump of everything at once, can happen']];
-  tbl(g,{x:90,y:225,heads:['what people hear','what he meant'],rows:rows.slice(0,Math.min(k+1,5)),colW:[560,860],fs:23,rowH:78,color:(i,j)=>j===0?C.brick:C.green});
+  tbl(g,{x:90,y:225,heads:['what people hear: a micro reading','what he meant: a macro claim'],rows:rows.slice(0,Math.min(k+1,5)),colW:[560,860],fs:23,rowH:78,color:(i,j)=>j===0?C.brick:C.green});
   if(k>=5)note(g,'The test is simple. A glut of cloth is not a counterexample; Say predicts those. A glut of everything would be. The next scenes build the sum and then try to break it.',740);
   sweep();});
 
