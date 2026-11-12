@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Say and Senior: Value Without Labor, part 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--cream:#FBFAF7;--green:#154734;--gold:#FFB81C;--golddeep:#C98F00;--ink:#1A1A1A;--warm:#6B7280;--brick:#9B2C2C;--pale:#D8D4CB;--earth:#8C7B6B;--mist:#EDE9DE}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--cream)}
+  body{cursor:pointer;user-select:none;-webkit-user-select:none}
+  #stage{position:fixed;inset:0;width:100vw;height:100vh;display:block}
+  svg text{font-family:"Fira Sans",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
+  svg text:not([fill]){fill:var(--ink)}
+  svg rect.bar{transition:x .6s cubic-bezier(.2,.8,.2,1),width .6s cubic-bezier(.2,.8,.2,1),y .6s cubic-bezier(.2,.8,.2,1),height .6s cubic-bezier(.2,.8,.2,1),opacity .4s}
+  .fade{transition:opacity .45s ease}
+  #help{position:fixed;left:16px;bottom:12px;font:13px "Fira Sans",sans-serif;color:var(--pale)}
+</style>
+</head>
+<body>
+<svg id="stage" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="1600" height="900" fill="#FBFAF7"/>
+  <text id="title" x="80" y="92" font-size="50" font-weight="700" fill="#154734" class="fade"></text>
+  <rect x="80" y="114" width="146" height="3" fill="#FFB81C"/>
+  <text id="sub" x="80" y="150" font-size="24" fill="#6B7280" class="fade"></text>
+  <g id="body"></g>
+  <text id="counter" x="1565" y="882" font-size="18" fill="#D8D4CB" text-anchor="end"></text>
+</svg>
+<div id="help">→ or click: next · ← or shift-click: back · End fills the scene · N next scene · F full screen · R restart</div>
+<script>
+(() => {
+const NS='http://www.w3.org/2000/svg';
+const C={green:'#154734',gold:'#FFB81C',golddeep:'#C98F00',ink:'#1A1A1A',warm:'#6B7280',brick:'#9B2C2C',pale:'#D8D4CB',earth:'#8C7B6B',mist:'#EDE9DE',cream:'#FBFAF7'};
+const $=id=>document.getElementById(id);
+const el=(tag,attrs,parent,text)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;(parent||$('body')).appendChild(e);return e;};
+const T=(g,x,y,s,a)=>el('text',Object.assign({x,y,'font-size':24,fill:C.ink},a||{}),g,s);
+const fmt=(v,d)=>v.toFixed(d==null?2:d);
+const pct=r=>Math.round(r*100)+'%';
+
+// ---------------- text helpers ----------------
+function note(g,text,y){const words=text.split(' ');let line='',lines=[];
+  for(const wd of words){if((line+' '+wd).length>120){lines.push(line);line=wd;}else line=line?line+' '+wd:wd;}
+  lines.push(line);lines.forEach((l,i)=>el('text',{x:80,y:(y||805)+i*30,'font-size':23,fill:C.ink},g,l));}
+function bullets(g,lines,y0,size,nshow){const fs=size||33,lh=Math.round(fs*1.3),gap=Math.round(fs*1.1),maxc=86;
+  // a line starting with '>' is a sub-bullet: indented, smaller, en dash
+  const items=lines.map(l=>l.startsWith('>')?{sub:true,t:l.slice(1).trim()}:{sub:false,t:l});
+  const wrapped=items.map(it=>{const mc=it.sub?maxc+8:maxc;const words=it.t.split(' ');let line='',rows=[];for(const wd of words){if((line+' '+wd).length>mc){rows.push(line);line=wd;}else line=line?line+' '+wd:wd;}rows.push(line);return rows;});
+  const lhOf=it=>it.sub?Math.round((fs-5)*1.3):lh;
+  const gapAfter=i=>(items[i+1]&&items[i+1].sub)?Math.round(gap*0.45):gap;
+  const H=wrapped.reduce((a,r,i)=>a+r.length*lhOf(items[i])+(i<wrapped.length-1?gapAfter(i):0),0);
+  let y=y0||Math.max(200,200+(640-H)/2)+fs; // vertically center the block in y=200..840
+  wrapped.forEach((rows,i)=>{const it=items[i];const f=it.sub?fs-5:fs;const op=(nshow!=null&&i>=nshow)?0:1;
+    el('text',{x:it.sub?150:90,y:y,'font-size':f,fill:it.sub?C.warm:C.gold,'font-weight':700,opacity:op},g,it.sub?'–':'•');
+    rows.forEach((r,k)=>el('text',{x:it.sub?185:130,y:y+k*lhOf(it),'font-size':f,fill:it.sub?C.warm:C.ink,opacity:op,class:'fade'},g,r));y+=rows.length*lhOf(it)+gapAfter(i);});}
+// animated rect with memory across scenes
+let bars={};const drawn={};
+function abar(g,key,x,y,w,h,fill,o){o=o||{};const rc=el('rect',Object.assign({class:'bar',fill,stroke:'#fff','stroke-width':1.5},o.attrs||{}),g);
+  const prev=bars[key];if(prev){rc.setAttribute('x',prev.x);rc.setAttribute('y',prev.y);rc.setAttribute('width',prev.w);rc.setAttribute('height',prev.h);}
+  else{rc.setAttribute('x',x);rc.setAttribute('y',y+h/2);rc.setAttribute('width',w);rc.setAttribute('height',0);}
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{rc.setAttribute('x',x);rc.setAttribute('y',y);rc.setAttribute('width',w);rc.setAttribute('height',h);}));
+  bars[key]={x,y,w,h};drawn[key]=1;
+  if(o.label!=null){const t=el('text',{x:x+w/2,y:y+h/2+(o.fs||22)/3,'font-size':o.fs||22,'font-weight':700,'text-anchor':'middle',fill:o.lc||'#fff',class:'fade',opacity:prev?1:0},g,o.label);if(!prev)setTimeout(()=>t.setAttribute('opacity',1),350);}
+  return rc;}
+function sweep(){for(const k in bars)if(!drawn[k])delete bars[k];for(const k in drawn)delete drawn[k];}
+
+// ---------------- generic staged table ----------------
+function tbl(g,o){ // {x,y,heads,rows,colW,show,fresh,fs,rowH,color(i,j),bold(i,j)}
+  const fs=o.fs||22,rowH=o.rowH||48;let cx=o.x;const xs=[];
+  for(let j=0;j<o.heads.length;j++){xs.push(cx+o.colW[j]/2);cx+=o.colW[j];}
+  o.heads.forEach((h,j)=>{const on=!o.show||o.show[j];const lines=String(h).split('\n');lines.forEach((ln,q)=>el('text',{x:xs[j],y:o.y-(lines.length-1-q)*20,'font-size':17,'text-anchor':'middle',fill:on?C.warm:C.pale},g,ln));});
+  el('line',{x1:o.x,y1:o.y+12,x2:cx,y2:o.y+12,stroke:C.pale,'stroke-width':2},g);
+  o.rows.forEach((row,i)=>{const y=o.y+rowH*(i+1)+10;
+    if(o.hl&&o.hl.includes(i))el('rect',{x:o.x-8,y:y-32,width:cx-o.x+16,height:rowH,fill:'#FFF3CF',rx:6},g);
+    row.forEach((v,j)=>{if(o.show&&!o.show[j])return;const fresh=o.fresh===j;
+      const t=el('text',{x:xs[j],y,'font-size':fs,'text-anchor':'middle',fill:(o.color&&o.color(i,j))||C.ink,'font-weight':(o.bold&&o.bold(i,j))?700:400,class:'fade',opacity:fresh?0:1},g,v);
+      if(fresh)setTimeout(()=>t.setAttribute('opacity',1),30);});});
+  return {right:cx,bottom:o.y+rowH*(o.rows.length+1)+10};}
+
+// ---------------- model 1: hunters ----------------
+function hunt(g,k,bv,dr,factor,o){ // bv beaver days, dr deer days, factor = productivity change in deer hunting at stage 2
+  const unit=300,X=420;const deer=k>=2?dr/factor:dr;
+  const row=(key,y,name,days,fill)=>{T(g,110,y+40,name,{'font-size':28,'font-weight':500});
+    abar(g,key,X,y,days*unit-6,60,fill,{label:(+days.toFixed(2))+(days===1?' day':' days'),lc:'#fff'});};
+  row('bv',230,'One beaver',bv,C.earth);row('dr',330,'One deer',deer,C.gold);
+  if(k>=1){const ratio=bv/deer;T(g,110,500,'1 beaver  =  '+(+ratio.toFixed(2))+' deer',{'font-size':48,'font-weight':700,fill:C.green});
+    T(g,110,548,'The exchange ratio is the ratio of the labor it takes to get each one.',{fill:C.warm});}
+  if(k>=2){T(g,110,630,(o&&o.cause)||'The hunters learn to mask their scent. No new tool, no one else\'s labor: a skill.',{'font-size':26});T(g,110,672,'Deer hunting gets '+factor+'× as productive. A deer now takes '+(+deer.toFixed(2))+(deer===1?' day.':' days.'),{'font-size':26,fill:C.green,'font-weight':500});}
+  if(k>=3)note(g,o&&o.note||'Hunters are richer: '+factor+'× the deer for the same work. And each deer is worth less, because less labor is in it. Riches rose, value fell. “Every diminution must lower it.” (HL p. 99)',735);
+  sweep();}
+
+// ---------------- model 1b: the stockings stack ----------------
+function stack(g,k,layers){const X=200,W=260,B=680,px=44;let y=B,sum=0;
+  layers.forEach((L,i)=>{if(i>k)return;const h=L.h*px;y-=h;sum+=L.h;abar(g,'st'+i,X,y,W,h,L.c,{label:L.h+' h',fs:20,lc:L.dark?C.ink:'#fff'});
+    T(g,X+W+24,y+h/2+8,L.name,{'font-size':24,fill:i===k?C.ink:C.warm,'font-weight':i===k?500:400});});
+  el('line',{x1:X-20,y1:B,x2:X+W+20,y2:B,stroke:C.ink,'stroke-width':2},g);
+  T(g,X+W/2,B+34,'one pair of stockings',{'text-anchor':'middle',fill:C.warm,'font-size':20});
+  T(g,1000,300,'labor embodied so far',{fill:C.warm,'font-size':20});T(g,1000,370,sum+' hours',{'font-size':54,'font-weight':700,fill:C.green});
+  if(k>=layers.length-1){T(g,1000,450,'The stockings exchange for anything else',{'font-size':24});T(g,1000,486,'that took '+sum+' hours, the loom\'s share included.',{'font-size':24});
+    note(g,'“The aggregate sum of these various kinds of labour determines the quantity of other things for which these stockings will exchange.” A loom is “so much partly produced cloth.” (HL p. 102)',770);}
+  sweep();}
+
+// ---------------- model 2: the day's product in hours ----------------
+function split(g,k,L,Lw,o){const X=110,W=1380,Y=300,H=130,px=W/L;const Lp=L-Lw;
+  T(g,X,Y-22,'the day\'s product: '+o.n+' workers × '+(L/o.n)+' hours  =  '+L+' hours of value',{fill:C.warm,'font-size':22});
+  el('rect',{x:X,y:Y,width:W,height:H,fill:'none',stroke:C.ink,'stroke-width':2},g);
+  if(k>=1){abar(g,'w',X,Y,Lw*px,H,C.earth,{label:'wages '+Lw,fs:30});
+    T(g,X,Y+H+40,'the necessaries of '+o.n+' workers took '+Lw+' hours to make: '+o.n+' baskets × '+(Lw/o.n)+' hours each',{'font-size':22});}
+  if(k>=2){abar(g,'p',X+Lw*px,Y,Lp*px,H,C.green,{label:'profit '+Lp,fs:30});
+    T(g,X,Y+H+78,'what is left after the necessaries are replaced goes to the capitalist: '+Lp+' hours',{'font-size':22});}
+  if(k>=3){T(g,X,560,'r  =  '+Lp+' ÷ '+Lw+'  =  '+fmt(Lp/Lw),{'font-size':40,'font-weight':700,fill:C.green});
+    T(g,X,600,'r is the rate of profit: profit divided by the wages the capitalist advanced. He laid out '+Lw+' hours of goods and got back '+L+'. The same r as the corn model.',{'font-size':21,fill:C.ink});}
+  if(o.echo&&(k>=4||o.opener))T(g,X,o.opener?580:640,o.echo,{fill:C.warm,'font-size':22});
+  if(k>=(o.echo?5:4)&&o.note)note(g,o.note,735);
+  sweep();}
+
+// ---------------- model 3: time-dated labor, two goods ----------------
+function timing(g,k,A,Bn,Bl,rs,o){ // steps 0-3 build the picture at rs[0]; later steps change r
+  const INTRO=4;const ri=k<INTRO?0:Math.min(k-INTRO,rs.length-1);const r=rs[ri],w=o.w||1,X=110,unit=22,LINE=X+520;
+  const yr=(x,y,h,fill,key,lab)=>abar(g,key,x,y,h*unit,56,fill,{label:lab,fs:20});
+  T(g,X,235,'last year',{fill:C.warm,'font-size':20});T(g,X+560,235,'this year',{fill:C.warm,'font-size':20});
+  el('line',{x1:LINE,y1:220,x2:LINE,y2:420,stroke:C.pale,'stroke-width':2,'stroke-dasharray':'6 5'},g);
+  T(g,X+820,275,'Good A',{'font-size':26,'font-weight':500});yr(X+560,250,A,C.earth,'A0',A+' hours');
+  if(k>=1){T(g,X+820,355,'Good B',{'font-size':26,'font-weight':500});yr(LINE-12-Bl*unit,330,Bl,C.gold,'B1',Bl+' hours');yr(X+560,330,Bn,C.earth,'B0',Bn+' hours');}
+  if(k>=2)T(g,X,470,'r = '+pct(r),{'font-size':44,'font-weight':700,fill:C.green});
+  const pA=w*(1+r)*A, pB=w*(1+r)*(Bn+Bl*(1+r));
+  const f=(1+r).toFixed(2);
+  const rows=[['A',A,`${w} × ${f} × ${A}`,fmt(pA)],['B',Bn+Bl,`${w} × ${f} × (${Bn} + ${Bl} × ${f})`,fmt(pB)]];
+  if(k>=2)tbl(g,{x:X+300,y:470,heads:['good','labor (hours)','price = w(1+r) × [now + last year × (1+r)]','price'],colW:[90,150,620,140],rows:k>=3?rows:rows.slice(0,1),fs:24,rowH:52,color:(i,j)=>j===3?C.green:C.ink,bold:(i,j)=>j===3});
+  if(k>=INTRO){T(g,X+300,650,'price of B ÷ price of A  =  '+fmt(pB/pA),{'font-size':34,'font-weight':700,fill:ri===0?C.green:C.brick});
+    T(g,X+300,690,'labor in B ÷ labor in A  =  '+fmt((Bn+Bl)/A),{'font-size':24,fill:C.warm});}
+  const intro=['Good A: ten hours of labor, all of it this year.','Good B: the same ten hours, but five of them were done last year, on a tool that is used up now.','Start with no charge for waiting: r = 0. Price A.','Price B the same way. Last year\'s hours get multiplied by (1 + r) once more, which at r = 0 changes nothing.'];
+  if(k<INTRO)note(g,intro[k],745);else if(o.notes&&o.notes[ri])note(g,o.notes[ri],745);
+  sweep();}
+
+// ---------------- compounding stair ----------------
+function stair(g,k){const vals=[100,110,121,133.10,146.41],adds=['','+ 10','+ 11','+ 12.10','+ 13.31'],labs=['wage paid, year 1','end of year 1','end of year 2','end of year 3','end of year 4: sold'];
+  const X=140,B=700,px=3.4,bw=200,gap=70;
+  vals.forEach((v,i)=>{if(i>k)return;const h=v*px,x=X+i*(bw+gap);abar(g,'sr'+i,x,B-h,bw,h,i===0?C.earth:C.green,{label:'$'+fmt(v),fs:26});
+    T(g,x+bw/2,B+32,labs[i],{'text-anchor':'middle','font-size':18,fill:C.warm});if(i>0)T(g,x+bw/2,B-h-14,adds[i],{'text-anchor':'middle','font-size':22,fill:C.golddeep,'font-weight':700});});
+  if(k>=4)note(g,'$100 of wages paid four years before the sale must be worth $146.41 in the price: $100 to repay the wage and $46.41 of profit for having $100 tied up for four years at 10 percent. Two years tied up would add only $21. (HL pp. 107–108)',765);
+  sweep();}
+
+// ---------------- Figure 5.7: x and y as time-dated labor ----------------
+function fig57(g,k){const X=200,unit=0.85,bw=130,gap=60,B0=390,B1=700;
+  const yrs=['4 years ago','3 years ago','2 years ago','last year','this year'];
+  yrs.forEach((s,i)=>T(g,X+i*(bw+gap)+bw/2,738,s,{'text-anchor':'middle','font-size':18,fill:C.warm}));
+  const good=(key,base,labs,name,fill)=>{T(g,X-120,base-40,name,{'font-size':30,'font-weight':700,fill:C.green});
+    labs.forEach((h,i)=>{if(h==null)return;abar(g,key+i,X+i*(bw+gap),base-h*unit,bw,h*unit,fill,{label:h,fs:22});});};
+  good('x',B0,[75,75,75,75,100],'x',C.earth);
+  if(k>=1)good('y',B1,[null,null,50,50,300],'y',C.gold);
+  T(g,1130,300,'x: 400 hours over five years',{'font-size':24});T(g,1130,336,'100 now, 75 in each of four past years',{'font-size':20,fill:C.warm});
+  if(k>=1){T(g,1130,560,'y: 400 hours over three years',{'font-size':24});T(g,1130,596,'300 now, 50 in each of two past years',{'font-size':20,fill:C.warm});
+    note(g,'Same labor in each, 400 hours per 100 units. The difference is only when the labor was done. x has more past labor and a longer wait, which Ricardo would call more fixed capital, more durable capital, or slower turnover. HL p. 106: all three are the same thing. (Figure 5.7, p. 109)',775);}
+  sweep();}
+
+// ---------------- Tables 5.1 and 5.2 ----------------
+function table5(g,k,o){const show=[true,true,k>=1,k>=2,k>=3,k>=4];
+  const heads=['','A\nlabor cost\n(now × w)','B\nmachinery\n(past labor, compounded)','C\nprofit\nr × (A + B)','D\ntotal\nA + B + C','E\nprice per unit\nD ÷ 100'];
+  const t=tbl(g,{x:120,y:300,heads,rows:o.rows,colW:[120,220,300,240,240,240],show,fresh:k,fs:28,rowH:70,color:(i,j)=>j===5?C.green:C.ink,bold:(i,j)=>j===5});
+  T(g,120,230,'wage w = $'+o.w+'   ·   profit rate r = '+o.r+'   ·   400 hours in each good',{'font-size':24,fill:C.warm});
+  if(k>=4){T(g,120,560,'price of x ÷ price of y  =  '+o.ratio,{'font-size':40,'font-weight':700,fill:C.green});if(o.extra)T(g,120,610,o.extra,{'font-size':24,fill:C.brick});}
+  if(k>=4&&o.note)note(g,o.note,735);}
+
+
+// ---------------- scenes ----------------
+const S=[];
+const txt=(title,sub,lines,extra)=>S.push({title,sub,stages:lines.length,draw:(g,k)=>{bullets(g,lines,null,null,k+1);if(extra)extra(g);}});
+const scene=(title,sub,n,draw)=>S.push({title,sub,stages:n,draw});
+
+// cover: part 2
+S.push({title:'',sub:'',draw:g=>{
+  el('rect',{x:0,y:0,width:1600,height:900,fill:C.green},g);
+  el('rect',{x:120,y:268,width:110,height:8,fill:C.gold},g);
+  T(g,120,380,'Say and Senior',{'font-size':92,'font-weight':700,fill:C.cream});
+  T(g,120,452,'Value without labor, part 2',{'font-size':44,fill:C.gold});
+  T(g,120,575,'Scott Cunningham  ·  History of Economic Thought  ·  Baylor University',{'font-size':36,fill:C.cream});
+  T(g,120,625,'Thursday, November 12, 2026  ·  ECO 4343/5343  ·  Hunt & Lautzenheiser ch. 6',{'font-size':30,fill:C.cream,opacity:0.62});
+  T(g,120,705,'Part 1: Bentham made value a quantity of pleasure and kept a role for repair',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,745,'Today: Say takes labor out of value, and Senior gives the result a method and a conscience',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,845,'who-gets-paid.pages.dev',{'font-size':32,'font-weight':700,fill:C.gold});
+}});
+
+txt('Where part 1 ended','Bentham, HL pp. 125–134',[
+ 'Value is utility, and utility is a quantity of pleasure you can add across people.',
+ 'Labor is pain, and “the surplus has no kind of value,” which is nearly the margin.',
+ 'The market can fail by hoarding and be improved by moving money down, so Bentham is the reformer wing of the utility side.',
+ 'Say and Senior keep the premise and remove both the hoarding and the redistribution.']);
+
+// 10pre: the present first
+txt('Next is Say, but first the present','Two schools of macroeconomics, both decorated with Nobel prizes, named for where their universities sit',[
+ 'Macroeconomists have argued for fifty years about why recessions happen and what, if anything, a government should do about them.',
+ 'Robert Hall named the camps in 1976: freshwater for the Great Lakes schools, saltwater for the coasts.',
+ '> Last month Hall, now 83, won the 2026 Nobel with Michael Woodford “for microeconomic foundations of macroeconomic stabilisation.”',
+ '> Woodford is the leading New Keynesian theorist, so the prize went to the synthesis, not to a camp.',
+ 'Each side has Nobel prizes, and both now write the same kind of model, so the fight is over assumptions.',
+ 'The question underneath is older than any of them: can an economy produce more than it is able to buy?']);
+
+// two-column wrapped layout, reused
+function cols2(g,k,o){const wrap=(t,mc)=>{const w=t.split(' ');let l='',out=[];for(const x of w){if((l+' '+x).length>mc){out.push(l);l=x;}else l=l?l+' '+x:x;}out.push(l);return out;};
+  const XL=o.xl||110,XM=o.xm||560,XR=o.xr||880,fs=o.fs||22,lh=Math.round(fs*1.3);
+  T(g,XM,232,o.hl,{'font-size':18,fill:C.warm});T(g,XR,232,o.hr,{'font-size':18,fill:C.warm});
+  el('line',{x1:XL-10,y1:246,x2:1520,y2:246,stroke:C.pale,'stroke-width':2},g);
+  let y=290;o.rows.slice(0,Math.min(k+1,o.rows.length)).forEach(([lab,a,b])=>{const la=wrap(a,o.mcl||32),lb=wrap(b,o.mcr||50);const n=Math.max(la.length,lb.length);
+    T(g,XL,y,lab,{'font-size':fs-2,'font-weight':700,fill:C.ink});la.forEach((ln,q)=>T(g,XM,y+q*lh,ln,{'font-size':fs,fill:C.brick}));lb.forEach((ln,q)=>T(g,XR,y+q*lh,ln,{'font-size':fs,fill:C.green}));y+=n*lh+16;});
+  el('line',{x1:XR-30,y1:252,x2:XR-30,y2:Math.max(260,y-24),stroke:C.pale,'stroke-width':2},g);return y;}
+
+scene('Freshwater and saltwater, side by side','The names are Robert Hall\'s, 1976',7,(g,k)=>{
+  cols2(g,k,{hl:'freshwater',hr:'saltwater',xl:100,xm:300,xr:900,mcl:46,mcr:50,fs:21,rows:[
+   ['places','Chicago, Minnesota, Rochester, Carnegie Mellon','MIT, Harvard, Yale, Berkeley, Princeton'],
+   ['people','Friedman, Lucas, Prescott, Sargent, Barro','Samuelson, Solow, Tobin, Modigliani, Krugman, Bernanke'],
+   ['Nobel prizes','Friedman 1976, Lucas 1995, Kydland and Prescott 2004, Sargent 2011','Samuelson 1970, Tobin 1981, Modigliani 1985, Solow 1987, Akerlof and Stiglitz 2001, Krugman 2008, Bernanke 2022; Hall and Woodford 2026 for the synthesis'],
+   ['years','rises in the 1970s on rational expectations; real business cycles from 1982','Keynes 1936; the synthesis of the 1950s; New Keynesian from the 1980s'],
+   ['core idea','markets clear and people anticipate policy, so output moves only for real reasons','prices and wages are sticky, so a fall in spending cuts output and jobs'],
+   ['a recession is','the economy\'s best response to a real shock','a failure of demand'],
+   ['why they argue','whether markets clear fast enough, and whether unemployment is ever a choice','same question, opposite answer, and the policy follows from it']]});
+  sweep();});
+
+// AD-AS helper: axes, a line clipped to the box, dots at intersections
+function adas(g,o){const X=o.x,Y=o.y,W=o.w,H=o.h;el('line',{x1:X,y1:Y+H,x2:X+W,y2:Y+H,stroke:C.ink,'stroke-width':2},g);el('line',{x1:X,y1:Y+H,x2:X,y2:Y,stroke:C.ink,'stroke-width':2},g);
+  T(g,X+W+14,Y+H+34,'Y',{'font-size':22,fill:C.ink});T(g,X-30,Y+10,o.ylab||'P',{'font-size':22,fill:C.ink});
+  // draw y=f(x) over the box, clipped
+  const curve=(f,col,lab,dash)=>{let x0=X+6,x1=X+W-16;while(x0<x1&&(f(x0)<Y+6||f(x0)>Y+H-6))x0+=2;while(x1>x0&&(f(x1)<Y+6||f(x1)>Y+H-6))x1-=2;
+    el('line',{x1:x0,y1:f(x0),x2:x1,y2:f(x1),stroke:col,'stroke-width':4,'stroke-dasharray':dash||null},g);if(lab)T(g,x1+6,f(x1)+(f(x1)>f(x0)?6:-6),lab,{'font-size':20,fill:col,'font-weight':700});};
+  const dot=(x,y,col)=>el('circle',{cx:x,cy:y,r:7,fill:col,stroke:'#fff','stroke-width':2},g);
+  const ytick=(y,lab,col)=>{el('line',{x1:X,y1:y,x2:X-8,y2:y,stroke:col,'stroke-width':2},g);T(g,X-14,y+7,lab,{'text-anchor':'end','font-size':18,fill:col});};
+  const xtick=(x,lab,col)=>{el('line',{x1:x,y1:Y+H,x2:x,y2:Y+H+8,stroke:col,'stroke-width':2},g);T(g,x,Y+H+30,lab,{'text-anchor':'middle','font-size':20,fill:col});};
+  const drop=(x,y,col)=>{el('line',{x1:x,y1:y,x2:x,y2:Y+H,stroke:col,'stroke-width':1.5,'stroke-dasharray':'5 5'},g);el('line',{x1:x,y1:y,x2:X,y2:y,stroke:col,'stroke-width':1.5,'stroke-dasharray':'5 5'},g);};
+  return {X,Y,W,H,curve,dot,ytick,xtick,drop};}
+function rbul(g,lines,x,y,fs,mc,nshow){const wrap=(t)=>{const w=t.split(' ');let l='',out=[];for(const z of w){if((l+' '+z).length>mc){out.push(l);l=z;}else l=l?l+' '+z:z;}out.push(l);return out;};const lh=Math.round(fs*1.3);
+  lines.forEach((t,i)=>{if(nshow!=null&&i>=nshow)return;const rows=wrap(t);el('text',{x:x-30,y,'font-size':fs,fill:C.gold,'font-weight':700},g,'•');rows.forEach((r,q)=>el('text',{x,y:y+q*lh,'font-size':fs,fill:C.ink,class:'fade'},g,r));y+=rows.length*lh+Math.round(fs*0.9);});}
+
+scene('Freshwater, in plain terms','The long-run model in every intermediate textbook',5,(g,k)=>{
+  const a=adas(g,{x:120,y:230,w:600,h:420});const xs=a.X+330,m=0.8,P0=a.Y+200;
+  const AD=x=>P0+m*(x-xs),AD2=x=>P0+m*(x-xs+90);
+  el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.green,'stroke-width':5},g);T(g,xs+10,a.Y+34,'LRAS',{'font-size':20,fill:C.green,'font-weight':700});a.xtick(xs,'Y*',C.green);
+  a.curve(AD,C.ink,'AD');a.dot(xs,P0,C.ink);a.ytick(P0,'P',C.ink);
+  if(k>=1){a.curve(AD2,C.brick,'AD′');a.drop(xs,AD2(xs),C.brick);a.dot(xs,AD2(xs),C.brick);a.ytick(AD2(xs),'P′',C.brick);T(g,a.X+10,a.Y+a.H+62,'spending falls: the price level falls from P to P′, output stays at Y*',{'font-size':19,fill:C.brick});}
+  if(k>=2){const x2=xs-110;el('line',{x1:x2,y1:a.Y+20,x2:x2,y2:a.Y+a.H,stroke:C.green,'stroke-width':5,'stroke-dasharray':'10 7'},g);T(g,x2-74,a.Y+34,'LRAS′',{'font-size':20,fill:C.green,'font-weight':700});a.dot(x2,AD(x2),C.green);a.drop(x2,AD(x2),C.green);a.xtick(x2,'Y′',C.green);T(g,a.X+10,a.Y+a.H+92,'a real shock moves the vertical line to Y′: that is a recession',{'font-size':19,fill:C.green});}
+  rbul(g,['People and firms see what is coming and act on it, so a policy everyone anticipates changes prices, not output.','Markets clear: if wages are too high they fall until everyone who wants work at the going wage has it.','A recession is therefore a real event, a bad harvest for the whole economy: an oil shock, a technology that stalls.','Where you met it: the long-run chapters, the vertical supply curve, the classical dichotomy, money neutrality.'],850,270,22,46,Math.min(k+1,4));
+  sweep();});
+
+scene('Saltwater, in plain terms','The short-run model in the same textbook, a few chapters later',5,(g,k)=>{
+  const a=adas(g,{x:120,y:230,w:600,h:420});const xs=a.X+330;
+  const SR=x=>(a.Y+a.H-60)-0.6*(x-(a.X+40));const P0=SR(xs);const m=0.8;const AD=x=>P0+m*(x-xs),AD2=x=>P0+m*(x-xs+110);
+  a.curve(SR,C.green,'SRAS');el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.pale,'stroke-width':3,'stroke-dasharray':'6 6'},g);a.xtick(xs,'Y*',C.warm);
+  a.curve(AD,C.ink,'AD');a.dot(xs,P0,C.ink);a.ytick(P0,'P',C.ink);
+  // AD' meets SRAS where P0+m(x-xs+110) = SR(x)
+  const x1=xs-m*110/(m+0.6);const y1=SR(x1);
+  if(k>=1){a.curve(AD2,C.brick,'AD′');a.drop(x1,y1,C.brick);a.dot(x1,y1,C.brick);a.xtick(x1,'Y′',C.brick);a.ytick(y1,'P′',C.brick);T(g,a.X+10,a.Y+a.H+62,'spending falls: output falls from Y* to Y′, and people are laid off',{'font-size':19,fill:C.brick});}
+  if(k>=2){const dx=xs-x1,dy=P0-y1,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L;const ax=x1+ux*14,ay=y1+uy*14,bx=xs-ux*16,by=P0-uy*16;el('line',{x1:ax,y1:ay,x2:bx,y2:by,stroke:C.green,'stroke-width':5},g);el('polygon',{points:`${xs-ux*10},${P0-uy*10} ${bx-uy*9},${by+ux*9} ${bx+uy*9},${by-ux*9}`,fill:C.green},g);T(g,(x1+xs)/2+30,(y1+P0)/2+30,'policy',{'text-anchor':'middle','font-size':18,fill:C.green,'font-weight':700});T(g,a.X+10,a.Y+a.H+92,'a central bank or a treasury can push AD back to Y*: that is the policy',{'font-size':19,fill:C.green});}
+  rbul(g,['Prices and wages are slow to change, so when spending falls, firms sell less and lay people off instead of cutting prices.','Unemployment in a slump is involuntary: people want work at the going wage and cannot find it.','A recession is therefore a shortfall of demand, and a central bank or a government that spends can shorten it.','Where you met it: the short-run chapters, the upward-sloping supply curve, the Keynesian cross, the Phillips curve.'],850,270,22,46,Math.min(k+1,4));
+  sweep();});
+
+// one picture with both camps
+scene('One picture with both camps in it','The Frank and Bernanke diagram: inflation on the vertical axis, output on the horizontal',6,(g,k)=>{
+  const a=adas(g,{x:120,y:230,w:600,h:420,ylab:'π'});const xs=a.X+330,pi0=a.Y+200,m=0.8;
+  el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.green,'stroke-width':5},g);T(g,xs+10,a.Y+34,'Y*  (freshwater: the long run)',{'font-size':18,fill:C.green,'font-weight':700});a.xtick(xs,'Y*',C.green);
+  const AD=x=>pi0+m*(x-xs),AD2=x=>pi0+m*(x-xs+110);
+  el('line',{x1:a.X+6,y1:pi0,x2:a.X+a.W-16,y2:pi0,stroke:C.golddeep,'stroke-width':5},g);T(g,a.X+a.W-14,pi0+6,'π₀',{'font-size':20,fill:C.golddeep,'font-weight':700});T(g,a.X+12,pi0+26,'saltwater: inflation sticks where it was',{'font-size':17,fill:C.golddeep});
+  a.curve(AD,C.ink,'AD');a.dot(xs,pi0,C.ink);
+  if(k>=1){a.curve(AD2,C.brick,'AD′');const x1=xs-110;a.dot(x1,pi0,C.brick);a.drop(x1,pi0,C.brick);a.xtick(x1,'Y′',C.brick);T(g,a.X+10,a.Y+a.H+62,'spending falls: output drops to Y′ at the old inflation; the gap is the recession',{'font-size':18,fill:C.brick});}
+  if(k>=2){const pi1=pi0+88;el('line',{x1:a.X+6,y1:pi1,x2:a.X+a.W-16,y2:pi1,stroke:C.golddeep,'stroke-width':5,'stroke-dasharray':'10 7'},g);T(g,a.X+a.W-14,pi1+6,'π₁',{'font-size':20,fill:C.golddeep,'font-weight':700});a.dot(xs,pi1,C.golddeep);T(g,a.X+10,a.Y+a.H+92,'slow road: the gap pulls inflation down until output is back at Y*',{'font-size':18,fill:C.golddeep});}
+  if(k>=3){const x1=xs-110;el('line',{x1:x1+16,y1:pi0-10,x2:xs-16,y2:pi0-10,stroke:C.green,'stroke-width':4},g);el('polygon',{points:`${xs-4},${pi0-10} ${xs-20},${pi0-20} ${xs-20},${pi0}`,fill:C.green},g);T(g,a.X+10,a.Y+a.H+122,'fast road: the Fed cuts the rate, AD moves back, which is the Taylor rule at work',{'font-size':18,fill:C.green});}
+  rbul(g,['Inflation on the vertical axis and output on the horizontal: Frank and Bernanke\'s diagram, and Taylor\'s and Romer\'s.','The vertical line at Y* is the freshwater long run, and the horizontal line is the saltwater short run.','AD slopes down because the Fed raises the real interest rate when inflation rises, which is the Taylor rule drawn as a curve.','A gap between output and Y* is what moves inflation, and either the gap closes itself slowly or the Fed closes it fast.'],850,270,21,46,Math.min(k+1,4));
+  if(k>=5)T(g,850,700,'Say owns the vertical line. Malthus owns the gap.',{'font-size':24,'font-weight':700,fill:C.green});
+  sweep();});
+
+txt('Does the Fed lean one way?','A saltwater model under freshwater discipline',[
+ 'The Fed\'s job assumes the saltwater premise, that policy moves real output in the short run; otherwise it would have nothing to do but watch prices.',
+ 'The Taylor rule, 1993, sets the interest rate on two gaps: inflation above target, and output below potential.',
+ '> i = r* + π + ½(π − π*) + ½(output gap): the output term is the saltwater premise, the inflation term is the commitment freshwater demanded.',
+ '> John Taylor is a rules man from Stanford, so the rule reads as a treaty between the camps rather than a victory for either.',
+ 'What freshwater won inside the building is rules over discretion, credibility, and independence, from Kydland and Prescott\'s 1977 argument that discretion cannot keep its promises.',
+ 'Economists call the result the new neoclassical synthesis, and Bernanke, who chaired the Fed, wrote the textbook version with Frank.']);
+
+// the core issue
+txt('The core issue: money versus production','Everything else in the argument hangs on one link in a chain',[
+ 'Say\'s chain: production creates income, income is spent, so whatever is produced gets bought.',
+ 'The chain holds only if money is a go-between, a veil over barter, so that selling and buying are one act.',
+ 'It breaks if people can sell and then hold the money, or if prices will not fall to clear what is left, and those are the two things the schools fight over.',
+ '> Freshwater: money is neutral and prices move, so the chain holds and production sets what the economy can buy.',
+ '> Saltwater: money is something people want to hold and prices are sticky, so demand can fall short of what was produced.',
+ 'So the question is whether production sets demand, or whether the wish to hold money can leave goods unsold, and that is the question Malthus put to Say.']);
+
+// Say on the map
+scene('Where Say sits among the writers so far','Year of the main work, and which side of the spine',4,(g,k)=>{
+  const X0=140,X1=1460,y0=1770,y1=1840;const xOf=yr=>X0+(yr-y0)/(y1-y0)*(X1-X0);
+  el('line',{x1:X0,y1:520,x2:X1,y2:520,stroke:C.ink,'stroke-width':2},g);for(let yr=1770;yr<=1840;yr+=10){el('line',{x1:xOf(yr),y1:520,x2:xOf(yr),y2:530,stroke:C.ink},g);T(g,xOf(yr),556,String(yr),{'text-anchor':'middle','font-size':18,fill:C.warm});}
+  T(g,X0,300,'harmony',{'font-size':20,fill:C.green});T(g,X0,740,'conflict concealed',{'font-size':20,fill:C.brick});
+  const W=[['Smith','Wealth of Nations',1776,430,C.ink],['Bentham','Introduction',1780,300,C.green],['Malthus','Essay',1798,420,C.ink],['Say','Traité',1803,300,C.green],['Ricardo','Principles',1817,700,C.brick],['Senior','Outline',1836,330,C.green]];
+  W.slice(0,k>=1?6:5).forEach(([n,w,yr,y,c])=>{if(n==='Say'&&k<1)return;el('circle',{cx:xOf(yr),cy:y,r:n==='Say'?16:11,fill:c},g);T(g,xOf(yr),y-24,n,{'text-anchor':'middle','font-size':n==='Say'?28:22,'font-weight':700,fill:c});T(g,xOf(yr),y+44,w+', '+yr,{'text-anchor':'middle','font-size':17,fill:C.warm});});
+  if(k>=2)note(g,'Say published in 1803, five years after Malthus\'s Essay and fourteen before Ricardo\'s Principles. He read Smith and kept only the harmony, which is why he is the first writer we have met with nothing to conceal.',805);
+  sweep();});
+
+// biography
+txt('Jean-Baptiste Say, 1767–1832: who he was','A merchant\'s son who ran a factory before he held a chair',[
+ 'Born in Lyon to a Protestant merchant family, apprenticed in trade, and sent to England at eighteen to learn business in a London counting house.',
+ 'Back in Paris he clerked for an insurance company under Clavière, the future finance minister, who handed him Smith\'s Wealth of Nations.',
+ 'In the Revolution he edited La Décade philosophique, the journal of the republican intellectuals, from 1794.',
+ 'Napoleon put him on the Tribunate in 1799 and removed him in 1804 when he would not rewrite the Treatise to suit the regime.']);
+
+txt('Say: what he was doing','Factory owner, then professor',[
+ 'Out of politics, he built and ran a cotton-spinning mill at Auchy in northern France from 1805 to 1813, with some four hundred workers.',
+ 'That is why his economics has an entrepreneur in it, the person who combines land, labor, and capital, a figure Smith and Ricardo do without.',
+ 'He visited England in 1814, met Ricardo, Bentham, and James Mill, and kept up the correspondence that became the Letters to Malthus.',
+ 'France gave him its first chairs in the subject: industrial economy at the Conservatoire des Arts et Métiers in 1819, political economy at the Collège de France in 1831.']);
+
+txt('Say: the major works','The Treatise was the textbook of its century',[
+ 'Traité d\'économie politique, 1803, revised through five editions to 1826; the 1821 English translation became the standard American college text, and Jefferson recommended it.',
+ 'Catéchisme d\'économie politique, 1815, the same doctrine in question and answer for a general reader.',
+ 'Lettres à M. Malthus, 1820, where the law of markets is argued out against the one man who denied it.',
+ 'Cours complet d\'économie politique pratique, 1828–1829, his lectures in six volumes.']);
+
+// 9 Say
+scene('Say: “This is an error”','A Treatise on Political Economy; HL pp. 134–137',5,(g,k)=>{
+  const rows=[['What makes value','labor embodied, tools as past labor','utility; price is its index (p. 135)'],
+   ['Who produces','labor, transforming nature','labor, capital, and land, “coequally” (p. 135)'],
+   ['Profit is','a deduction from what labor made','pay for frugality, a title to property (p. 136)'],
+   ['Distribution','subsistence and productivity set it','each agency paid for the utility it adds (p. 136)']];
+  tbl(g,{x:90,y:230,heads:['','Ricardo','Say'],rows:rows.slice(0,Math.min(k,4)),colW:[260,560,600],fs:24,rowH:84});
+  if(k>=4)note(g,'“To the labour of man alone he ascribes the power of producing values. This is an error.” (HL p. 134). Once owning capital is a sacrifice like working, “rich and poor ... are not opposed to each other, and ... all rivalships are mere folly.” (p. 137)',740);
+});
+
+txt('Where it came from, with the overstatement marked','The glut controversy, 1815–1825',[
+ 'After the Napoleonic wars Britain had unsold goods and idle workers, and economists split over why.',
+ 'Malthus said demand could fall short of supply; Say, Ricardo, and James Mill said it could not, and that was the line.',
+ 'Keynes drew the modern line back to them, and he was picking a side when he did: “If only Malthus, instead of Ricardo, had been the parent stem from which nineteenth-century economics proceeded, what a much wiser and richer place the world would be to-day!” (1933)',
+ '> The overstatement: the moderns have money, expectations, and sticky prices, none of which Say or Malthus had.',
+ '> What carries over is the question, whether a shortfall of demand is possible, and the two answers.']);
+
+// 10a Say's law: the words
+txt('Say\'s Law: “supply creates its own demand”','Three phrasings of one claim',[
+ '“Supply creates its own demand” is Keynes\'s six-word summary from 1936, not a sentence Say wrote, and the label “Say\'s Law” itself dates from the 1920s.',
+ 'Say, 1803: a product is “no sooner created than it, from that instant, affords a market for other products to the full extent of its own value.”',
+ 'Say to Malthus, 1820: “a supply creates a demand of the same magnitude,” and “produce opens a vent for produce” (HL p. 137).',
+ 'Read “own” carefully: the demand a product creates is for other products, to the amount of its value.']);
+
+// 10a2 what people hear vs what he meant
+scene('What people hear, and what Say meant','Out of context it sounds like microeconomics; the claim is macroeconomics',6,(g,k)=>{
+  const rows=[['a claim about one good, in one market','a claim about all goods at once, the sum across every market'],
+   ['make it and buyers will appear for it','making it gives its maker income to the amount of its value, which is demand for other things'],
+   ['a producer can always sell what he made','a producer can fail to sell, but only because something else was not made in enough quantity'],
+   ['a slogan: help producers and demand follows','an identity: income is spent, so the sum of demand cannot fall short of the sum of supply'],
+   ['a theory of growth','a denial that a general glut, a slump of everything at once, can happen']];
+  const wrap=(t,mc)=>{const w=t.split(' ');let l='',o=[];for(const x of w){if((l+' '+x).length>mc){o.push(l);l=x;}else l=l?l+' '+x:x;}o.push(l);return o;};
+  const XL=120,XR=720,fs=24,lh=31;
+  T(g,XL,232,'what people hear: a micro reading',{'font-size':18,fill:C.warm});T(g,XR,232,'what he meant: a macro claim',{'font-size':18,fill:C.warm});
+  el('line',{x1:XL-10,y1:246,x2:1500,y2:246,stroke:C.pale,'stroke-width':2},g);
+  el('line',{x1:XR-40,y1:252,x2:XR-40,y2:252+5*0,stroke:C.pale,'stroke-width':2},g);
+  let y=292;
+  rows.slice(0,Math.min(k+1,5)).forEach(([a,b],i)=>{const la=wrap(a,38),lb=wrap(b,58);const n=Math.max(la.length,lb.length);
+    la.forEach((ln,q)=>T(g,XL,y+q*lh,ln,{'font-size':fs,fill:C.brick}));lb.forEach((ln,q)=>T(g,XR,y+q*lh,ln,{'font-size':fs,fill:C.green}));
+    y+=n*lh+22;});
+  el('line',{x1:XR-40,y1:252,x2:XR-40,y2:Math.max(260,y-30),stroke:C.pale,'stroke-width':2},g);
+  if(k>=5)note(g,'The test is simple. A glut of cloth is not a counterexample; Say predicts those. A glut of everything would be. The next scenes build the sum and then try to break it.',Math.max(y+10,720));
+  sweep();});
+
+// 10 Say's law: the claim
+txt('Say\'s Law: the claim','HL pp. 137–138',[
+ 'A free market adjusts by itself to full employment of labor and of capacity.',
+ 'Smith, Ricardo, and the early Bentham all held it, and the name stuck to Say.',
+ 'Malthus, the later Bentham, Marx, and Keynes rejected it.',
+ 'HL: these conclusions “are still accepted by many economists, and policy makers, today.”']);
+
+// 10b the argument
+scene('Say\'s Law: the argument, from the letters to Malthus','Money is only the medium, so every sale is a purchase waiting to happen',5,(g,k)=>{
+  const box=(x,lab,sub,fill)=>{el('rect',{x,y:215,width:380,height:110,rx:12,fill},g);T(g,x+190,262,lab,{'text-anchor':'middle','font-size':28,'font-weight':700,fill:C.cream});T(g,x+190,300,sub,{'text-anchor':'middle','font-size':20,fill:C.cream,opacity:0.85});};
+  if(k>=0)box(110,'produce','cloth worth 100',C.earth);
+  if(k>=1){T(g,520,282,'→',{'font-size':48,fill:C.warm});box(610,'sell','100 of income',C.green);}
+  if(k>=2){T(g,1020,282,'→',{'font-size':48,fill:C.warm});box(1110,'buy','100 of corn, hats, bread',C.golddeep);}
+  if(k>=2){el('path',{d:'M1300 335 C1300 420, 300 420, 300 335',fill:'none',stroke:C.warm,'stroke-width':3,'stroke-dasharray':'8 6'},g);T(g,800,430,'and the corn, hats, and bread were produced in order to buy the cloth',{'text-anchor':'middle','font-size':21,fill:C.warm});}
+  bullets(g,['Money has no importance of its own and is only a means of exchange.','No one produces except to exchange it for someone else\'s production.','So “a supply creates a demand of the same magnitude,” and “produce opens a vent for produce.”','True of each producer, so true of the sum: aggregate supply equals aggregate demand.'],500,26,Math.min(k+1,4));
+  sweep();});
+
+// 10c the model
+scene('A model: two goods, one income','Everything produced is paid to someone, and everything paid is spent',5,(g,k)=>{
+  const rows=[['value of output','100','100','200'],['paid out as wages, profit, rent','100','100','200'],['spent','100','100','200'],['glut: output − spending','0','0','0']];
+  tbl(g,{x:160,y:230,heads:['','cloth','corn','total'],rows:rows.slice(0,Math.min(k+1,4)),colW:[520,240,240,260],fs:27,rowH:66,bold:(i,j)=>j===3,color:(i,j)=>i===3?C.green:null});
+  if(k>=4)bullets(g,['Every dollar of output becomes someone\'s income, so income is 200 by construction.','Every dollar of income is spent, so demand is 200 before anyone decides what to buy.'],640,27,2);
+  sweep();});
+
+// 10d tastes shift
+scene('The model when tastes shift','Spending moves from cloth to corn; output has not caught up yet',6,(g,k)=>{
+  const rows=[['value of output','100','100','200'],['spent','80','120','200'],['glut: output − spending','+20','−20','0'],['price','falls','rises',''],['profit','low','high',''],['next period\'s output','80','120','200']];
+  tbl(g,{x:160,y:215,heads:['','cloth','corn','total'],rows:rows.slice(0,Math.min(k+1,6)),colW:[520,240,240,260],fs:26,rowH:58,hl:k>=2?[2]:[],bold:(i,j)=>j===3,color:(i,j)=>i===2?(j===1?C.brick:j===2?C.green:C.ink):null});
+  if(k>=3)bullets(g,['The gluts cancel in the aggregate, so there is no general glut.','Capitalists leave cloth for corn until “the productive services are equally paid by both” (p. 138).','An overstock of cloth only means corn “was not produced in sufficient quantities” (p. 138).'],650,25,Math.min(k-2,3));
+  sweep();});
+
+// 10e the mechanism is old
+txt('The mechanism is Smith\'s and Ricardo\'s own','What Say adds is the word “aggregate”',[
+ 'Capital migrating toward the higher profit is Smith\'s natural price (ch. 3).',
+ 'A uniform rate of profit across trades is Ricardo\'s competition (ch. 5, p. 93).',
+ 'Say adds nothing to the mechanism and asserts that it holds for the sum.',
+ 'The one assumption that makes the sum work is that all income is spent.']);
+
+// 10f the chest
+scene('The objection: a chest','Twenty of income goes into a chest instead of the shops',6,(g,k)=>{
+  const rows=[['value of output','100','100','200'],['paid out as income','100','100','200'],['put in a chest','','','20'],['spent','90','90','180'],['glut: output − spending','+10','+10','+20']];
+  tbl(g,{x:160,y:215,heads:['','cloth','corn','total'],rows:rows.slice(0,Math.min(k+1,5)),colW:[520,240,240,260],fs:26,rowH:60,hl:k>=4?[4]:[],bold:(i,j)=>j===3,color:(i,j)=>i===4?C.brick:(i===2?C.brick:null)});
+  if(k>=4)bullets(g,['Both goods are in glut at once, and migration cannot fix it because there is nowhere to go.','Prices fall, then profits, then investment, which is Bentham\'s chest (p. 133) and Malthus\'s effectual demand (ch. 4).'],610,25,Math.min(k-3,2));
+  if(k>=5)note(g,'The sum of the gluts equals what went into the chest. That is the whole dispute in one line: Say\'s identity holds only when the chest is empty.',800);
+  sweep();});
+
+// 10g what each side needs
+txt('What each side needs to be true','Say, Malthus, and the door Senior will close',[
+ 'Say needs money to be a veil, held only for a moment on the way to the next purchase.',
+ 'Malthus needs someone who can earn without spending, a landlord who hoards or a capitalist who will not invest.',
+ 'Senior will close the door harder: a general glut would require “general satiety,” which nobody feels (p. 145).',
+ 'Marx and Keynes reopen it, each by naming who holds the money and why.']);
+
+// 10g2 what Say is getting at
+txt('What Say is getting at: a slump is never a shortage of demand','The claim is about recessions, and it has a policy attached',[
+ 'A general glut, unsold goods everywhere at once, cannot happen, so a slump is never a failure of demand.',
+ 'What can happen is misallocation, too much cloth and too little corn, which prices and migrating capital correct on their own.',
+ '> Money is neutral and fluctuations have real causes, which is the frame real business cycle theory later keeps and builds a model inside.',
+ '> Keynes named “Say\'s Law” as the thing the General Theory set out to overturn.',
+ 'The policy follows: encourage production, not consumption, and no spending by landlords or governments can cure a slump.',
+ 'Ricardo held this against Malthus to the end; his one concession, in the 1821 edition, was that machinery can displace workers, not that demand can fail.']);
+
+// 10h you drive
+scene('You drive: Say\'s Law on paper','Output: cloth 150, corn 50. Tastes: 60 percent of spending goes to cloth.',3,(g,k)=>{
+  bullets(g,['Case 1, all 200 of income is spent: find the glut in each good and their sum.','Case 2, 20 goes into a chest: find the glut in each good and their sum.','Say in one sentence what the sum of the gluts equals in each case, and why Say is right in one and wrong in the other.'],230,28,Math.min(k+1,3));
+  if(k>=2)note(g,'Answers. Case 1: spending 120 and 80, gluts +30 and −30, sum 0. Case 2: spending 108 and 72, gluts +42 and −22, sum +20, which is the chest. Partial gluts cancel; a general glut is exactly the money that left circulation.',640);
+  sweep();});
+
+// 11 Senior turns
+txt('Senior turns, 1830','HL pp. 138–139',[
+ 'Before 1830 he was sympathetic to the poor and did not accept that subsistence wages were inevitable.',
+ 'Then came “the fires and insurrections which terrified the south of England in the frightful autumn of 1830.”',
+ 'The wages fund: capitalists hold a “fund for the maintenance of labourers,” so wages rise only if productivity rises or workers are fewer.']);
+
+txt('Senior writes the Poor Law, 1834','HL pp. 140–141',[
+ 'A worker “paid, not according to his value, but his wants ... ceases to be a free man.”',
+ 'He drafted the 1834 Poor Law: relief below the lowest wage, and stigmatized.',
+ 'Hobsbawm on the result: “an engine of degradation and oppression more than a means of material relief.” (p. 141)']);
+
+// 12 method
+txt('Senior\'s method: not Happiness, but Wealth','HL pp. 141–143',[
+ 'The first clear positive/normative split: strip the ethics, keep “a very few general propositions,” deduce.',
+ '“The subject treated by the Political Economist ... is not Happiness, but Wealth ... his conclusions ... do not authorize him in adding a single syllable of advice.” (p. 142)',
+ 'HL\'s objection: which few propositions matter depends on the problem you care about, and that choice is a value.',
+ 'The giveaway is that the economist states principles “which it is fatal to neglect,” and the man who wrote the Poor Law knew for whom.']);
+
+// 13 four propositions
+scene('The four propositions','HL pp. 143–144',5,(g,k)=>{
+  const rows=[['1','“every man desires to obtain additional Wealth with as little sacrifice as possible”','utility maximization, prices, no gluts'],
+   ['2','population is limited only by moral or physical evil, or by fear of want','Malthus kept, and the poor laws blamed'],
+   ['3','labor and capital “indefinitely increased” by reinvesting products','accumulation, and abstinence'],
+   ['4','more labor on a given district of land yields “a less proportionate return”','rent, redefined']];
+  tbl(g,{x:90,y:230,heads:['','Senior\'s premise','What he builds on it'],rows:rows.slice(0,Math.min(k,4)),colW:[70,900,450],fs:23,rowH:90});
+  if(k>=4)note(g,'HL p. 143: each premise carries a moral. We take them in turn.',720);
+});
+
+// 14 Senior on value
+txt('Senior on value: against Bentham','HL pp. 144–145',[
+ 'Wealth is “the power, direct or indirect, of producing pleasure,” so maximizing wealth is maximizing utility.',
+ 'Against Bentham: “no person feels his whole wants to be adequately supplied,” and wants differ by character.',
+ 'So there is no satiation, no comparing persons, and no case for redistribution.']);
+
+txt('Senior on value: as if nature supplied everything','HL pp. 145–146',[
+ 'Against Ricardo: if nature supplied all goods without labor, “in precisely the same quantities,” they would exchange in “[no] other than their present proportions.”',
+ 'Ricardo had answered in advance (ch. 5, p. 98) that scarce, non-reproducible goods are the exception, and Senior says they are “the bulk of wealth.”',
+ 'A general glut would require “general satiety,” which proposition 1 forbids, so crises cannot exist, where Say at least admitted distress.']);
+
+// 15 abstinence
+txt('Abstinence: profit is pay for pain','HL pp. 146–148',[
+ 'Thompson and Hodgskin (ch. 7) had said: labor is a real human cost, owning capital is only a legal relation, so wages are earned and profits are not.',
+ 'Senior\'s answer needs a cost of owning: “To this conduct we have already given the name of Abstinence.”',
+ '“To abstain from the enjoyment which is in our power, or to seek distant rather than immediate results, are among the most painful exertions of the human will.”',
+ 'So profit stands on the same footing as wages, and the nation\'s prosperity rests on the abstinence of its capitalists.']);
+
+txt('Abstinence: HL\'s reply','HL pp. 150–151',[
+ 'Most capital is inherited, and its origins were almost never abstinence (ch. 9).',
+ '“Abstaining from the unproductive use of capital” only means using a factory for profit rather than for enjoyment, so the pain is defined into profit.',
+ 'Senior himself says capitalists “go on producing and amassing and leave the task of expending to their heirs,” so where is the pain?']);
+
+// 16 every income is rent
+scene('Every income is partly rent, so there are no classes','HL pp. 148–149',6,(g,k)=>{
+  const X=110,Y=240,w=420,h=150;
+  const box=(j,lab,sub,fill)=>{el('rect',{x:X+j*(w+40),y:Y,width:w,height:h,rx:10,fill:fill},g);T(g,X+j*(w+40)+24,Y+62,lab,{'font-size':34,'font-weight':700,fill:C.cream});T(g,X+j*(w+40)+24,Y+108,sub,{'font-size':22,fill:C.cream});};
+  box(0,'RENT','“offered by nature or accident”',C.earth);
+  if(k>=1)box(1,'WAGES','“the reward of labour”',C.green);
+  if(k>=2)box(2,'PROFIT','“that of abstinence”',C.golddeep);
+  if(k>=3){el('rect',{x:X,y:Y+h+30,width:3*w+80,height:60,rx:10,fill:C.mist},g);T(g,X+24,Y+h+70,'“At a distance these divisions appear clearly marked, but when we look into the details, we find them so intermingled....” (p. 149)',{'font-size':23,fill:C.brick});}
+  bullets(g,['Rent is redefined as “an advantage derived from the use of a natural agent not universally accessible.” Any advantage: talent, inherited capital, a better machine.','Then a worker\'s wage and a capitalist\'s profit each contain rent, and directing capital is itself labor, so profit shades into wages.','Class differences are “largely illusory.” Doctrines of class conflict are “the political economy of the poor” (p. 150). And the landlord? His interest and the public\'s “coincide” (p. 148). Ricardo p. 96 said the opposite.'],520,24,Math.max(0,k-2));
+});
+
+// 17 Song B
+scene('Song B again: three ledgers for one AI song','Game Level 6, open now at who-gets-paid.pages.dev',5,(g,k)=>{
+  const rows=[['Who made it?','a million songwriters, and engineers','labor, capital, and nature, coequally','whoever abstained to build the model'],
+   ['What is it worth?','its hours: now nearly zero a song','its utility; the price is the index','its utility; labor\'s absence is nothing'],
+   ['Who should be paid?','those whose labor is in it','each agency, for the utility it added','the abstainer, and the advantage\'s owner'],
+   ['Is prompting labor?','minutes of it; the value is elsewhere','industry that made utility, so yes','labor, plus a rent for talent']];
+  tbl(g,{x:70,y:220,heads:['','Ricardo','Say','Senior'],rows:rows.slice(0,Math.min(k,4)),colW:[240,420,420,420],fs:22,rowH:100});
+  if(k>=4)note(g,'Your answers from the Ricardo day, “it stole from the artists” included, each sit in one of these columns. Level 6 asks you to pick a column and defend it.',720);
+});
+
+// 18 scorecard
+scene('Scorecard: harmony or conflict','The question every week answers',6,(g,k)=>{
+  const rows=[['value is','labor embodied','utility','utility','utility'],
+   ['profit is','a deduction','(silent)','pay for frugality','pay for abstinence'],
+   ['rent is','a deduction, against everyone','(silent)','pay for a natural agent','an advantage, in every income'],
+   ['general gluts','impossible','possible: hoarding','impossible: Say\'s law','impossible: no satiety'],
+   ['the market','conceals a conflict','harmony, with repair','harmony','harmony']];
+  tbl(g,{x:90,y:220,heads:['','Ricardo','Bentham','Say','Senior'],rows:rows.slice(0,Math.min(k,5)),colW:[220,300,300,300,300],fs:23,rowH:76});
+  if(k>=5)note(g,'HL p. 150 concede one point: by 1850 the rent/profit line had blurred. What critics keep is the line between income from working and income from owning. Chapter 7 and Marx start there.',720);
+});
+
+// 19 exam
+txt('What to take out the door','Three sentences, one per writer  ·  who-gets-paid.pages.dev',[
+ 'Bentham: value is utility, a quantity of pleasure you can add across people, and the market can hoard and can be improved.',
+ 'Say: labor, capital, and land coequally make utility and are each paid their contribution, so profit is earned the way wages are, and supply creates its own demand.',
+ 'Senior: nobody is ever satisfied, so no comparing persons and no general glut; profit is pay for abstinence; every income is partly rent, so classes blur.',
+ 'Next, Thompson and Hodgskin (HL ch. 7) put the line between working and owning back.']);
+
+// ---------------- engine ----------------
+let i=0,k=0;
+const stagesOf=n=>S[n].stages||1;
+function show(si,sk){
+  i=Math.max(0,Math.min(S.length-1,si));
+  const s=S[i];k=Math.max(0,Math.min(stagesOf(i)-1,sk||0));
+  $('title').textContent=s.title;$('sub').textContent=s.sub||'';
+  const g=$('body');while(g.firstChild)g.removeChild(g.firstChild);
+  if(!s.stages)bars={};
+  s.draw(g,k);
+  $('counter').textContent=(i+1)+' / '+S.length+(stagesOf(i)>1?'   ·   step '+(k+1)+' of '+stagesOf(i)+(k<stagesOf(i)-1?'  →':''):'');
+  try{localStorage.setItem('ss2.i',i);localStorage.setItem('ss2.k',k);}catch(e){}
+}
+const next=()=>{if(k<stagesOf(i)-1)show(i,k+1);else show(i+1,0);};
+const prev=()=>{if(k>0)show(i,k-1);else if(i>0)show(i-1,stagesOf(i-1)-1);};
+document.body.addEventListener('click',e=>{if(e.shiftKey)prev();else next();});
+window.addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown','Enter'].includes(e.key)){e.preventDefault();next();}else if(['ArrowLeft','ArrowUp','PageUp','Backspace','p','P'].includes(e.key)){e.preventDefault();prev();}else if(e.key==='End'||e.key==='.'){show(i,stagesOf(i)-1);}else if(e.key==='n'||e.key==='N'){show(i+1,0);}else if(e.key==='r'||e.key==='R'){show(0,0);}else if(e.key==='f'||e.key==='F'){const d=document.documentElement;if(document.fullscreenElement||document.webkitFullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document);}else{(d.requestFullscreen||d.webkitRequestFullscreen).call(d);}}});
+let si=0,sk=0;try{si=+localStorage.getItem('ss2.i')||0;sk=+localStorage.getItem('ss2.k')||0;}catch(e){}
+const Q=new URLSearchParams(location.search);if(Q.has('s')){si=(+Q.get('s')||1)-1;sk=Q.has('k')?(+Q.get('k')||1)-1:99;}
+show(si,sk);
+})();
+</script>
+</body>
+</html>
