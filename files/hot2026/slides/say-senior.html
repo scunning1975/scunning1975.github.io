@@ -487,11 +487,11 @@ scene('The four propositions','HL pp. 143–144',5,(g,k)=>{
 
 // 13b the propositions today
 scene('Senior\'s four propositions, in today\'s textbooks','Each one has a chapter you have already taken',6,(g,k)=>{
-  const y=cols2(g,k,{hl:'in micro today',hr:'in macro today',xl:100,xm:330,xr:950,mcl:46,mcr:44,fs:21,rows:[
-   ['1  more wealth, least sacrifice','utility maximization and “more is better,” cost minimization; the first chapters of any micro text','the optimizing household and firm inside every modern model, the freshwater ones from this morning included'],
-   ['2  population checked by evil or by fear of want','labor supply and work incentives; the argument that relief blunts the incentive to work','population growth n in the Solow model; the Malthusian chapter of every growth text'],
-   ['3  products used as means of further production','investment and the saving decision; consumption now against consumption later (Fisher)','capital accumulation, ΔK = sY − δK; endogenous growth when returns to capital do not fall'],
-   ['4  diminishing returns on a given district of land','the law of diminishing marginal returns: MPL falls as L rises with K fixed','diminishing returns to capital, the reason Solow growth stops without technology']]});
+  const y=cols2(g,k,{hl:'in micro today',hr:'in macro today',xl:100,xm:440,xr:1000,mcl:40,mcr:40,fs:21,rows:[
+   ['1  wealth, least sacrifice','utility maximization and “more is better,” cost minimization; the first chapters of any micro text','the optimizing household and firm inside every modern model, the freshwater ones from this morning included'],
+   ['2  population and fear of want','labor supply and work incentives; the argument that relief blunts the incentive to work','population growth n in the Solow model; the Malthusian chapter of every growth text'],
+   ['3  products reinvested','investment and the saving decision; consumption now against consumption later (Fisher)','capital accumulation, ΔK = sY − δK; endogenous growth when returns to capital do not fall'],
+   ['4  diminishing returns on land','the law of diminishing marginal returns: MPL falls as L rises with K fixed','diminishing returns to capital, the reason Solow growth stops without technology']]});
   if(k>=4)note(g,'Read 1 as an optimizing agent and 2, 3, 4 as its constraints, and you have the skeleton of the Solow model and of the freshwater models from this morning. Senior wrote the axioms in 1836; the models arrived a century later.',Math.max(y+20,700));
   sweep();});
 
