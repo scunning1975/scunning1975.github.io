@@ -406,8 +406,17 @@ scene('What people hear, and what Say meant','Out of context it sounds like micr
    ['a producer can always sell what he made','a producer can fail to sell, but only because something else was not made in enough quantity'],
    ['a slogan: help producers and demand follows','an identity: income is spent, so the sum of demand cannot fall short of the sum of supply'],
    ['a theory of growth','a denial that a general glut, a slump of everything at once, can happen']];
-  tbl(g,{x:90,y:225,heads:['what people hear: a micro reading','what he meant: a macro claim'],rows:rows.slice(0,Math.min(k+1,5)),colW:[560,860],fs:23,rowH:78,color:(i,j)=>j===0?C.brick:C.green});
-  if(k>=5)note(g,'The test is simple. A glut of cloth is not a counterexample; Say predicts those. A glut of everything would be. The next scenes build the sum and then try to break it.',740);
+  const wrap=(t,mc)=>{const w=t.split(' ');let l='',o=[];for(const x of w){if((l+' '+x).length>mc){o.push(l);l=x;}else l=l?l+' '+x:x;}o.push(l);return o;};
+  const XL=120,XR=720,fs=24,lh=31;
+  T(g,XL,232,'what people hear: a micro reading',{'font-size':18,fill:C.warm});T(g,XR,232,'what he meant: a macro claim',{'font-size':18,fill:C.warm});
+  el('line',{x1:XL-10,y1:246,x2:1500,y2:246,stroke:C.pale,'stroke-width':2},g);
+  el('line',{x1:XR-40,y1:252,x2:XR-40,y2:252+5*0,stroke:C.pale,'stroke-width':2},g);
+  let y=292;
+  rows.slice(0,Math.min(k+1,5)).forEach(([a,b],i)=>{const la=wrap(a,38),lb=wrap(b,58);const n=Math.max(la.length,lb.length);
+    la.forEach((ln,q)=>T(g,XL,y+q*lh,ln,{'font-size':fs,fill:C.brick}));lb.forEach((ln,q)=>T(g,XR,y+q*lh,ln,{'font-size':fs,fill:C.green}));
+    y+=n*lh+22;});
+  el('line',{x1:XR-40,y1:252,x2:XR-40,y2:Math.max(260,y-30),stroke:C.pale,'stroke-width':2},g);
+  if(k>=5)note(g,'The test is simple. A glut of cloth is not a counterexample; Say predicts those. A glut of everything would be. The next scenes build the sum and then try to break it.',Math.max(y+10,720));
   sweep();});
 
 // 10 Say's law: the claim
