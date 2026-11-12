@@ -435,7 +435,7 @@ scene('The objection: a chest','Twenty of income goes into a chest instead of th
   const rows=[['value of output','100','100','200'],['paid out as income','100','100','200'],['put in a chest','','','20'],['spent','90','90','180'],['glut: output − spending','+10','+10','+20']];
   tbl(g,{x:160,y:215,heads:['','cloth','corn','total'],rows:rows.slice(0,Math.min(k+1,5)),colW:[520,240,240,260],fs:26,rowH:60,hl:k>=4?[4]:[],bold:(i,j)=>j===3,color:(i,j)=>i===4?C.brick:(i===2?C.brick:null)});
   if(k>=4)bullets(g,['Both goods are in glut at once, and migration cannot fix it because there is nowhere to go.','Prices fall, then profits, then investment, which is Bentham\'s chest (p. 133) and Malthus\'s effectual demand (ch. 4).'],610,25,Math.min(k-3,2));
-  if(k>=5)note(g,'The sum of the gluts equals what went into the chest. That is the whole dispute in one line: Say\'s identity holds only when the chest is empty.',760);
+  if(k>=5)note(g,'The sum of the gluts equals what went into the chest. That is the whole dispute in one line: Say\'s identity holds only when the chest is empty.',800);
   sweep();});
 
 // 10g what each side needs
