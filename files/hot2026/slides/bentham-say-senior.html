@@ -450,7 +450,7 @@ scene('Where Say sits among the writers so far','Year of the main work, and whic
   const X0=140,X1=1460,y0=1770,y1=1840;const xOf=yr=>X0+(yr-y0)/(y1-y0)*(X1-X0);
   el('line',{x1:X0,y1:520,x2:X1,y2:520,stroke:C.ink,'stroke-width':2},g);for(let yr=1770;yr<=1840;yr+=10){el('line',{x1:xOf(yr),y1:520,x2:xOf(yr),y2:530,stroke:C.ink},g);T(g,xOf(yr),556,String(yr),{'text-anchor':'middle','font-size':18,fill:C.warm});}
   T(g,X0,300,'harmony',{'font-size':20,fill:C.green});T(g,X0,740,'conflict concealed',{'font-size':20,fill:C.brick});
-  const W=[['Smith','Wealth of Nations',1776,430,C.ink],['Bentham','Introduction',1780,340,C.green],['Malthus','Essay',1798,420,C.ink],['Say','Traité',1803,300,C.green],['Ricardo','Principles',1817,700,C.brick],['Senior','Outline',1836,330,C.green]];
+  const W=[['Smith','Wealth of Nations',1776,430,C.ink],['Bentham','Introduction',1780,300,C.green],['Malthus','Essay',1798,420,C.ink],['Say','Traité',1803,300,C.green],['Ricardo','Principles',1817,700,C.brick],['Senior','Outline',1836,330,C.green]];
   W.slice(0,k>=1?6:5).forEach(([n,w,yr,y,c])=>{if(n==='Say'&&k<1)return;el('circle',{cx:xOf(yr),cy:y,r:n==='Say'?16:11,fill:c},g);T(g,xOf(yr),y-24,n,{'text-anchor':'middle','font-size':n==='Say'?28:22,'font-weight':700,fill:c});T(g,xOf(yr),y+44,w+', '+yr,{'text-anchor':'middle','font-size':17,fill:C.warm});});
   if(k>=2)note(g,'Say published in 1803, five years after Malthus\'s Essay and fourteen before Ricardo\'s Principles. He read Smith and kept only the harmony, which is why he is the first writer we have met with nothing to conceal.',805);
   sweep();});
