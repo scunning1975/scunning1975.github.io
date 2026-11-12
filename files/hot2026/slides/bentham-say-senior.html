@@ -392,12 +392,97 @@ scene('Say: “This is an error”','A Treatise on Political Economy; HL pp. 134
   if(k>=4)note(g,'“To the labour of man alone he ascribes the power of producing values. This is an error.” (HL p. 134). Once owning capital is a sacrifice like working, “rich and poor ... are not opposed to each other, and ... all rivalships are mere folly.” (p. 137)',740);
 });
 
-// 10pre modern debate first
-txt('Before Say: a question you already have an opinion on','Why do recessions happen, and can spending fix them?',[
- 'Saltwater (MIT, Harvard, Berkeley): a recession is a shortfall of demand, prices adjust slowly, and government or central-bank spending can shorten it.',
- 'Freshwater (Chicago, Minnesota, Rochester): a recession is the economy\'s response to a real shock, markets clear, and demand policy mostly moves prices.',
- 'The stimulus of 2009 and of 2020 was that argument settled, for the moment, on the saltwater side.',
+// 10pre: the present first
+txt('Now Say, but first the present','Two schools of macroeconomics, both decorated with Nobel prizes, named for where their universities sit',[
+ 'Macroeconomists have argued for fifty years about why recessions happen and what, if anything, a government should do about them.',
+ 'Robert Hall named the camps in 1976: freshwater for the Great Lakes schools, saltwater for the coasts.',
+ 'Each side has Nobel prizes, and both now write the same kind of model, so the fight is over assumptions.',
  'The question underneath is older than any of them: can an economy produce more than it is able to buy?']);
+
+// two-column wrapped layout, reused
+function cols2(g,k,o){const wrap=(t,mc)=>{const w=t.split(' ');let l='',out=[];for(const x of w){if((l+' '+x).length>mc){out.push(l);l=x;}else l=l?l+' '+x:x;}out.push(l);return out;};
+  const XL=o.xl||110,XM=o.xm||560,XR=o.xr||880,fs=o.fs||22,lh=Math.round(fs*1.3);
+  T(g,XM,232,o.hl,{'font-size':18,fill:C.warm});T(g,XR,232,o.hr,{'font-size':18,fill:C.warm});
+  el('line',{x1:XL-10,y1:246,x2:1520,y2:246,stroke:C.pale,'stroke-width':2},g);
+  let y=290;o.rows.slice(0,Math.min(k+1,o.rows.length)).forEach(([lab,a,b])=>{const la=wrap(a,o.mcl||32),lb=wrap(b,o.mcr||50);const n=Math.max(la.length,lb.length);
+    T(g,XL,y,lab,{'font-size':fs-2,'font-weight':700,fill:C.ink});la.forEach((ln,q)=>T(g,XM,y+q*lh,ln,{'font-size':fs,fill:C.brick}));lb.forEach((ln,q)=>T(g,XR,y+q*lh,ln,{'font-size':fs,fill:C.green}));y+=n*lh+16;});
+  el('line',{x1:XR-30,y1:252,x2:XR-30,y2:Math.max(260,y-24),stroke:C.pale,'stroke-width':2},g);return y;}
+
+scene('Freshwater and saltwater, side by side','The names are Robert Hall\'s, 1976',7,(g,k)=>{
+  cols2(g,k,{hl:'freshwater',hr:'saltwater',xl:100,xm:300,xr:900,mcl:46,mcr:50,fs:21,rows:[
+   ['places','Chicago, Minnesota, Rochester, Carnegie Mellon','MIT, Harvard, Yale, Berkeley, Princeton'],
+   ['people','Friedman, Lucas, Prescott, Sargent, Barro','Samuelson, Solow, Tobin, Modigliani, Krugman, Bernanke'],
+   ['Nobel prizes','Friedman 1976, Lucas 1995, Kydland and Prescott 2004, Sargent 2011','Samuelson 1970, Tobin 1981, Modigliani 1985, Solow 1987, Akerlof and Stiglitz 2001, Krugman 2008, Bernanke 2022'],
+   ['years','rises in the 1970s on rational expectations; real business cycles from 1982','Keynes 1936; the synthesis of the 1950s; New Keynesian from the 1980s'],
+   ['core idea','markets clear and people anticipate policy, so output moves only for real reasons','prices and wages are sticky, so a fall in spending cuts output and jobs'],
+   ['a recession is','the economy\'s best response to a real shock','a failure of demand'],
+   ['why they argue','whether markets clear fast enough, and whether unemployment is ever a choice','same question, opposite answer, and the policy follows from it']]});
+  sweep();});
+
+// AD-AS helper
+function adas(g,o){const X=o.x,Y=o.y,W=o.w,H=o.h;el('line',{x1:X,y1:Y+H,x2:X+W,y2:Y+H,stroke:C.ink,'stroke-width':2},g);el('line',{x1:X,y1:Y+H,x2:X,y2:Y,stroke:C.ink,'stroke-width':2},g);
+  T(g,X+W+8,Y+H+8,'Y',{'font-size':22,fill:C.ink});T(g,X-30,Y+10,'P',{'font-size':22,fill:C.ink});
+  const ad=(dx,col,lab)=>{el('line',{x1:X+60+dx,y1:Y+40,x2:X+W-120+dx,y2:Y+H-40,stroke:col,'stroke-width':4},g);T(g,X+W-115+dx,Y+H-36,lab,{'font-size':20,fill:col,'font-weight':700});};
+  return {ad,X,Y,W,H};}
+function rbul(g,lines,x,y,fs,mc,nshow){const wrap=(t)=>{const w=t.split(' ');let l='',out=[];for(const z of w){if((l+' '+z).length>mc){out.push(l);l=z;}else l=l?l+' '+z:z;}out.push(l);return out;};const lh=Math.round(fs*1.3);
+  lines.forEach((t,i)=>{if(nshow!=null&&i>=nshow)return;const rows=wrap(t);el('text',{x:x-30,y,'font-size':fs,fill:C.gold,'font-weight':700},g,'•');rows.forEach((r,q)=>el('text',{x,y:y+q*lh,'font-size':fs,fill:C.ink,class:'fade'},g,r));y+=rows.length*lh+Math.round(fs*0.9);});}
+
+scene('Freshwater, in plain terms','The long-run model in every intermediate textbook',5,(g,k)=>{
+  const a=adas(g,{x:120,y:230,w:600,h:420});
+  const xs=a.X+330;el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.green,'stroke-width':5},g);T(g,xs+10,a.Y+34,'LRAS',{'font-size':20,fill:C.green,'font-weight':700});T(g,xs-12,a.Y+a.H+28,'Y*',{'font-size':20,fill:C.green});
+  a.ad(0,C.ink,'AD');
+  if(k>=1){a.ad(-90,C.brick,'AD′');T(g,a.X+10,a.Y+a.H+60,'spending falls: the price level falls, output does not',{'font-size':19,fill:C.brick});}
+  if(k>=2){el('line',{x1:xs-110,y1:a.Y+20,x2:xs-110,y2:a.Y+a.H,stroke:C.green,'stroke-width':5,'stroke-dasharray':'10 7'},g);T(g,xs-200,a.Y+34,'LRAS′',{'font-size':20,fill:C.green,'font-weight':700});T(g,a.X+10,a.Y+a.H+90,'a real shock moves the vertical line: that is a recession',{'font-size':19,fill:C.green});}
+  rbul(g,['People and firms see what is coming and act on it, so a policy everyone anticipates changes prices, not output.','Markets clear: if wages are too high they fall until everyone who wants work at the going wage has it.','A recession is therefore a real event, a bad harvest for the whole economy: an oil shock, a technology that stalls.','Where you met it: the long-run chapters, the vertical supply curve, the classical dichotomy, money neutrality.'],850,270,22,46,Math.min(k+1,4));
+  sweep();});
+
+scene('Saltwater, in plain terms','The short-run model in the same textbook, a few chapters later',5,(g,k)=>{
+  const a=adas(g,{x:120,y:230,w:600,h:420});
+  el('line',{x1:a.X+40,y1:a.Y+a.H-60,x2:a.X+a.W-60,y2:a.Y+60,stroke:C.green,'stroke-width':5},g);T(g,a.X+a.W-55,a.Y+58,'SRAS',{'font-size':20,fill:C.green,'font-weight':700});
+  const xs=a.X+330;el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.pale,'stroke-width':3,'stroke-dasharray':'6 6'},g);T(g,xs-12,a.Y+a.H+28,'Y*',{'font-size':20,fill:C.warm});
+  a.ad(0,C.ink,'AD');
+  if(k>=1){a.ad(-110,C.brick,'AD′');T(g,a.X+10,a.Y+a.H+60,'spending falls: output falls below Y*, and people are laid off',{'font-size':19,fill:C.brick});}
+  if(k>=2){T(g,a.X+10,a.Y+a.H+90,'a central bank or a treasury can push AD back: that is the policy',{'font-size':19,fill:C.green});}
+  rbul(g,['Prices and wages are slow to change, so when spending falls, firms sell less and lay people off instead of cutting prices.','Unemployment in a slump is involuntary: people want work at the going wage and cannot find it.','A recession is therefore a shortfall of demand, and a central bank or a government that spends can shorten it.','Where you met it: the short-run chapters, the upward-sloping supply curve, the Keynesian cross, the Phillips curve.'],850,270,22,46,Math.min(k+1,4));
+  sweep();});
+
+// the core issue
+txt('The core issue: money versus production','Everything else in the argument hangs on one link in a chain',[
+ 'Say\'s chain: production creates income, income is spent, so whatever is produced gets bought.',
+ 'The chain holds only if money is a go-between, a veil over barter, so that selling and buying are one act.',
+ 'It breaks if people can sell and then hold the money, or if prices will not fall to clear what is left, and those are the two things the schools fight over.',
+ '> Freshwater: money is neutral and prices move, so the chain holds and production sets what the economy can buy.',
+ '> Saltwater: money is something people want to hold and prices are sticky, so demand can fall short of what was produced.',
+ 'So the question is whether production sets demand, or whether the wish to hold money can leave goods unsold, and that is the question Malthus put to Say.']);
+
+// Say on the map
+scene('Where Say sits among the writers so far','Year of the main work, and which side of the spine',4,(g,k)=>{
+  const X0=140,X1=1460,y0=1770,y1=1840;const xOf=yr=>X0+(yr-y0)/(y1-y0)*(X1-X0);
+  el('line',{x1:X0,y1:520,x2:X1,y2:520,stroke:C.ink,'stroke-width':2},g);for(let yr=1770;yr<=1840;yr+=10){el('line',{x1:xOf(yr),y1:520,x2:xOf(yr),y2:530,stroke:C.ink},g);T(g,xOf(yr),556,String(yr),{'text-anchor':'middle','font-size':18,fill:C.warm});}
+  T(g,X0,300,'harmony',{'font-size':20,fill:C.green});T(g,X0,740,'conflict concealed',{'font-size':20,fill:C.brick});
+  const W=[['Smith','Wealth of Nations',1776,430,C.ink],['Bentham','Introduction',1780,340,C.green],['Malthus','Essay',1798,420,C.ink],['Say','Traité',1803,300,C.green],['Ricardo','Principles',1817,700,C.brick],['Senior','Outline',1836,330,C.green]];
+  W.slice(0,k>=1?6:5).forEach(([n,w,yr,y,c])=>{if(n==='Say'&&k<1)return;el('circle',{cx:xOf(yr),cy:y,r:n==='Say'?16:11,fill:c},g);T(g,xOf(yr),y-24,n,{'text-anchor':'middle','font-size':n==='Say'?28:22,'font-weight':700,fill:c});T(g,xOf(yr),y+44,w+', '+yr,{'text-anchor':'middle','font-size':17,fill:C.warm});});
+  if(k>=2)note(g,'Say published in 1803, five years after Malthus\'s Essay and fourteen before Ricardo\'s Principles. He read Smith and kept only the harmony, which is why he is the first writer we have met with nothing to conceal.',805);
+  sweep();});
+
+// biography
+txt('Jean-Baptiste Say, 1767–1832: who he was','A merchant\'s son who ran a factory before he held a chair',[
+ 'Born in Lyon to a Protestant merchant family, apprenticed in trade, and sent to England at eighteen to learn business in a London counting house.',
+ 'Back in Paris he clerked for an insurance company under Clavière, the future finance minister, who handed him Smith\'s Wealth of Nations.',
+ 'In the Revolution he edited La Décade philosophique, the journal of the republican intellectuals, from 1794.',
+ 'Napoleon put him on the Tribunate in 1799 and removed him in 1804 when he would not rewrite the Treatise to suit the regime.']);
+
+txt('Say: what he was doing','Factory owner, then professor',[
+ 'Out of politics, he built and ran a cotton-spinning mill at Auchy in northern France from 1805 to 1813, with some four hundred workers.',
+ 'That is why his economics has an entrepreneur in it, the person who combines land, labor, and capital, a figure Smith and Ricardo do without.',
+ 'He visited England in 1814, met Ricardo, Bentham, and James Mill, and kept up the correspondence that became the Letters to Malthus.',
+ 'France gave him its first chairs in the subject: industrial economy at the Conservatoire des Arts et Métiers in 1819, political economy at the Collège de France in 1831.']);
+
+txt('Say: the major works','The Treatise was the textbook of its century',[
+ 'Traité d\'économie politique, 1803, revised through five editions to 1826; the 1821 English translation became the standard American college text, and Jefferson recommended it.',
+ 'Catéchisme d\'économie politique, 1815, the same doctrine in question and answer for a general reader.',
+ 'Lettres à M. Malthus, 1820, where the law of markets is argued out against the one man who denied it.',
+ 'Cours complet d\'économie politique pratique, 1828–1829, his lectures in six volumes.']);
 
 txt('Where it came from, with the overstatement marked','The glut controversy, 1815–1825',[
  'After the Napoleonic wars Britain had unsold goods and idle workers, and economists split over why.',
