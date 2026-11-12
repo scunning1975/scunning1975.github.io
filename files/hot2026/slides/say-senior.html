@@ -286,6 +286,14 @@ txt('The core issue: money versus production','Everything else in the argument h
  '> Saltwater: money is something people want to hold and prices are sticky, so demand can fall short of what was produced.',
  'So the question is whether production sets demand, or whether the wish to hold money can leave goods unsold, and that is the question Malthus put to Say.']);
 
+txt('The chain, in the textbook\'s equations','An identity that is always true, and a condition that can fail',[
+ 'Y = C + I + G + NX is an accounting identity, always true, because I includes the goods nobody bought, counted as inventory.',
+ 'The short-run model replaces it with a condition: Y = PAE = C + Iᵖ + G + NX, where Iᵖ is planned investment and C = C̄ + mpc × (Y − T).',
+ '> Solve it and Y = (C̄ − mpc·T + Iᵖ + G + NX) ÷ (1 − mpc), and the 1 ÷ (1 − mpc) is the multiplier you half remember.',
+ '> The gap between I and Iᵖ is unsold goods, which is the general glut written as inventory.',
+ 'Say\'s Law in this language: planned spending always equals potential output, PAE = Y*, because saving becomes investment on its own.',
+ 'So Say is the claim that the economy lives at Y*, the vertical line, and Malthus is the claim that it can live at PAE, below it.']);
+
 // Say on the map
 scene('Where Say sits among the writers so far','Year of the main work, and which side of the spine',4,(g,k)=>{
   const X0=140,X1=1460,y0=1770,y1=1840;const xOf=yr=>X0+(yr-y0)/(y1-y0)*(X1-X0);
