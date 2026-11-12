@@ -226,8 +226,10 @@ function adas(g,o){const X=o.x,Y=o.y,W=o.w,H=o.h;el('line',{x1:X,y1:Y+H,x2:X+W,y
   const xtick=(x,lab,col)=>{el('line',{x1:x,y1:Y+H,x2:x,y2:Y+H+8,stroke:col,'stroke-width':2},g);T(g,x,Y+H+30,lab,{'text-anchor':'middle','font-size':20,fill:col});};
   const drop=(x,y,col)=>{el('line',{x1:x,y1:y,x2:x,y2:Y+H,stroke:col,'stroke-width':1.5,'stroke-dasharray':'5 5'},g);el('line',{x1:x,y1:y,x2:X,y2:y,stroke:col,'stroke-width':1.5,'stroke-dasharray':'5 5'},g);};
   return {X,Y,W,H,curve,dot,ytick,xtick,drop};}
-function rbul(g,lines,x,y,fs,mc,nshow){const wrap=(t)=>{const w=t.split(' ');let l='',out=[];for(const z of w){if((l+' '+z).length>mc){out.push(l);l=z;}else l=l?l+' '+z:z;}out.push(l);return out;};const lh=Math.round(fs*1.3);
-  lines.forEach((t,i)=>{if(nshow!=null&&i>=nshow)return;const rows=wrap(t);el('text',{x:x-30,y,'font-size':fs,fill:C.gold,'font-weight':700},g,'•');rows.forEach((r,q)=>el('text',{x,y:y+q*lh,'font-size':fs,fill:C.ink,class:'fade'},g,r));y+=rows.length*lh+Math.round(fs*0.9);});}
+function rbul(g,lines,x,y,fs,mc,nshow){const wrap=(t,m)=>{const w=t.split(' ');let l='',out=[];for(const z of w){if((l+' '+z).length>m){out.push(l);l=z;}else l=l?l+' '+z:z;}out.push(l);return out;};
+  lines.forEach((t0,i)=>{if(nshow!=null&&i>=nshow)return;const sub=t0.startsWith('>');const t=sub?t0.slice(1).trim():t0;const f=sub?fs-4:fs,lh=Math.round(f*1.3);const rows=wrap(t,sub?mc+6:mc);const xx=sub?x+34:x;
+    el('text',{x:xx-26,y,'font-size':f,fill:sub?C.warm:C.gold,'font-weight':700},g,sub?'–':'•');rows.forEach((r,q)=>el('text',{x:xx,y:y+q*lh,'font-size':f,fill:sub?C.warm:C.ink,class:'fade'},g,r));
+    const nextSub=lines[i+1]&&lines[i+1].startsWith('>');y+=rows.length*lh+Math.round(f*(nextSub?0.4:0.9));});}
 
 scene('Freshwater, in plain terms','The long-run model in every intermediate textbook',5,(g,k)=>{
   const a=adas(g,{x:120,y:230,w:600,h:420});const xs=a.X+330,m=0.8,P0=a.Y+200;
@@ -256,13 +258,13 @@ scene('One picture with both camps in it','The Frank and Bernanke diagram: infla
   const a=adas(g,{x:120,y:230,w:600,h:420,ylab:'π'});const xs=a.X+330,pi0=a.Y+200,m=0.8;
   el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.green,'stroke-width':5},g);T(g,xs+10,a.Y+34,'Y*  (freshwater: the long run)',{'font-size':18,fill:C.green,'font-weight':700});a.xtick(xs,'Y*',C.green);
   const AD=x=>pi0+m*(x-xs),AD2=x=>pi0+m*(x-xs+110);
-  el('line',{x1:a.X+6,y1:pi0,x2:a.X+a.W-16,y2:pi0,stroke:C.golddeep,'stroke-width':5},g);T(g,a.X+a.W-14,pi0+6,'π₀',{'font-size':20,fill:C.golddeep,'font-weight':700});T(g,a.X+12,pi0+26,'saltwater: inflation sticks where it was',{'font-size':17,fill:C.golddeep});
+  el('line',{x1:a.X+6,y1:pi0,x2:a.X+a.W-16,y2:pi0,stroke:C.golddeep,'stroke-width':5},g);T(g,a.X+a.W-14,pi0+6,'π₀',{'font-size':20,fill:C.golddeep,'font-weight':700});T(g,a.X+12,pi0+24,'saltwater:',{'font-size':17,fill:C.golddeep});T(g,a.X+12,pi0+44,'inflation sticks',{'font-size':17,fill:C.golddeep});
   a.curve(AD,C.ink,'AD');a.dot(xs,pi0,C.ink);
   if(k>=1){a.curve(AD2,C.brick,'AD′');const x1=xs-110;a.dot(x1,pi0,C.brick);a.drop(x1,pi0,C.brick);a.xtick(x1,'Y′',C.brick);T(g,a.X+10,a.Y+a.H+62,'spending falls: output drops to Y′ at the old inflation; the gap is the recession',{'font-size':18,fill:C.brick});}
   if(k>=2){const pi1=pi0+88;el('line',{x1:a.X+6,y1:pi1,x2:a.X+a.W-16,y2:pi1,stroke:C.golddeep,'stroke-width':5,'stroke-dasharray':'10 7'},g);T(g,a.X+a.W-14,pi1+6,'π₁',{'font-size':20,fill:C.golddeep,'font-weight':700});a.dot(xs,pi1,C.golddeep);T(g,a.X+10,a.Y+a.H+92,'slow road: the gap pulls inflation down until output is back at Y*',{'font-size':18,fill:C.golddeep});}
   if(k>=3){const x1=xs-110;el('line',{x1:x1+16,y1:pi0-10,x2:xs-16,y2:pi0-10,stroke:C.green,'stroke-width':4},g);el('polygon',{points:`${xs-4},${pi0-10} ${xs-20},${pi0-20} ${xs-20},${pi0}`,fill:C.green},g);T(g,a.X+10,a.Y+a.H+122,'fast road: the Fed cuts the rate, AD moves back, which is the Taylor rule at work',{'font-size':18,fill:C.green});}
-  rbul(g,['Inflation on the vertical axis and output on the horizontal: Frank and Bernanke\'s diagram, and Taylor\'s and Romer\'s.','The vertical line at Y* is the freshwater long run, and the horizontal line is the saltwater short run.','AD slopes down because the Fed raises the real interest rate when inflation rises, which is the Taylor rule drawn as a curve.','A gap between output and Y* is what moves inflation, and either the gap closes itself slowly or the Fed closes it fast.'],850,270,21,46,Math.min(k+1,4));
-  if(k>=5)T(g,850,700,'Say owns the vertical line. Malthus owns the gap.',{'font-size':24,'font-weight':700,fill:C.green});
+  rbul(g,['Inflation on the vertical axis and output on the horizontal: Frank and Bernanke\'s diagram, which is how I taught principles.','> Some texts put the price level on that axis instead, as the two graphs before this one did; you may have seen it that way with Dr. Ssozi or Dr. Kelly.','> It is the same picture either way: the vertical line is the long run, the sloped line is demand, and the gap is the recession.','The vertical line at Y* is the freshwater long run, and the horizontal line is the saltwater short run.','AD slopes down because the Fed raises the real interest rate when inflation rises, which is the Taylor rule drawn as a curve.','A gap between output and Y* is what moves inflation, and either the gap closes itself slowly or the Fed closes it fast.'],850,262,20,48,Math.min(k+2,6));
+  if(k>=5)T(g,850,812,'Say owns the vertical line. Malthus owns the gap.',{'font-size':24,'font-weight':700,fill:C.green});
   sweep();});
 
 txt('Does the Fed lean one way?','A saltwater model under freshwater discipline',[
