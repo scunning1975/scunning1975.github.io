@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bastiat and Mill: Pure Versus Eclectic</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--cream:#FBFAF7;--green:#154734;--gold:#FFB81C;--golddeep:#C98F00;--ink:#1A1A1A;--warm:#6B7280;--brick:#9B2C2C;--pale:#D8D4CB;--earth:#8C7B6B;--mist:#EDE9DE}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--cream)}
+  body{cursor:pointer;user-select:none;-webkit-user-select:none}
+  #stage{position:fixed;inset:0;width:100vw;height:100vh;display:block}
+  svg text{font-family:"Fira Sans",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
+  svg text:not([fill]){fill:var(--ink)}
+  svg rect.bar{transition:x .6s cubic-bezier(.2,.8,.2,1),width .6s cubic-bezier(.2,.8,.2,1),y .6s cubic-bezier(.2,.8,.2,1),height .6s cubic-bezier(.2,.8,.2,1),opacity .4s}
+  .fade{transition:opacity .45s ease}
+  #help{position:fixed;left:16px;bottom:12px;font:13px "Fira Sans",sans-serif;color:var(--pale)}
+</style>
+</head>
+<body>
+<svg id="stage" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="1600" height="900" fill="#FBFAF7"/>
+  <text id="title" x="80" y="92" font-size="50" font-weight="700" fill="#154734" class="fade"></text>
+  <rect x="80" y="114" width="146" height="3" fill="#FFB81C"/>
+  <text id="sub" x="80" y="150" font-size="24" fill="#6B7280" class="fade"></text>
+  <g id="body"></g>
+  <text id="counter" x="1565" y="882" font-size="18" fill="#D8D4CB" text-anchor="end"></text>
+</svg>
+<div id="help">→ or click: next · ← or shift-click: back · End fills the scene · N next scene · F full screen · R restart</div>
+<script>
+(() => {
+const NS='http://www.w3.org/2000/svg';
+const C={green:'#154734',gold:'#FFB81C',golddeep:'#C98F00',ink:'#1A1A1A',warm:'#6B7280',brick:'#9B2C2C',pale:'#D8D4CB',earth:'#8C7B6B',mist:'#EDE9DE',cream:'#FBFAF7'};
+const $=id=>document.getElementById(id);
+const el=(tag,attrs,parent,text)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;(parent||$('body')).appendChild(e);return e;};
+const T=(g,x,y,s,a)=>el('text',Object.assign({x,y,'font-size':24,fill:C.ink},a||{}),g,s);
+const fmt=(v,d)=>v.toFixed(d==null?2:d);
+const pct=r=>Math.round(r*100)+'%';
+
+// ---------------- text helpers ----------------
+function note(g,text,y){const words=text.split(' ');let line='',lines=[];
+  for(const wd of words){if((line+' '+wd).length>120){lines.push(line);line=wd;}else line=line?line+' '+wd:wd;}
+  lines.push(line);lines.forEach((l,i)=>el('text',{x:80,y:(y||805)+i*30,'font-size':23,fill:C.ink},g,l));}
+function bullets(g,lines,y0,size,nshow){const fs=size||33,lh=Math.round(fs*1.3),gap=Math.round(fs*1.1),maxc=86;
+  // a line starting with '>' is a sub-bullet: indented, smaller, en dash
+  const items=lines.map(l=>l.startsWith('>')?{sub:true,t:l.slice(1).trim()}:{sub:false,t:l});
+  const wrapped=items.map(it=>{const mc=it.sub?maxc+8:maxc;const words=it.t.split(' ');let line='',rows=[];for(const wd of words){if((line+' '+wd).length>mc){rows.push(line);line=wd;}else line=line?line+' '+wd:wd;}rows.push(line);return rows;});
+  const lhOf=it=>it.sub?Math.round((fs-5)*1.3):lh;
+  const gapAfter=i=>(items[i+1]&&items[i+1].sub)?Math.round(gap*0.45):gap;
+  const H=wrapped.reduce((a,r,i)=>a+r.length*lhOf(items[i])+(i<wrapped.length-1?gapAfter(i):0),0);
+  let y=y0||Math.max(200,200+(640-H)/2)+fs; // vertically center the block in y=200..840
+  wrapped.forEach((rows,i)=>{const it=items[i];const f=it.sub?fs-5:fs;const op=(nshow!=null&&i>=nshow)?0:1;
+    el('text',{x:it.sub?150:90,y:y,'font-size':f,fill:it.sub?C.warm:C.gold,'font-weight':700,opacity:op},g,it.sub?'–':'•');
+    rows.forEach((r,k)=>el('text',{x:it.sub?185:130,y:y+k*lhOf(it),'font-size':f,fill:it.sub?C.warm:C.ink,opacity:op,class:'fade'},g,r));y+=rows.length*lhOf(it)+gapAfter(i);});}
+// animated rect with memory across scenes
+let bars={};const drawn={};
+function abar(g,key,x,y,w,h,fill,o){o=o||{};const rc=el('rect',Object.assign({class:'bar',fill,stroke:'#fff','stroke-width':1.5},o.attrs||{}),g);
+  const prev=bars[key];if(prev){rc.setAttribute('x',prev.x);rc.setAttribute('y',prev.y);rc.setAttribute('width',prev.w);rc.setAttribute('height',prev.h);}
+  else{rc.setAttribute('x',x);rc.setAttribute('y',y+h/2);rc.setAttribute('width',w);rc.setAttribute('height',0);}
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{rc.setAttribute('x',x);rc.setAttribute('y',y);rc.setAttribute('width',w);rc.setAttribute('height',h);}));
+  bars[key]={x,y,w,h};drawn[key]=1;
+  if(o.label!=null){const t=el('text',{x:x+w/2,y:y+h/2+(o.fs||22)/3,'font-size':o.fs||22,'font-weight':700,'text-anchor':'middle',fill:o.lc||'#fff',class:'fade',opacity:prev?1:0},g,o.label);if(!prev)setTimeout(()=>t.setAttribute('opacity',1),350);}
+  return rc;}
+function sweep(){for(const k in bars)if(!drawn[k])delete bars[k];for(const k in drawn)delete drawn[k];}
+
+// ---------------- generic staged table ----------------
+function tbl(g,o){ // {x,y,heads,rows,colW,show,fresh,fs,rowH,color(i,j),bold(i,j)}
+  const fs=o.fs||22,rowH=o.rowH||48;let cx=o.x;const xs=[];
+  for(let j=0;j<o.heads.length;j++){xs.push(cx+o.colW[j]/2);cx+=o.colW[j];}
+  o.heads.forEach((h,j)=>{const on=!o.show||o.show[j];const lines=String(h).split('\n');lines.forEach((ln,q)=>el('text',{x:xs[j],y:o.y-(lines.length-1-q)*20,'font-size':17,'text-anchor':'middle',fill:on?C.warm:C.pale},g,ln));});
+  el('line',{x1:o.x,y1:o.y+12,x2:cx,y2:o.y+12,stroke:C.pale,'stroke-width':2},g);
+  o.rows.forEach((row,i)=>{const y=o.y+rowH*(i+1)+10;
+    if(o.hl&&o.hl.includes(i))el('rect',{x:o.x-8,y:y-32,width:cx-o.x+16,height:rowH,fill:'#FFF3CF',rx:6},g);
+    row.forEach((v,j)=>{if(o.show&&!o.show[j])return;const fresh=o.fresh===j;
+      const t=el('text',{x:xs[j],y,'font-size':fs,'text-anchor':'middle',fill:(o.color&&o.color(i,j))||C.ink,'font-weight':(o.bold&&o.bold(i,j))?700:400,class:'fade',opacity:fresh?0:1},g,v);
+      if(fresh)setTimeout(()=>t.setAttribute('opacity',1),30);});});
+  return {right:cx,bottom:o.y+rowH*(o.rows.length+1)+10};}
+
+// ---------------- model 1: hunters ----------------
+function hunt(g,k,bv,dr,factor,o){ // bv beaver days, dr deer days, factor = productivity change in deer hunting at stage 2
+  const unit=300,X=420;const deer=k>=2?dr/factor:dr;
+  const row=(key,y,name,days,fill)=>{T(g,110,y+40,name,{'font-size':28,'font-weight':500});
+    abar(g,key,X,y,days*unit-6,60,fill,{label:(+days.toFixed(2))+(days===1?' day':' days'),lc:'#fff'});};
+  row('bv',230,'One beaver',bv,C.earth);row('dr',330,'One deer',deer,C.gold);
+  if(k>=1){const ratio=bv/deer;T(g,110,500,'1 beaver  =  '+(+ratio.toFixed(2))+' deer',{'font-size':48,'font-weight':700,fill:C.green});
+    T(g,110,548,'The exchange ratio is the ratio of the labor it takes to get each one.',{fill:C.warm});}
+  if(k>=2){T(g,110,630,(o&&o.cause)||'The hunters learn to mask their scent. No new tool, no one else\'s labor: a skill.',{'font-size':26});T(g,110,672,'Deer hunting gets '+factor+'× as productive. A deer now takes '+(+deer.toFixed(2))+(deer===1?' day.':' days.'),{'font-size':26,fill:C.green,'font-weight':500});}
+  if(k>=3)note(g,o&&o.note||'Hunters are richer: '+factor+'× the deer for the same work. And each deer is worth less, because less labor is in it. Riches rose, value fell. “Every diminution must lower it.” (HL p. 99)',735);
+  sweep();}
+
+// ---------------- model 1b: the stockings stack ----------------
+function stack(g,k,layers){const X=200,W=260,B=680,px=44;let y=B,sum=0;
+  layers.forEach((L,i)=>{if(i>k)return;const h=L.h*px;y-=h;sum+=L.h;abar(g,'st'+i,X,y,W,h,L.c,{label:L.h+' h',fs:20,lc:L.dark?C.ink:'#fff'});
+    T(g,X+W+24,y+h/2+8,L.name,{'font-size':24,fill:i===k?C.ink:C.warm,'font-weight':i===k?500:400});});
+  el('line',{x1:X-20,y1:B,x2:X+W+20,y2:B,stroke:C.ink,'stroke-width':2},g);
+  T(g,X+W/2,B+34,'one pair of stockings',{'text-anchor':'middle',fill:C.warm,'font-size':20});
+  T(g,1000,300,'labor embodied so far',{fill:C.warm,'font-size':20});T(g,1000,370,sum+' hours',{'font-size':54,'font-weight':700,fill:C.green});
+  if(k>=layers.length-1){T(g,1000,450,'The stockings exchange for anything else',{'font-size':24});T(g,1000,486,'that took '+sum+' hours, the loom\'s share included.',{'font-size':24});
+    note(g,'“The aggregate sum of these various kinds of labour determines the quantity of other things for which these stockings will exchange.” A loom is “so much partly produced cloth.” (HL p. 102)',770);}
+  sweep();}
+
+// ---------------- model 2: the day's product in hours ----------------
+function split(g,k,L,Lw,o){const X=110,W=1380,Y=300,H=130,px=W/L;const Lp=L-Lw;
+  T(g,X,Y-22,'the day\'s product: '+o.n+' workers × '+(L/o.n)+' hours  =  '+L+' hours of value',{fill:C.warm,'font-size':22});
+  el('rect',{x:X,y:Y,width:W,height:H,fill:'none',stroke:C.ink,'stroke-width':2},g);
+  if(k>=1){abar(g,'w',X,Y,Lw*px,H,C.earth,{label:'wages '+Lw,fs:30});
+    T(g,X,Y+H+40,'the necessaries of '+o.n+' workers took '+Lw+' hours to make: '+o.n+' baskets × '+(Lw/o.n)+' hours each',{'font-size':22});}
+  if(k>=2){abar(g,'p',X+Lw*px,Y,Lp*px,H,C.green,{label:'profit '+Lp,fs:30});
+    T(g,X,Y+H+78,'what is left after the necessaries are replaced goes to the capitalist: '+Lp+' hours',{'font-size':22});}
+  if(k>=3){T(g,X,560,'r  =  '+Lp+' ÷ '+Lw+'  =  '+fmt(Lp/Lw),{'font-size':40,'font-weight':700,fill:C.green});
+    T(g,X,600,'r is the rate of profit: profit divided by the wages the capitalist advanced. He laid out '+Lw+' hours of goods and got back '+L+'. The same r as the corn model.',{'font-size':21,fill:C.ink});}
+  if(o.echo&&(k>=4||o.opener))T(g,X,o.opener?580:640,o.echo,{fill:C.warm,'font-size':22});
+  if(k>=(o.echo?5:4)&&o.note)note(g,o.note,735);
+  sweep();}
+
+// ---------------- model 3: time-dated labor, two goods ----------------
+function timing(g,k,A,Bn,Bl,rs,o){ // steps 0-3 build the picture at rs[0]; later steps change r
+  const INTRO=4;const ri=k<INTRO?0:Math.min(k-INTRO,rs.length-1);const r=rs[ri],w=o.w||1,X=110,unit=22,LINE=X+520;
+  const yr=(x,y,h,fill,key,lab)=>abar(g,key,x,y,h*unit,56,fill,{label:lab,fs:20});
+  T(g,X,235,'last year',{fill:C.warm,'font-size':20});T(g,X+560,235,'this year',{fill:C.warm,'font-size':20});
+  el('line',{x1:LINE,y1:220,x2:LINE,y2:420,stroke:C.pale,'stroke-width':2,'stroke-dasharray':'6 5'},g);
+  T(g,X+820,275,'Good A',{'font-size':26,'font-weight':500});yr(X+560,250,A,C.earth,'A0',A+' hours');
+  if(k>=1){T(g,X+820,355,'Good B',{'font-size':26,'font-weight':500});yr(LINE-12-Bl*unit,330,Bl,C.gold,'B1',Bl+' hours');yr(X+560,330,Bn,C.earth,'B0',Bn+' hours');}
+  if(k>=2)T(g,X,470,'r = '+pct(r),{'font-size':44,'font-weight':700,fill:C.green});
+  const pA=w*(1+r)*A, pB=w*(1+r)*(Bn+Bl*(1+r));
+  const f=(1+r).toFixed(2);
+  const rows=[['A',A,`${w} × ${f} × ${A}`,fmt(pA)],['B',Bn+Bl,`${w} × ${f} × (${Bn} + ${Bl} × ${f})`,fmt(pB)]];
+  if(k>=2)tbl(g,{x:X+300,y:470,heads:['good','labor (hours)','price = w(1+r) × [now + last year × (1+r)]','price'],colW:[90,150,620,140],rows:k>=3?rows:rows.slice(0,1),fs:24,rowH:52,color:(i,j)=>j===3?C.green:C.ink,bold:(i,j)=>j===3});
+  if(k>=INTRO){T(g,X+300,650,'price of B ÷ price of A  =  '+fmt(pB/pA),{'font-size':34,'font-weight':700,fill:ri===0?C.green:C.brick});
+    T(g,X+300,690,'labor in B ÷ labor in A  =  '+fmt((Bn+Bl)/A),{'font-size':24,fill:C.warm});}
+  const intro=['Good A: ten hours of labor, all of it this year.','Good B: the same ten hours, but five of them were done last year, on a tool that is used up now.','Start with no charge for waiting: r = 0. Price A.','Price B the same way. Last year\'s hours get multiplied by (1 + r) once more, which at r = 0 changes nothing.'];
+  if(k<INTRO)note(g,intro[k],745);else if(o.notes&&o.notes[ri])note(g,o.notes[ri],745);
+  sweep();}
+
+// ---------------- compounding stair ----------------
+function stair(g,k){const vals=[100,110,121,133.10,146.41],adds=['','+ 10','+ 11','+ 12.10','+ 13.31'],labs=['wage paid, year 1','end of year 1','end of year 2','end of year 3','end of year 4: sold'];
+  const X=140,B=700,px=3.4,bw=200,gap=70;
+  vals.forEach((v,i)=>{if(i>k)return;const h=v*px,x=X+i*(bw+gap);abar(g,'sr'+i,x,B-h,bw,h,i===0?C.earth:C.green,{label:'$'+fmt(v),fs:26});
+    T(g,x+bw/2,B+32,labs[i],{'text-anchor':'middle','font-size':18,fill:C.warm});if(i>0)T(g,x+bw/2,B-h-14,adds[i],{'text-anchor':'middle','font-size':22,fill:C.golddeep,'font-weight':700});});
+  if(k>=4)note(g,'$100 of wages paid four years before the sale must be worth $146.41 in the price: $100 to repay the wage and $46.41 of profit for having $100 tied up for four years at 10 percent. Two years tied up would add only $21. (HL pp. 107–108)',765);
+  sweep();}
+
+// ---------------- Figure 5.7: x and y as time-dated labor ----------------
+function fig57(g,k){const X=200,unit=0.85,bw=130,gap=60,B0=390,B1=700;
+  const yrs=['4 years ago','3 years ago','2 years ago','last year','this year'];
+  yrs.forEach((s,i)=>T(g,X+i*(bw+gap)+bw/2,738,s,{'text-anchor':'middle','font-size':18,fill:C.warm}));
+  const good=(key,base,labs,name,fill)=>{T(g,X-120,base-40,name,{'font-size':30,'font-weight':700,fill:C.green});
+    labs.forEach((h,i)=>{if(h==null)return;abar(g,key+i,X+i*(bw+gap),base-h*unit,bw,h*unit,fill,{label:h,fs:22});});};
+  good('x',B0,[75,75,75,75,100],'x',C.earth);
+  if(k>=1)good('y',B1,[null,null,50,50,300],'y',C.gold);
+  T(g,1130,300,'x: 400 hours over five years',{'font-size':24});T(g,1130,336,'100 now, 75 in each of four past years',{'font-size':20,fill:C.warm});
+  if(k>=1){T(g,1130,560,'y: 400 hours over three years',{'font-size':24});T(g,1130,596,'300 now, 50 in each of two past years',{'font-size':20,fill:C.warm});
+    note(g,'Same labor in each, 400 hours per 100 units. The difference is only when the labor was done. x has more past labor and a longer wait, which Ricardo would call more fixed capital, more durable capital, or slower turnover. HL p. 106: all three are the same thing. (Figure 5.7, p. 109)',775);}
+  sweep();}
+
+// ---------------- Tables 5.1 and 5.2 ----------------
+function table5(g,k,o){const show=[true,true,k>=1,k>=2,k>=3,k>=4];
+  const heads=['','A\nlabor cost\n(now × w)','B\nmachinery\n(past labor, compounded)','C\nprofit\nr × (A + B)','D\ntotal\nA + B + C','E\nprice per unit\nD ÷ 100'];
+  const t=tbl(g,{x:120,y:300,heads,rows:o.rows,colW:[120,220,300,240,240,240],show,fresh:k,fs:28,rowH:70,color:(i,j)=>j===5?C.green:C.ink,bold:(i,j)=>j===5});
+  T(g,120,230,'wage w = $'+o.w+'   ·   profit rate r = '+o.r+'   ·   400 hours in each good',{'font-size':24,fill:C.warm});
+  if(k>=4){T(g,120,560,'price of x ÷ price of y  =  '+o.ratio,{'font-size':40,'font-weight':700,fill:C.green});if(o.extra)T(g,120,610,o.extra,{'font-size':24,fill:C.brick});}
+  if(k>=4&&o.note)note(g,o.note,735);}
+
+
+// ---------------- scenes ----------------
+const S=[];
+const txt=(title,sub,lines,extra)=>S.push({title,sub,stages:lines.length,draw:(g,k)=>{bullets(g,lines,null,null,k+1);if(extra)extra(g);}});
+const scene=(title,sub,n,draw)=>S.push({title,sub,stages:n,draw});
+
+function cols2(g,k,o){const wrap=(t,mc)=>{const w=t.split(' ');let l='',out=[];for(const x of w){if((l+' '+x).length>mc){out.push(l);l=x;}else l=l?l+' '+x:x;}out.push(l);return out;};
+  const XL=o.xl||110,XM=o.xm||560,XR=o.xr||880,fs=o.fs||22,lh=Math.round(fs*1.3);
+  T(g,XM,232,o.hl,{'font-size':18,fill:C.warm});T(g,XR,232,o.hr,{'font-size':18,fill:C.warm});
+  el('line',{x1:XL-10,y1:246,x2:1520,y2:246,stroke:C.pale,'stroke-width':2},g);
+  let y=290;o.rows.slice(0,Math.min(k+1,o.rows.length)).forEach(([lab,a,b])=>{const la=wrap(a,o.mcl||32),lb=wrap(b,o.mcr||50);const n=Math.max(la.length,lb.length);
+    T(g,XL,y,lab,{'font-size':fs-2,'font-weight':700,fill:C.ink});la.forEach((ln,q)=>T(g,XM,y+q*lh,ln,{'font-size':fs,fill:C.brick}));lb.forEach((ln,q)=>T(g,XR,y+q*lh,ln,{'font-size':fs,fill:C.green}));y+=n*lh+16;});
+  el('line',{x1:XR-30,y1:252,x2:XR-30,y2:Math.max(260,y-24),stroke:C.pale,'stroke-width':2},g);return y;}
+
+function rbul(g,lines,x,y,fs,mc,nshow){const wrap=(t,m)=>{const w=t.split(' ');let l='',out=[];for(const z of w){if((l+' '+z).length>m){out.push(l);l=z;}else l=l?l+' '+z:z;}out.push(l);return out;};
+  lines.forEach((t0,i)=>{if(nshow!=null&&i>=nshow)return;const sub=t0.startsWith('>');const t=sub?t0.slice(1).trim():t0;const f=sub?fs-4:fs,lh=Math.round(f*1.3);const rows=wrap(t,sub?mc+6:mc);const xx=sub?x+34:x;
+    el('text',{x:xx-26,y,'font-size':f,fill:sub?C.warm:C.gold,'font-weight':700},g,sub?'–':'•');rows.forEach((r,q)=>el('text',{x:xx,y:y+q*lh,'font-size':f,fill:sub?C.warm:C.ink,class:'fade'},g,r));
+    const nextSub=lines[i+1]&&lines[i+1].startsWith('>');y+=rows.length*lh+Math.round(f*(nextSub?0.4:0.9));});}
+
+
+// ---------------- flowchart helper ----------------
+function flow(g,o){const N={};o.nodes.forEach((n,i)=>{N[n.id]=n;if(o.showN!=null&&i>=o.showN)return;el('rect',{x:n.x,y:n.y,width:n.w,height:n.h,rx:10,fill:n.fill||C.mist,stroke:n.stroke||'none','stroke-width':2},g);
+    const lines=String(n.t).split('\n');const top=n.sub?n.y+30:n.y+n.h/2+8-(lines.length-1)*13;lines.forEach((ln,q)=>T(g,n.x+n.w/2,top+q*26,ln,{'text-anchor':'middle','font-size':n.fs||21,'font-weight':700,fill:n.fg||C.ink}));
+    if(n.sub){n.sub.split('\n').forEach((ln,q)=>T(g,n.x+n.w/2,n.y+56+q*20,ln,{'text-anchor':'middle','font-size':16,fill:n.fg?n.fg:C.warm}));}});
+  o.edges.forEach((e,i)=>{if(o.showE!=null&&i>=o.showE)return;const a=N[e[0]],b=N[e[1]];if(!a||!b)return;const ax=a.x+a.w/2,ay=a.y+a.h/2,bx=b.x+b.w/2,by=b.y+b.h/2;
+    const clip=(n,cx,cy,dx,dy)=>{const tx=dx!==0?(n.w/2)/Math.abs(dx):1e9,ty=dy!==0?(n.h/2)/Math.abs(dy):1e9;const t=Math.min(tx,ty);return [cx+dx*t,cy+dy*t];};
+    const dx=bx-ax,dy=by-ay;const [x1,y1]=clip(a,ax,ay,dx,dy);const [x2,y2]=clip(b,bx,by,-dx,-dy);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L;const ex=x2-ux*10,ey=y2-uy*10;const col=e[3]||C.warm;
+    el('line',{x1,y1,x2:ex,y2:ey,stroke:col,'stroke-width':3,'stroke-dasharray':e[4]||null},g);
+    el('polygon',{points:`${x2},${y2} ${ex-uy*7},${ey+ux*7} ${ex+uy*7},${ey-ux*7}`,fill:col},g);
+    if(e[2])T(g,(x1+x2)/2+(e[5]||0),(y1+y2)/2+(e[6]||-8),e[2],{'text-anchor':'middle','font-size':16,fill:col});});}
+
+
+// ---------------- scenes: Bastiat and Mill ----------------
+// cover
+S.push({title:'',sub:'',draw:g=>{
+  el('rect',{x:0,y:0,width:1600,height:900,fill:C.green},g);
+  el('rect',{x:120,y:268,width:110,height:8,fill:C.gold},g);
+  T(g,120,380,'Bastiat and Mill',{'font-size':92,'font-weight':700,fill:C.cream});
+  T(g,120,452,'Pure versus eclectic: where property came from, and what it earns',{'font-size':40,fill:C.gold});
+  T(g,120,575,'Scott Cunningham  ·  History of Economic Thought  ·  Baylor University',{'font-size':36,fill:C.cream});
+  T(g,120,625,'ECO 4343/5343  ·  Hunt & Lautzenheiser ch. 8, pp. 174–200',{'font-size':30,fill:C.cream,opacity:0.62});
+  T(g,120,705,'Two books: Mill\'s Principles, 1848, and Bastiat\'s Economic Harmonies, 1850',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,745,'One keeps both theories of value and hesitates; the other keeps one and never doubts',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,845,'who-gets-paid.pages.dev',{'font-size':32,'font-weight':700,fill:C.gold});
+}});
+
+// 1 two streams
+scene('Two streams out of Smith, and where they are by 1850','The spine, as a map',6,(g,k)=>{
+  const nodes=[
+   {id:'smith',x:620,y:200,w:360,h:72,t:'Smith, 1776',sub:'invisible hand, and a government for the rich',fill:C.pale},
+   {id:'ric',x:180,y:330,w:330,h:64,t:'Ricardo, 1817',sub:'value is labor; profit a deduction',fill:'#F3D9D9'},
+   {id:'ben',x:1090,y:330,w:330,h:64,t:'Bentham, 1780 / 1801',sub:'value is utility; the chest',fill:'#DCEBDD'},
+   {id:'hod',x:180,y:450,w:330,h:64,t:'Hodgskin, Thompson, 1820s',sub:'labor is the only real cost',fill:'#F3D9D9'},
+   {id:'say',x:1090,y:450,w:330,h:64,t:'Say, 1803 · Senior, 1836',sub:'coequal agencies; abstinence',fill:'#DCEBDD'},
+   {id:'marx',x:180,y:570,w:330,h:64,t:'Marx, 1867',sub:'exploitation, crisis',fill:'#F3D9D9'},
+   {id:'bas',x:1090,y:570,w:330,h:64,t:'Bastiat, 1850',sub:'“exchange is political economy”',fill:'#DCEBDD'},
+   {id:'mill',x:620,y:690,w:360,h:72,t:'Mill, 1848',sub:'production laws fixed; distribution chosen',fill:C.gold,fg:C.ink}];
+  const edges=[['smith','ric'],['smith','ben'],['ric','hod'],['ben','say'],['hod','marx'],['say','bas'],['ric','mill','',C.brick,'6 5'],['say','mill','',C.green,'6 5']];
+  flow(g,{nodes,edges,showN:Math.min(k+3,8),showE:k>=5?8:Math.min(k+1,6)});
+  T(g,345,310,'production: conflict',{'text-anchor':'middle','font-size':19,fill:C.brick,'font-weight':700});T(g,1255,310,'exchange: harmony',{'text-anchor':'middle','font-size':19,fill:C.green,'font-weight':700});
+  if(k>=5)note(g,'Bastiat is the exchange stream with nothing left to concede. Mill drinks from both and says so. HL p. 186: they are “the first two clear representatives of a polar bifurcation of utilitarian economics,” Bastiat toward Austria and Chicago, Mill toward Marshall and liberal reform.',800);
+  sweep();});
+
+// 2 1848 and 1850
+txt('1848 and 1850: two books against a rising tide','HL pp. 174–176',[
+ 'Socialist ideas spread fastest in France in the 1830s and 1840s: Saint-Simon\'s planners, Fourier\'s cooperatives, and Proudhon\'s “Property is theft.”',
+ 'Fourier saw that competition ends in monopoly, “feudalism in an inverse order, founded on mercantile leagues” (p. 176).',
+ 'Mill\'s Principles, 1848, is “the last great effort to retain both the utility and labor perspectives within the same body of economic doctrines” (p. 175).',
+ 'Bastiat\'s Economic Harmonies, 1850, is “pure economic utilitarianism pushed to its logical conclusions” (p. 175).']);
+
+// ===== BASTIAT =====
+txt('Frédéric Bastiat, 1801–1850: who he was','A provincial landowner who became France\'s best economic pamphleteer',[
+ 'Born in Bayonne, orphaned young, and left to run the family estate at Mugron in the southwest, where he read economics for twenty years.',
+ 'Cobden\'s Anti-Corn Law League woke him up in 1844; he wrote for the Journal des économistes and founded a French free-trade association.',
+ 'Economic Sophisms, 1845–48, made him famous: the candlemakers petitioning against the sun, and the broken window of “what is seen and what is not seen.”',
+ 'Elected to the Assembly in 1848, he wrote Economic Harmonies against the socialists and died of tuberculosis in Rome in December 1850.']);
+
+txt('The Bastiat you may already know','Two sophisms, outside HL, worth two minutes',[
+ 'The candlemakers petition the Chamber to shut out the sun, an unfair competitor who sells light at zero, so that every French industry may prosper from the demand for candles.',
+ 'The broken window: the glazier\'s trade is what is seen; the shoes the shopkeeper would have bought are what is not seen, so breaking windows makes nobody richer.',
+ 'Both are opportunity-cost arguments, and both are harmony as comedy: the policy that helps one trade is paid for by everyone else.',
+ 'Keep the method in mind, because in the Harmonies he forgets to ask who pays for property.']);
+
+txt('Bastiat\'s method: science, and then God','HL p. 177',[
+ '“Socialism, like astrology and alchemy, proceeds by way of imagination; political economy, like astronomy and chemistry, proceeds by way of observation.”',
+ 'His scientists are Say and Senior; his astrologer is Proudhon.',
+ '“It would be absurd for an atheist to say: Laissez faire! ... But we, who are believers have the right to cry: Laissez passer! Let God\'s order and justice prevail.”',
+ 'HL\'s point for the whole chapter: when the observations run out, he reaches for Providence, and the reach marks the spot.']);
+
+scene('The syllogism: all of utilitarian economics in three lines','HL p. 178',5,(g,k)=>{
+  const L=[['1','All exchanges are mutually beneficial to all parties.'],['2','All human interactions can be reduced to exchanges.'],['∴','All human interactions are beneficial to all parties.']];
+  L.slice(0,Math.min(k+1,3)).forEach(([n,t],i)=>{el('rect',{x:120,y:215+i*100,width:1360,height:76,rx:10,fill:i===2?C.gold:C.mist},g);T(g,160,263+i*100,n,{'font-size':34,'font-weight':700,fill:i===2?C.ink:C.green});T(g,230,263+i*100,t,{'font-size':28,fill:C.ink});});
+  if(k>=3)bullets(g,['Premise 1 needs the initial distribution taken as given: Condillac, quoted with approval, “every exchange represents two gains for humanity.”','Premise 2 is the move Smith never made and Ricardo refused: “Exchange is political economy ... it is society itself.”'],560,25,Math.min(k-2,2));
+  if(k>=4)note(g,'HL p. 178: Smith gave exchange a few dozen of a thousand pages; Ricardo defined the subject as distribution among three classes. With Bastiat the invisible hand “had become the whole of political economy. The sanitizing job was complete.”',760);
+  sweep();});
+
+scene('Premise 1, with numbers, and what it hides','Gains from exchange are real; the question is who walked in with what',5,(g,k)=>{
+  const X=120,Y=230;
+  if(k>=0){T(g,X,Y+20,'A buyer values a coat at 10; a seller made it for 4.',{'font-size':26,fill:C.ink});}
+  if(k>=1){el('line',{x1:X,y1:Y+90,x2:X+1200,y2:Y+90,stroke:C.ink,'stroke-width':2},g);[0,4,7,10].forEach(v=>{const x=X+v*120;el('line',{x1:x,y1:Y+80,x2:x,y2:Y+100,stroke:C.ink,'stroke-width':2},g);T(g,x,Y+130,String(v),{'text-anchor':'middle','font-size':22,fill:C.warm});});
+    el('rect',{x:X+4*120,y:Y+50,width:3*120,height:30,fill:C.earth},g);T(g,X+5.5*120,Y+72,'seller gains 3',{'text-anchor':'middle','font-size':18,fill:C.cream});el('rect',{x:X+7*120,y:Y+50,width:3*120,height:30,fill:C.green},g);T(g,X+8.5*120,Y+72,'buyer gains 3',{'text-anchor':'middle','font-size':18,fill:C.cream});T(g,X+7*120,Y+40,'price 7',{'text-anchor':'middle','font-size':20,'font-weight':700,fill:C.brick});}
+  bullets(g,['At any price between 4 and 10 both gain, and the sum of the gains is 6 whatever the price: this is the part that is true.','Which price, and so who gets how much of the 6, the exchange does not say; bargaining does.','Whether the buyer has 10 to spend, and whether the seller owns the cloth, were settled before the exchange began.','So the syllogism proves that trading from a given starting point helps both traders, and nothing about the starting point.'],430,25,Math.min(k,4));
+  sweep();});
+
+scene('Where the syllogism goes: the welfare theorems','Bastiat in 1850 has the first theorem without the fine print, and no second theorem at all',7,(g,k)=>{
+  const nodes=[
+   {id:'p1',x:90,y:200,w:400,h:70,t:'“every exchange is two gains”',sub:'Bastiat, 1850',fill:'#DCEBDD'},
+   {id:'fwt',x:90,y:330,w:400,h:84,t:'First Welfare Theorem',sub:'a competitive equilibrium is Pareto\nefficient (Arrow, Debreu, 1951–54)',fill:C.mist},
+   {id:'p2',x:600,y:200,w:400,h:70,t:'“all interactions are exchanges”',sub:'premise 2',fill:'#DCEBDD'},
+   {id:'fail',x:600,y:330,w:400,h:84,t:'the fine print',sub:'no externalities, no public goods,\nno market power, complete markets',fill:'#F3D9D9'},
+   {id:'pub',x:600,y:470,w:400,h:84,t:'Public economics',sub:'Pigou 1920, Samuelson 1954,\nCoase 1960: what to do when it fails',fill:C.mist},
+   {id:'end',x:1110,y:200,w:400,h:70,t:'“given the endowments”',sub:'the premise he never states',fill:'#DCEBDD'},
+   {id:'swt',x:1110,y:330,w:400,h:84,t:'Second Welfare Theorem',sub:'any efficient allocation is a market\noutcome after lump-sum transfers',fill:C.mist},
+   {id:'red',x:1110,y:470,w:400,h:84,t:'Redistribute first, trade after',sub:'Mill\'s inheritance cap, p. 197;\nthe modern case for transfers',fill:C.gold,fg:C.ink}];
+  const edges=[['p1','fwt'],['p2','fail'],['fail','pub'],['end','swt'],['swt','red']];
+  flow(g,{nodes,edges,showN:[1,2,3,4,5,8,8][Math.min(k,6)],showE:[0,1,2,3,3,5,5][Math.min(k,6)]});
+  if(k>=6)note(g,'Public economics is the study of premise 2 failing: the bribe-for-legislation exchange on p. 184 has a third party, the public, who pays. The second theorem is what Mill reaches for and Bastiat forbids: fix the endowments, then let the exchanges run.',640);
+  sweep();});
+
+txt('Two utilities, and the service that never hurts','HL pp. 179–181',[
+ 'Gratuitous utility comes from Providence at no cost, water; onerous utility “insists on being purchased through effort,” diamonds, and only the second is priced.',
+ 'A service is “effort on the part of one man, whereas the want and the satisfaction are another\'s,” and effort is pain, so every price pays for pain.',
+ 'Then money “rendered an important service” by easing exchange, and its owner collects interest, with no pain anywhere in sight (p. 180).',
+ 'HL\'s rule: “a thinker\'s inconsistencies are often the most fruitful indication of the thinker\'s class bias,” because the bias is more consistent than the logic.',
+ '> Value runs “from the service to the material value,” the reverse of the marginalists, who will run it from the buyer\'s utility back to the inputs.',
+ '> He never says how utility fixes the value of a service; that theory waited until the 1870s, “after Marx.”']);
+
+txt('Property before law','HL pp. 181–182',[
+ '“Property does not exist because there are laws, but laws exist because there is property.”',
+ '“Man is born a proprietor ... property is nothing but an extension of the faculties ... divinely instituted.”',
+ 'To men of property: all you hold “has been compensation for mental and physical effort, for sweat and toil expended, for dangers faced ... for services rendered and received.”',
+ 'HL\'s reply through Hodgskin: granted that tools are extensions of a man\'s faculties, why are nearly all of them owned by men who do not use them?']);
+
+scene('The distribution law, and the arithmetic it skipped','HL p. 185: “As capital increases, the capitalists\' absolute share increases while their relative share decreases”',5,(g,k)=>{
+  const rows=[['capital K','100','300'],['rate of profit r','10%','8%'],['profit rK','10','24'],['output Y','200','300'],['capital\'s share rK ÷ Y','5%','8%']];
+  tbl(g,{x:200,y:215,heads:['','year 1','year 2'],rows:rows.slice(0,Math.min(k+1,5)),colW:[480,300,300],fs:27,rowH:62,hl:k>=4?[4]:[],bold:(i,j)=>i===4,color:(i,j)=>i===4&&j>0?C.brick:null});
+  if(k>=4)bullets(g,['His whole proof is that “the more plentiful capital is, the lower its interest rate,” and the rate did fall.','The share rose anyway, because capital tripled while the rate fell a fifth: the claim needs r to fall faster than K grows, and he never shows it.','Piketty\'s r > g is this law tested over two centuries, and the share has gone both ways.'],600,25,3);
+  sweep();});
+
+txt('Government: the one exchange he would not look at','HL p. 184',[
+ 'The state should keep to “the maintenance of liberty, property, and individual rights,” since government is the main source of barriers to competition.',
+ 'He never asks why governments create monopolies, and his own theory answers: a monopoly is more profitable, so a bribe for legislation is an exchange with two gains.',
+ 'Premise 2 fails here, because that exchange has a third party, the public, who pays and did not consent.',
+ '“Men\'s interests are harmonious; therefore, the answer lies entirely in this one word: freedom” (p. 185), where freedom includes the worker\'s freedom to starve or to sell.']);
+
+// ===== MILL =====
+txt('John Stuart Mill, 1806–1873: who he was','The most educated child in England, and the one classical who changed his mind in print',[
+ 'Taught by his father James Mill, Bentham\'s lieutenant, from age three: Greek at three, Latin at eight, political economy at thirteen, and a breakdown at twenty.',
+ 'Thirty-five years at the East India Company\'s London office, writing on the side: the System of Logic, 1843, and the Principles, 1848, which ran to seven editions.',
+ 'Harriet Taylor, whom he married in 1851, pushed the Principles leftward with every edition, and On Liberty, 1859, and The Subjection of Women, 1869, followed.',
+ 'A member of Parliament, 1865–68, who proposed votes for women; he died in Avignon in 1873, having recanted his own wages fund in 1869.']);
+
+txt('Production laws are physical; distribution laws are chosen','HL p. 186',[
+ '“The production of wealth ... is evidently not an arbitrary thing. It has necessary conditions.”',
+ '“Unlike the laws of Production, those of Distribution are partly of human institution.”',
+ 'Property is not God\'s or nature\'s but “wholly a question of general expediency. When private property [is] not expedient, it [is] unjust.”',
+ '“Exchange is not the fundamental law of the distribution of produce, no more than roads and carriages are the essential laws of motion” (p. 187), the direct answer to Bastiat.']);
+
+scene('Can distribution be read off production?','Y = K^(1/3) L^(2/3); K = 8, L = 27, so Y = 18',5,(g,k)=>{
+  const rows=[['marginal product of capital','(1/3)·Y/K = 0.75','pays capital 0.75 × 8 = 6'],['marginal product of labor','(2/3)·Y/L = 0.44','pays labor 0.44 × 27 = 12'],['sum','6 + 12 = 18 = Y','the product is exactly used up (Euler)']];
+  tbl(g,{x:120,y:215,heads:['Say, Clark: pay each factor its marginal product','','so'],rows:rows.slice(0,Math.min(k+1,3)),colW:[480,360,560],fs:24,rowH:62,bold:(i,j)=>i===2});
+  if(k>=3)bullets(g,['Under constant returns the production function alone fixes the split, one third to capital, two thirds to labor: distribution is derived.','Mill: the same 18 can be split 6 and 12, or 2 and 16, or 9 and 9, and the function does not object; the split is a law of institution, set by property and bargaining.','That is the whole dispute in one function: whether F(K, L) tells you who gets paid.'],500,25,Math.min(k-2,3));
+  sweep();});
+
+txt('Mill against Bentham: two axioms refused','HL p. 187',[
+ 'Bentham\'s axioms: all motives are self-interest, and each person is the sole judge of his own pleasures, so “pushpin is as good as poetry.”',
+ 'Mill: people act from self-interest because a competitive society made them so, and a better society might act from “nobler” motives.',
+ 'And “some kinds of pleasure are more desirable and more valuable than others”: “better to be a Socrates dissatisfied than a fool satisfied.”',
+ 'HL: that one sentence “utterly destroys the basis” of every normative argument from exchange, Bastiat\'s included, because now someone other than the chooser can judge the choice.']);
+
+txt('Mill on value: Ricardo for a page, then Smith','HL pp. 188–190',[
+ 'He opens with Ricardo: cost “is resolvable into labour,” and value “depends principally (we shall presently see whether it depends solely) on the quantity of labour.”',
+ 'Then wine and cloth, equal labor and different timing, and “all commodities made by machinery are assimilated to the wine”: Level 3 again, and he will not call it small.',
+ 'So he reverts to Smith\'s adding-up price: natural price = the price of land + the price of labor + the price of capital.',
+ 'Value means exchange value only; he dismisses Ricardo\'s invariable measure as impossible and beside the point.']);
+
+scene('Two theories of profit, nine pages apart in one book','HL p. 189',5,(g,k)=>{
+  cols2(g,k,{hl:'profit as a residual (Ricardo)',hr:'profit as a price (Smith, Senior)',xl:100,xm:300,xr:900,mcl:46,mcr:46,fs:21,rows:[
+   ['the sentence','“The cause of profit is, that labour produces more than is required for its support.”','“the profits of the capitalist are properly, according to Mr. Senior\'s well-chosen expression, the remuneration of abstinence”'],
+   ['where it comes from','“not from the incident of exchange, but from the productive power of labour”','exchange: a payment for abstinence, risk, and superintendence, with a minimum rate below which capital stops'],
+   ['the corn model','100 hours, 70 to the basket, 30 is what is left','price = w + r·K + rent, each a price of a service'],
+   ['test: wages rise','profit falls, and the capital-heavy good gets cheaper (Tables 5.1–5.2)','every price rises, as Smith said and Ricardo refuted']]});
+  if(k>=4)note(g,'HL: the second view “dominated Mill\'s Principles.” The numbers can match, 70 and 30 either way; what differs is whether the 30 was taken out of something or paid for something. Which Mill wrote the book is a fair exam question.',740);
+  sweep();});
+
+scene('Wages: the fund in 1848, the fight in 1869','HL pp. 191–192',5,(g,k)=>{
+  const rows=[['1848, the Principles','w = F ÷ N: “the demand for labour is constituted solely by the funds directly set apart for the use of labourers”','700 ÷ 10 = 70, and a strike cannot change F'],['1869, the Thornton review','the fund is what profit leaves after the capitalists\' own maintenance, and the wage is set by struggle: “the additional payment comes out of his own income”','w = w₀ + β(Y − w₀ − c): Y 100, w₀ 50, c 20'],['weak unions, β = 0.5','','wages 65, profit 35'],['strong unions, β = 0.8','','wages 74, profit 26']];
+  cols2(g,k,{hl:'what he said',hr:'the arithmetic',xl:100,xm:360,xr:1060,mcl:60,mcr:38,fs:21,rows});
+  if(k>=4)note(g,'The first bargaining model of the wage, and a reversal of Senior: the wage sets the fund, not the fund the wage. His sympathy is stated: whoever does not wish “that the labourers may prevail ... must have a standard of morals widely different from those of either Mr. Thornton or the present writer.”',720);
+  sweep();});
+
+scene('A theory of crises, and Say\'s Law defended anyway','HL pp. 192–193',6,(g,k)=>{
+  const rows=[['1  calm','100','10%','accumulate'],['2  accumulation','150','6.7%','profit sinks toward the minimum'],['3  over-trading','200','5%','“factories are built ... beyond what the market requires”'],['4  crisis','140','7.1%','“establishments are shut up ... hands are discharged”; capital destroyed'],['5  recovery','150','6.7%','and “such revulsions are almost periodical”']];
+  tbl(g,{x:90,y:215,heads:['period','capital K','rate of profit (= 1000 ÷ K)','what happens'],rows:rows.slice(0,Math.min(k+1,5)),colW:[240,180,300,700],fs:22,rowH:60,hl:k>=3?[3]:[],color:(i,j)=>i===3?C.brick:null});
+  if(k>=5)bullets(g,['He has a cycle driven by the falling rate of profit, with capital export and crises as the counterforces, and he still calls Malthus\'s glut “so much inconsistency in its very conception.”','His two moves: a general glut is really “an undersupply of money,” which is what Malthus said; and the derangements are “temporary.” Keynes: “In the long run we are all dead.”'],600,24,2);
+  sweep();});
+
+scene('Offer curves: Mill\'s piece in every trade course','HL p. 190',4,(g,k)=>{
+  const X=120,Y=230,W=560,H=400;el('line',{x1:X,y1:Y+H,x2:X+W,y2:Y+H,stroke:C.ink,'stroke-width':2},g);el('line',{x1:X,y1:Y+H,x2:X,y2:Y,stroke:C.ink,'stroke-width':2},g);T(g,X+W+10,Y+H+8,'cloth',{'font-size':20});T(g,X-8,Y-8,'wine',{'font-size':20,'text-anchor':'end'});
+  if(k>=1){el('line',{x1:X,y1:Y+H,x2:X+W-40,y2:Y+H-200,stroke:C.pale,'stroke-width':3},g);el('line',{x1:X,y1:Y+H,x2:X+260,y2:Y+20,stroke:C.pale,'stroke-width':3},g);T(g,X+W-30,Y+H-205,'England\'s cost ratio',{'font-size':16,fill:C.warm});T(g,X+270,Y+30,'Portugal\'s cost ratio',{'font-size':16,fill:C.warm});}
+  if(k>=2){el('path',{d:`M${X} ${Y+H} C ${X+200} ${Y+H-60}, ${X+360} ${Y+H-180}, ${X+480} ${Y+H-330}`,fill:'none',stroke:C.brick,'stroke-width':4},g);el('path',{d:`M${X} ${Y+H} C ${X+60} ${Y+H-200}, ${X+180} ${Y+H-330}, ${X+330} ${Y+H-385}`,fill:'none',stroke:C.green,'stroke-width':4},g);T(g,X+490,Y+H-335,'England offers',{'font-size':16,fill:C.brick});T(g,X+300,Y+H-395,'Portugal offers',{'font-size':16,fill:C.green});}
+  if(k>=3){el('circle',{cx:X+300,cy:Y+H-215,r:8,fill:C.gold,stroke:'#fff','stroke-width':2},g);el('line',{x1:X,y1:Y+H,x2:X+300,y2:Y+H-215,stroke:C.gold,'stroke-width':2,'stroke-dasharray':'6 5'},g);T(g,X+315,Y+H-225,'terms of trade',{'font-size':17,'font-weight':700,fill:C.golddeep});}
+  rbul(g,['Ricardo showed both countries gain at any price between the two cost ratios, and stopped: he never said which price.','Factors do not cross borders, so costs are not equalized and the international price “depend[s] exclusively on supply and demand.”','Each country must pay for imports with exports, so at every price it offers a quantity of cloth for wine: an offer curve.','Where the two curves cross, “the whole of her exports may exactly pay for the whole of her imports”: that is the price. Reciprocal demand, 1848.'],800,270,21,46,Math.min(k+1,4));
+  sweep();});
+
+txt('Mill on socialism: dust in the balance','HL pp. 194–195',[
+ '“I do not recognize as either just or salutary, a state of society in which there is any ‘class’ which is not labouring.”',
+ 'If the choice were Communism or a society where produce is shared “almost in an inverse ratio to the labour,” then “all the difficulties, great or small, of Communism would be but as dust in the balance.”',
+ 'But socialism is “at present workable only by the elite of mankind,” and “while minds are coarse they require coarse stimuli, and let them have them.”',
+ 'So the task “for a considerable time to come” is “not the subversion of the system of individual property, but the improvement of it.”']);
+
+scene('The reform ledger: harmony with repair, as a list','HL pp. 195–198',5,(g,k)=>{
+  cols2(g,k,{hl:'the harm',hr:'the measure',xl:100,xm:340,xr:900,mcl:44,mcr:48,fs:21,rows:[
+   ['poverty','“the immense majority are condemned from their birth to a life of never-ending, never-intermitting toil”','national education; “extinguish extreme poverty for one whole generation,” paid from the surplus capital that would otherwise go abroad'],
+   ['unearned wealth','“a small minority ... born to the enjoyment of all the external advantages ... without earning them”','a cap on what anyone may receive “by gift, bequest, or inheritance” (p. 197)'],
+   ['power at work','a single worker cannot bargain with an employer who can replace him','the right to combine; hours laws; child-labor laws; safety standards'],
+   ['monopoly','“The monopolist can fix the value as high as he pleases”','regulate it, or let the public take the profits (p. 198)'],
+   ['the poor law','“the person most interested is not [always] the best judge”','relief for all, on the 1834 principle that leaves “a strong motive to do without it”']]});
+  if(k>=4)note(g,'“Laissez faire ... should be the general practice,” and he departs from it five times on two pages. HL\'s catch on p. 197: if surplus capital is always there to fund the poor, abstinence cannot be what profit pays for.',760);
+  sweep();});
+
+scene('HL: a utilitarian cannot be a reformer, and Mill was not one','HL pp. 198–200',5,(g,k)=>{
+  const rows=[['allocation A','5','5','10'],['allocation B','8','4','12']];
+  tbl(g,{x:200,y:215,heads:['','person 1','person 2','sum'],rows:rows.slice(0,Math.min(k+1,2)),colW:[320,260,260,260],fs:27,rowH:62,bold:(i,j)=>j===3});
+  if(k>=2)bullets(g,['Pareto cannot rank A and B, since person 2 loses; the sum can, only if their utils are comparable, which Senior forbade and Bentham allowed.','Add a misanthrope who enjoys person 2\'s loss, and “pushpin is as good as poetry” gives no ground to prefer the philanthropist: unanimity or nothing.','And governments are people: a politician acting from self-interest sells legislation to the rich, an exchange with two gains, so utilitarian reform is improbable by its own psychology.','Mill escapes only because he rejected both axioms; reform became improbable rather than impossible, and his hope was that the rich might be “content with being rich.”'],400,24,Math.min(k-1,4));
+  sweep();});
+
+// ===== PROPERTY =====
+S.push({title:'',sub:'',draw:g=>{
+  el('rect',{x:0,y:0,width:1600,height:900,fill:C.green},g);el('rect',{x:120,y:268,width:110,height:8,fill:C.gold},g);
+  T(g,120,380,'Where property came from',{'font-size':84,'font-weight':700,fill:C.cream});
+  T(g,120,452,'and what owning it earns',{'font-size':44,fill:C.gold});
+  T(g,120,600,'One fact, four origin stories, two theories of value',{'font-size':30,fill:C.cream,opacity:0.85});
+}});
+
+scene('One fact, four origin stories','Someone owns the land and the loom. How did that happen?',6,(g,k)=>{
+  cols2(g,k,{hl:'how property began',hr:'and so what owning it earns',xl:100,xm:420,xr:1030,mcl:50,mcr:40,fs:21,rows:[
+   ['Smith, 1776','herds are the first wealth that can be kept, so property comes before government, and government is made “for the defence of the rich against the poor” (HL p. 45)','both: a natural price that pays stock, and a state that guards the taking'],
+   ['Mill, 1848','“a distribution of property which was the result, not of just partition, or acquisition by industry, but of conquest and violence” (p. 194)','a title that “never yet conformed” to its own justification; open to revision'],
+   ['Bastiat, 1850','“laws exist because there is property”; man “is born a proprietor”; every fortune is past service (pp. 181–182)','a payment for service rendered, beyond challenge'],
+   ['Demsetz, 1967','rights appear when the gain from keeping others out exceeds the cost of fencing: the Labrador fur trade made beaver territories','a payment for a useful institution; the rent is what the fence creates'],
+   ['Marx, 1867','enclosure and expropriation, “written in the annals of mankind in letters of blood and fire”','a deduction, enforced']]});
+  if(k>=5)note(g,'Read down the right column and the spine appears: earned or efficient, and the collection is a payment; seized, and it is a deduction. Smith is on both sides, which is why he had an invisible hand and a government for the rich on facing pages.',790);
+  sweep();});
+
+scene('Smith again: property first, then government','HL pp. 44–45, which you saw in week three',4,(g,k)=>{
+  const rows=[['hunting','nothing to keep','“neither sovereign nor commonwealth”'],['pasturage','herds','civil government is born'],['agriculture','land','“every landlord was a sort of petty prince”'],['commerce','land and stock','government sides with “the rich against the poor”']];
+  tbl(g,{x:120,y:215,heads:['stage','what is owned','who rules'],rows:rows.slice(0,Math.min(k+1,4)),colW:[260,380,720],fs:24,rowH:62});
+  if(k>=3)note(g,'“The acquisition of valuable and extensive property, therefore, necessarily requires the establishment of civil government. Where there is no property ... civil government is not so necessary.” Smith is historical, not theological: property is prior in time, and the state is its creature. Bastiat will say prior in nature; Mill will ask how the first owner got it.',600);
+  sweep();});
+
+txt('Bastiat and Mill on the same page: inheritance','HL p. 183 beside p. 197',[
+ 'Bastiat: forbidding bequest “would prevent the creation of new private property by paralyzing a full half of human effort,” because a father works for his children.',
+ '> So the motive defended is love, not self-interest, and the socialists are made its enemies.',
+ '> Thompson had argued the reverse: only a cooperative society secures all children, not the lucky ones.',
+ 'Mill: bequest is “one of the privileges of property which are fit subjects for regulation,” and there should be “a limitation of the amount which any person should be permitted to acquire by gift, bequest, or inheritance.”',
+ 'A cap is a tax at one hundred percent above a threshold, and it is the second welfare theorem in practice: move the endowments, then let the market run.']);
+
+scene('Demsetz, 1967: a right appears when it pays','A plot with output 12L − L²; the wage elsewhere is 4',6,(g,k)=>{
+  const rows=[['open access: enter until the average product equals the wage','12 − L = 4, so L = 8','output 32, wages 32, rent 0'],['a private right: hire until the marginal product equals the wage','12 − 2L = 4, so L = 4','output 32, wages 16, rent 16'],['the gain from excluding others','','16, and four workers freed to produce elsewhere'],['fencing and enforcement cost 20','16 < 20','the commons stays'],['the fur trade doubles the price','rent 32 > 20','territories appear: the Montagnais, 1700s']];
+  tbl(g,{x:90,y:215,heads:['','condition','result'],rows:rows.slice(0,Math.min(k+1,5)),colW:[720,300,400],fs:21,rowH:60,hl:k>=4?[4]:[],bold:(i,j)=>j===2&&i>=2});
+  if(k>=5)note(g,'The no-rent margin from Ricardo\'s Farm, seen from the owner\'s side: the right exists because the rent it creates is worth more than the fence. This is the efficiency origin story, and it is the one every modern law-and-economics course starts from (Coase 1960, Alchian and Demsetz 1972).',620);
+  sweep();});
+
+scene('Four stories, two columns: what does ownership earn?','The hinge between the two theories of value',6,(g,k)=>{
+  const nodes=[
+   {id:'bas',x:90,y:200,w:300,h:64,t:'Bastiat: earned',sub:'past service, God\'s law',fill:'#DCEBDD'},
+   {id:'dem',x:90,y:300,w:300,h:64,t:'Demsetz: efficient',sub:'the fence pays for itself',fill:'#DCEBDD'},
+   {id:'smi',x:90,y:430,w:300,h:64,t:'Smith: prior, and defended',sub:'herds, then the state',fill:C.pale},
+   {id:'mil',x:90,y:560,w:300,h:64,t:'Mill: seized, then kept',sub:'conquest and violence',fill:'#F3D9D9'},
+   {id:'mrx',x:90,y:660,w:300,h:64,t:'Marx: seized, and renewed',sub:'blood and fire',fill:'#F3D9D9'},
+   {id:'pay',x:620,y:250,w:360,h:84,t:'ownership earns a payment',sub:'Say\'s frugality, Senior\'s abstinence,\nBastiat\'s service, Clark\'s MPK',fill:'#DCEBDD'},
+   {id:'ded',x:620,y:610,w:360,h:84,t:'ownership takes a deduction',sub:'Ricardo\'s residual, Hodgskin\'s\nlegal relation, Marx\'s surplus value',fill:'#F3D9D9'},
+   {id:'har',x:1180,y:250,w:330,h:84,t:'harmony',sub:'utility theory of value',fill:C.gold,fg:C.ink},
+   {id:'con',x:1180,y:610,w:330,h:84,t:'conflict',sub:'labor theory of value',fill:C.brick,fg:C.cream}];
+  const edges=[['bas','pay','',C.green],['dem','pay','',C.green],['smi','pay','',C.warm,'6 5'],['smi','ded','',C.warm,'6 5'],['mil','ded','',C.brick],['mrx','ded','',C.brick],['pay','har','',C.green],['ded','con','',C.brick]];
+  flow(g,{nodes,edges,showN:[5,5,7,7,9,9,9][Math.min(k,6)],showE:[0,2,4,6,8,8,8][Math.min(k,6)]});
+  if(k>=5)note(g,'Every writer in the course agrees that owners collect something. They disagree about what the collection is, and that turns on where the ownership came from. Pick an origin story and you have picked a side of the spine.',800);
+  sweep();});
+
+txt('The firm, a century later: the same split','Alchian and Demsetz 1972 against Marglin 1974, outside HL',[
+ 'Alchian and Demsetz: in team production nobody can see who shirked, so someone must monitor, and the monitor works only if he keeps what is left: the owner is the residual claimant because that is efficient.',
+ 'Marglin, “What Do Bosses Do?”: the factory system did not raise output; it put the capitalist between the worker and the market so that the surplus passed through his hands.',
+ 'That is Say and Senior against Hodgskin and Marx with twentieth-century evidence, and the song in Level 6 is the live case: who should the model\'s dollar go to, and for what?',
+ 'The course has never been about whether owners get paid; it has been about which column the payment belongs in.']);
+
+// ===== WHERE IT GOES =====
+scene('Where the streams go from here','1850 to the present, and the units left in this course',6,(g,k)=>{
+  const nodes=[
+   {id:'bas',x:90,y:200,w:330,h:64,t:'Bastiat',sub:'exchange is everything',fill:'#DCEBDD'},
+   {id:'aus',x:90,y:330,w:330,h:64,t:'Jevons, Menger, Walras, 1871',sub:'the utility theory finished (Dec 3)',fill:'#DCEBDD'},
+   {id:'chi',x:90,y:460,w:330,h:64,t:'Austria and Chicago',sub:'Hayek, Friedman, public choice',fill:'#DCEBDD'},
+   {id:'mill',x:635,y:200,w:330,h:64,t:'Mill',sub:'both, with repair',fill:C.gold,fg:C.ink},
+   {id:'mar',x:635,y:330,w:330,h:64,t:'Marshall, 1890',sub:'supply and demand as scissors',fill:C.mist},
+   {id:'pig',x:635,y:460,w:330,h:64,t:'Pigou, Samuelson, Arrow',sub:'welfare and public economics',fill:C.mist},
+   {id:'hod',x:1180,y:200,w:330,h:64,t:'Hodgskin, Thompson',sub:'labor is the only cost',fill:'#F3D9D9'},
+   {id:'mrx',x:1180,y:330,w:330,h:64,t:'Marx, 1867',sub:'surplus value, crisis (next)',fill:'#F3D9D9'},
+   {id:'key',x:1180,y:460,w:330,h:64,t:'Keynes, 1936',sub:'Malthus\'s glut, with a model',fill:'#F3D9D9'}];
+  const edges=[['bas','aus'],['aus','chi'],['mill','mar'],['mar','pig'],['hod','mrx'],['mrx','key','',C.warm,'6 5']];
+  flow(g,{nodes,edges,showN:Math.min(k*2+3,9),showE:Math.min(k*2+1,6)});
+  if(k>=4)note(g,'Three answers to one question, still. Bastiat\'s line says the market is harmony and the state should guard it. Mill\'s says the market is harmony that needs repair, and public economics is the repair shop. The labor line says the harmony conceals a taking, and Marx is where we go next.',620);
+  sweep();});
+
+scene('Scorecard: harmony or conflict','The question every week answers',5,(g,k)=>{
+  const rows=[['value is','utility, via services','exchange value; labor “principally,” then cost of production'],['profit is','pay for the capitalist\'s pain','a residual on one page, pay for abstinence on the next'],['property is','God\'s, prior to law','expedient, from conquest, revisable'],['gluts','impossible','periodic crises, and Say\'s Law anyway'],['the market','harmony, by syllogism','harmony with repair, by legislation']];
+  tbl(g,{x:90,y:215,heads:['','Bastiat','Mill'],rows:rows.slice(0,Math.min(k+1,5)),colW:[220,560,640],fs:23,rowH:66});
+  if(k>=4)note(g,'HL p. 186: Bastiat “the consistent developer of the conclusions implicit in utilitarian psychology,” Mill “the eclectic whose doctrines contain major inconsistencies,” and Bastiat\'s superior as a theorist and a scholar all the same.',700);
+  sweep();});
+
+txt('What to take out the door','Three sentences and a question',[
+ 'Bastiat: every exchange is two gains, all of life is exchange, so property is sacred and the only policy is freedom; the proof skips the endowments and the third parties.',
+ 'Mill: production has laws and distribution has choices, profit is a price on one page and a residual on the next, and the cure for capitalism is to improve it.',
+ 'Where property came from decides what owning it earns, and that is the line between the two theories of value this course has followed since Smith.',
+ 'Next: Marx, who takes the labor theory, the conquest story, and Mill\'s crises, and refuses the repair.']);
+
+// ---------------- engine ----------------
+let i=0,k=0;
+const stagesOf=n=>S[n].stages||1;
+function show(si,sk){
+  i=Math.max(0,Math.min(S.length-1,si));
+  const s=S[i];k=Math.max(0,Math.min(stagesOf(i)-1,sk||0));
+  $('title').textContent=s.title;$('sub').textContent=s.sub||'';
+  const g=$('body');while(g.firstChild)g.removeChild(g.firstChild);
+  if(!s.stages)bars={};
+  s.draw(g,k);
+  $('counter').textContent=(i+1)+' / '+S.length+(stagesOf(i)>1?'   ·   step '+(k+1)+' of '+stagesOf(i)+(k<stagesOf(i)-1?'  →':''):'');
+  try{localStorage.setItem('bm.i',i);localStorage.setItem('bm.k',k);}catch(e){}
+}
+const next=()=>{if(k<stagesOf(i)-1)show(i,k+1);else show(i+1,0);};
+const prev=()=>{if(k>0)show(i,k-1);else if(i>0)show(i-1,stagesOf(i-1)-1);};
+document.body.addEventListener('click',e=>{if(e.shiftKey)prev();else next();});
+window.addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown','Enter'].includes(e.key)){e.preventDefault();next();}else if(['ArrowLeft','ArrowUp','PageUp','Backspace','p','P'].includes(e.key)){e.preventDefault();prev();}else if(e.key==='End'||e.key==='.'){show(i,stagesOf(i)-1);}else if(e.key==='n'||e.key==='N'){show(i+1,0);}else if(e.key==='r'||e.key==='R'){show(0,0);}else if(e.key==='f'||e.key==='F'){const d=document.documentElement;if(document.fullscreenElement||document.webkitFullscreenElement){(document.exitFullscreen||document.webkitExitFullscreen).call(document);}else{(d.requestFullscreen||d.webkitRequestFullscreen).call(d);}}});
+let si=0,sk=0;try{si=+localStorage.getItem('bm.i')||0;sk=+localStorage.getItem('bm.k')||0;}catch(e){}
+const Q=new URLSearchParams(location.search);if(Q.has('s')){si=(+Q.get('s')||1)-1;sk=Q.has('k')?(+Q.get('k')||1)-1:99;}
+show(si,sk);
+})();
+</script>
+</body>
+</html>
