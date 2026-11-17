@@ -162,6 +162,37 @@ function table5(g,k,o){const show=[true,true,k>=1,k>=2,k>=3,k>=4];
   if(k>=4&&o.note)note(g,o.note,735);}
 
 
+// ---------------- flowchart helper ----------------
+function flow(g,o){const N={};o.nodes.forEach((n,i)=>{N[n.id]=n;if(o.showN!=null&&i>=o.showN)return;el('rect',{x:n.x,y:n.y,width:n.w,height:n.h,rx:10,fill:n.fill||C.mist,stroke:n.stroke||'none','stroke-width':2},g);
+    const lines=String(n.t).split('\n');const top=n.sub?n.y+30:n.y+n.h/2+8-(lines.length-1)*13;lines.forEach((ln,q)=>T(g,n.x+n.w/2,top+q*26,ln,{'text-anchor':'middle','font-size':n.fs||21,'font-weight':700,fill:n.fg||C.ink}));
+    if(n.sub){n.sub.split('\n').forEach((ln,q)=>T(g,n.x+n.w/2,n.y+56+q*20,ln,{'text-anchor':'middle','font-size':16,fill:n.fg?n.fg:C.warm}));}});
+  o.edges.forEach((e,i)=>{if(o.showE!=null&&i>=o.showE)return;const a=N[e[0]],b=N[e[1]];if(!a||!b)return;const ax=a.x+a.w/2,ay=a.y+a.h/2,bx=b.x+b.w/2,by=b.y+b.h/2;
+    const clip=(n,cx,cy,dx,dy)=>{const tx=dx!==0?(n.w/2)/Math.abs(dx):1e9,ty=dy!==0?(n.h/2)/Math.abs(dy):1e9;const t=Math.min(tx,ty);return [cx+dx*t,cy+dy*t];};
+    const dx=bx-ax,dy=by-ay;const [x1,y1]=clip(a,ax,ay,dx,dy);const [x2,y2]=clip(b,bx,by,-dx,-dy);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L;const ex=x2-ux*10,ey=y2-uy*10;const col=e[3]||C.warm;
+    el('line',{x1,y1,x2:ex,y2:ey,stroke:col,'stroke-width':3,'stroke-dasharray':e[4]||null},g);
+    el('polygon',{points:`${x2},${y2} ${ex-uy*7},${ey+ux*7} ${ex+uy*7},${ey-ux*7}`,fill:col},g);
+    if(e[2])T(g,(x1+x2)/2+(e[5]||0),(y1+y2)/2+(e[6]||-8),e[2],{'text-anchor':'middle','font-size':16,fill:col});});}
+
+
+
+// plot reminder: the two-lines map with the current writer highlighted
+function plotmap(g,k,focus,lines,sub){
+  const nodes=[
+   {id:'smith',x:620,y:200,w:360,h:64,t:'Smith, 1776',sub:'invisible hand; a state for the rich',fill:C.pale},
+   {id:'ric',x:180,y:320,w:330,h:58,t:'Ricardo, 1817',sub:'value is labor; profit a deduction',fill:'#F3D9D9'},
+   {id:'ben',x:1090,y:320,w:330,h:58,t:'Bentham',sub:'value is utility; the chest',fill:'#DCEBDD'},
+   {id:'hod',x:180,y:420,w:330,h:58,t:'Hodgskin, Thompson',sub:'labor is the only real cost',fill:'#F3D9D9'},
+   {id:'say',x:1090,y:420,w:330,h:58,t:'Say · Senior',sub:'coequal agencies; abstinence',fill:'#DCEBDD'},
+   {id:'marx',x:180,y:520,w:330,h:58,t:'Marx, 1867',sub:'exploitation, crisis',fill:'#F3D9D9'},
+   {id:'bas',x:1090,y:520,w:330,h:58,t:'Bastiat, 1850',sub:'exchange is everything',fill:'#DCEBDD'},
+   {id:'mill',x:620,y:600,w:360,h:64,t:'Mill, 1848',sub:'both lines, and reform',fill:C.pale}];
+  nodes.forEach(n=>{if(focus.includes(n.id)){n.fill=C.gold;n.fg=C.ink;n.stroke=C.golddeep;}});
+  const edges=[['smith','ric'],['smith','ben'],['ric','hod'],['ben','say'],['hod','marx'],['say','bas'],['ric','mill','',C.brick,'6 5'],['say','mill','',C.green,'6 5']];
+  flow(g,{nodes,edges});
+  T(g,345,300,'production: conflict',{'text-anchor':'middle','font-size':18,fill:C.brick,'font-weight':700});T(g,1255,300,'exchange: harmony',{'text-anchor':'middle','font-size':18,fill:C.green,'font-weight':700});
+  bullets(g,lines,700,24,Math.min(k,lines.length));}
+
 // ---------------- scenes ----------------
 const S=[];
 const txt=(title,sub,lines,extra)=>S.push({title,sub,stages:lines.length,draw:(g,k)=>{bullets(g,lines,null,null,k+1);if(extra)extra(g);}});
@@ -175,25 +206,24 @@ S.push({title:'',sub:'',draw:g=>{
   T(g,120,452,'Value without labor, part 2',{'font-size':44,fill:C.gold});
   T(g,120,575,'Scott Cunningham  ·  History of Economic Thought  ·  Baylor University',{'font-size':36,fill:C.cream});
   T(g,120,625,'Thursday, November 12, 2026  ·  ECO 4343/5343  ·  Hunt & Lautzenheiser ch. 6',{'font-size':30,fill:C.cream,opacity:0.62});
-  T(g,120,705,'Part 1: Bentham made value a quantity of pleasure and kept a role for repair',{'font-size':28,fill:C.cream,opacity:0.85});
-  T(g,120,745,'Today: Say takes labor out of value, and Senior gives the result a method and a conscience',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,705,'Part 1: Bentham made value a quantity of pleasure and kept a case for redistribution',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,745,'Today: Say takes labor out of value, and Senior builds a method and a defense of profit on top of it',{'font-size':28,fill:C.cream,opacity:0.85});
   T(g,120,845,'who-gets-paid.pages.dev',{'font-size':32,'font-weight':700,fill:C.gold});
 }});
 
 txt('Where part 1 ended','Bentham, HL pp. 125–134',[
  'Value is utility, and utility is a quantity of pleasure you can add across people.',
- 'Labor is pain, and “the surplus has no kind of value,” which is nearly the margin.',
+ 'Labor is pain, and “the surplus has no kind of value,” which is close to a marginal idea.',
  'The market can fail by hoarding and be improved by moving money down, so Bentham is the reformer wing of the utility side.',
  'Say and Senior keep the premise and remove both the hoarding and the redistribution.']);
 
 // 10pre: the present first
-txt('Next is Say, but first the present','Two schools of macroeconomics, both decorated with Nobel prizes, named for where their universities sit',[
+txt('Two macro camps still argue Say\'s question','Freshwater and saltwater, Robert Hall\'s names from 1976',[
  'Macroeconomists have argued for fifty years about why recessions happen and what, if anything, a government should do about them.',
  'Robert Hall named the camps in 1976: freshwater for the Great Lakes schools, saltwater for the coasts.',
  '> Last month Hall, now 83, won the 2026 Nobel with Michael Woodford “for microeconomic foundations of macroeconomic stabilisation.”',
- '> Woodford is the leading New Keynesian theorist, so the prize went to the synthesis, not to a camp.',
- 'Each side has Nobel prizes, and both now write the same kind of model, so the fight is over assumptions.',
- 'The question underneath is older than any of them: can an economy produce more than it is able to buy?']);
+ '> Woodford is the leading New Keynesian theorist, so the prize rewarded the synthesis of the two camps.',
+ 'Each side has Nobel prizes, and both now write the same kind of model, so the fight is over assumptions.']);
 
 // two-column wrapped layout, reused
 function cols2(g,k,o){const wrap=(t,mc)=>{const w=t.split(' ');let l='',out=[];for(const x of w){if((l+' '+x).length>mc){out.push(l);l=x;}else l=l?l+' '+x:x;}out.push(l);return out;};
@@ -208,11 +238,11 @@ scene('Freshwater and saltwater, side by side','The names are Robert Hall\'s, 19
   cols2(g,k,{hl:'freshwater',hr:'saltwater',xl:100,xm:300,xr:900,mcl:46,mcr:50,fs:21,rows:[
    ['places','Chicago, Minnesota, Rochester, Carnegie Mellon','MIT, Harvard, Yale, Berkeley, Princeton'],
    ['people','Friedman, Lucas, Prescott, Sargent, Barro','Samuelson, Solow, Tobin, Modigliani, Krugman, Bernanke'],
-   ['Nobel prizes','Friedman 1976, Lucas 1995, Kydland and Prescott 2004, Sargent 2011','Samuelson 1970, Tobin 1981, Modigliani 1985, Solow 1987, Akerlof and Stiglitz 2001, Krugman 2008, Bernanke 2022; Hall and Woodford 2026 for the synthesis'],
+   ['Nobel prizes','four prizes, 1976 to 2011','eight prizes, 1970 to 2026, the last for the synthesis'],
    ['years','rises in the 1970s on rational expectations; real business cycles from 1982','Keynes 1936; the synthesis of the 1950s; New Keynesian from the 1980s'],
    ['core idea','markets clear and people anticipate policy, so output moves only for real reasons','prices and wages are sticky, so a fall in spending cuts output and jobs'],
    ['a recession is','the economy\'s best response to a real shock','a failure of demand'],
-   ['why they argue','whether markets clear fast enough, and whether unemployment is ever a choice','same question, opposite answer, and the policy follows from it']]});
+   ['why they argue','whether markets clear fast enough, and whether unemployment is ever a choice','they give the opposite answer to the same question, and each answer implies a different policy']]});
   sweep();});
 
 // AD-AS helper: axes, a line clipped to the box, dots at intersections
@@ -231,77 +261,88 @@ function rbul(g,lines,x,y,fs,mc,nshow){const wrap=(t,m)=>{const w=t.split(' ');l
     el('text',{x:xx-26,y,'font-size':f,fill:sub?C.warm:C.gold,'font-weight':700},g,sub?'–':'•');rows.forEach((r,q)=>el('text',{x:xx,y:y+q*lh,'font-size':f,fill:sub?C.warm:C.ink,class:'fade'},g,r));
     const nextSub=lines[i+1]&&lines[i+1].startsWith('>');y+=rows.length*lh+Math.round(f*(nextSub?0.4:0.9));});}
 
-scene('Freshwater, in plain terms','Built one line at a time; the word that matters is “aggregate”',7,(g,k)=>{
+// freshwater, scene 1 of 2: the setup
+scene('Freshwater, in plain terms','Every curve is a total for the whole economy',4,(g,k)=>{
   const a=adas(g,{x:120,y:230,w:600,h:420});const xs=a.X+330,m=0.8,P0=a.Y+200;
-  const AD=x=>P0+m*(x-xs),AD2=x=>P0+m*(x-xs+90);
+  const AD=x=>P0+m*(x-xs);
+  T(g,a.X+10,a.Y+a.H+62,'Y is real GDP, every final good and service made in a year',{'font-size':18,fill:C.warm});
+  T(g,a.X+10,a.Y+a.H+88,'P is the price level, the CPI or the GDP deflator',{'font-size':18,fill:C.warm});
   if(k>=1)a.curve(AD,C.ink,'AD');
   if(k>=2){el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.green,'stroke-width':5},g);T(g,xs+10,a.Y+34,'LRAS',{'font-size':20,fill:C.green,'font-weight':700});a.xtick(xs,'Y*',C.green);}
   if(k>=3){a.dot(xs,P0,C.ink);a.ytick(P0,'P',C.ink);a.drop(xs,P0,C.pale);}
-  if(k>=4){a.curve(AD2,C.brick,'AD′');a.dot(xs,AD2(xs),C.brick);a.ytick(AD2(xs),'P′',C.brick);a.drop(xs,AD2(xs),C.brick);}
-  if(k>=5){const x2=xs-110;el('line',{x1:x2,y1:a.Y+20,x2:x2,y2:a.Y+a.H,stroke:C.green,'stroke-width':5,'stroke-dasharray':'10 7'},g);T(g,x2-74,a.Y+34,'LRAS′',{'font-size':20,fill:C.green,'font-weight':700});a.dot(x2,AD(x2),C.green);a.drop(x2,AD(x2),C.green);a.xtick(x2,'Y′',C.green);}
-  rbul(g,['Axes: Y is real GDP, every final good and service produced in the United States in a year, and P is the price level, the CPI or the GDP deflator.','AD is aggregate demand, C + Iᵖ + G + NX: total planned spending at each price level, everyone\'s spending added up, not one market.','LRAS is long-run aggregate supply: potential output Y*, what the economy makes with its workers and machines fully used.','Equilibrium: the price level settles where total spending equals what the economy can make, and in the long run output is Y* whatever P is.','Spending falls to AD′: the price level falls, output does not. Money is neutral, and freshwater lives here.','A real shock moves the vertical line to Y′: that is a recession, and nothing on the demand side can undo it.','Where you met it: the long-run chapters, the vertical supply curve, the classical dichotomy, money neutrality.'],850,262,20,48,Math.min(k+1,7));
-  if(k===0)T(g,a.X+10,a.Y+a.H+66,'not the micro graph: every curve here is a total for the whole economy',{'font-size':19,fill:C.warm});
+  rbul(g,['AD is aggregate demand, C + Iᵖ + G + NX, total planned spending at each price level for the whole economy.','LRAS is long-run aggregate supply: potential output Y*, what the economy makes with its workers and machines fully used.','The price level settles where total spending equals what the economy can make, and in the long run output is Y* whatever P is.'],850,262,20,48,Math.min(k,3));
   sweep();});
 
-scene('Saltwater, in plain terms','Same axes, same AD, one new line',7,(g,k)=>{
+// freshwater, scene 2 of 2: a fall in spending
+scene('Freshwater lets a fall in spending change only prices','Only a real shock can make a recession',4,(g,k)=>{
+  const a=adas(g,{x:120,y:230,w:600,h:420});const xs=a.X+330,m=0.8,P0=a.Y+200;
+  const AD=x=>P0+m*(x-xs),AD2=x=>P0+m*(x-xs+90);
+  a.curve(AD,C.ink,'AD');
+  el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.green,'stroke-width':5},g);T(g,xs+10,a.Y+34,'LRAS',{'font-size':20,fill:C.green,'font-weight':700});a.xtick(xs,'Y*',C.green);
+  a.dot(xs,P0,C.ink);a.ytick(P0,'P',C.ink);a.drop(xs,P0,C.pale);
+  if(k>=1){a.curve(AD2,C.brick,'AD′');a.dot(xs,AD2(xs),C.brick);a.ytick(AD2(xs),'P′',C.brick);a.drop(xs,AD2(xs),C.brick);}
+  if(k>=2){const x2=xs-110;el('line',{x1:x2,y1:a.Y+20,x2:x2,y2:a.Y+a.H,stroke:C.green,'stroke-width':5,'stroke-dasharray':'10 7'},g);T(g,x2-74,a.Y+34,'LRAS′',{'font-size':20,fill:C.green,'font-weight':700});a.dot(x2,AD(x2),C.green);a.drop(x2,AD(x2),C.green);a.xtick(x2,'Y′',C.green);}
+  rbul(g,['When spending falls to AD′ the price level falls and output stays at Y*, which is money neutrality and the freshwater position.','A real shock moves LRAS to Y′, which is a recession that demand policy cannot undo.','Where you met it: the long-run chapters, the vertical supply curve, the classical dichotomy, money neutrality.'],850,262,20,48,Math.min(k,3));
+  sweep();});
+
+scene('Saltwater, in plain terms','Same axes and AD, plus a short-run supply curve',5,(g,k)=>{
   const a=adas(g,{x:120,y:230,w:600,h:420});const xs=a.X+330;
   const SR=x=>(a.Y+a.H-60)-0.6*(x-(a.X+40));const P0=SR(xs);const m=0.8;const AD=x=>P0+m*(x-xs),AD2=x=>P0+m*(x-xs+110);
   const x1=xs-m*110/(m+0.6);const y1=SR(x1);
-  if(k>=1)a.curve(AD,C.ink,'AD');
-  if(k>=2){a.curve(SR,C.green,'SRAS');el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.pale,'stroke-width':3,'stroke-dasharray':'6 6'},g);a.xtick(xs,'Y*',C.warm);}
-  if(k>=3){a.dot(xs,P0,C.ink);a.ytick(P0,'P',C.ink);}
-  if(k>=4){a.curve(AD2,C.brick,'AD′');a.drop(x1,y1,C.brick);a.dot(x1,y1,C.brick);a.xtick(x1,'Y′',C.brick);a.ytick(y1,'P′',C.brick);}
-  if(k>=5){const dx=xs-x1,dy=P0-y1,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L;const ax=x1+ux*14,ay=y1+uy*14,bx=xs-ux*16,by=P0-uy*16;el('line',{x1:ax,y1:ay,x2:bx,y2:by,stroke:C.green,'stroke-width':5},g);el('polygon',{points:`${xs-ux*10},${P0-uy*10} ${bx-uy*9},${by+ux*9} ${bx+uy*9},${by-ux*9}`,fill:C.green},g);T(g,(x1+xs)/2+30,(y1+P0)/2+30,'policy',{'text-anchor':'middle','font-size':18,fill:C.green,'font-weight':700});}
-  rbul(g,['Axes as before: Y is real GDP, P is the price level.','AD as before: total planned spending, C + Iᵖ + G + NX, at each price level.','SRAS is short-run aggregate supply, and it slopes up because prices and wages adjust slowly, so when spending rises firms make more rather than only charge more.','Equilibrium at Y*: spending equals what is made, at the going prices.','Spending falls to AD′: output falls to Y′ and people are laid off, because prices did not fall enough to clear what was made.','A central bank or a treasury pushes AD back to Y*: that is the policy, and saltwater lives here.','Where you met it: the short-run chapters, the upward-sloping supply curve, the Keynesian cross, the Phillips curve.'],850,262,20,48,Math.min(k+1,7));
+  a.curve(AD,C.ink,'AD');
+  T(g,a.X+10,a.Y+a.H+62,'where you met it: the short-run chapters,',{'font-size':18,fill:C.warm});
+  T(g,a.X+10,a.Y+a.H+88,'the Keynesian cross, the Phillips curve',{'font-size':18,fill:C.warm});
+  if(k>=1){a.curve(SR,C.green,'SRAS');el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.pale,'stroke-width':3,'stroke-dasharray':'6 6'},g);a.xtick(xs,'Y*',C.warm);}
+  if(k>=2){a.dot(xs,P0,C.ink);a.ytick(P0,'P',C.ink);}
+  if(k>=3){a.curve(AD2,C.brick,'AD′');a.drop(x1,y1,C.brick);a.dot(x1,y1,C.brick);a.xtick(x1,'Y′',C.brick);a.ytick(y1,'P′',C.brick);}
+  if(k>=4){const dx=xs-x1,dy=P0-y1,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L;const ax=x1+ux*14,ay=y1+uy*14,bx=xs-ux*16,by=P0-uy*16;el('line',{x1:ax,y1:ay,x2:bx,y2:by,stroke:C.green,'stroke-width':5},g);el('polygon',{points:`${xs-ux*10},${P0-uy*10} ${bx-uy*9},${by+ux*9} ${bx+uy*9},${by-ux*9}`,fill:C.green},g);T(g,(x1+xs)/2+30,(y1+P0)/2+30,'policy',{'text-anchor':'middle','font-size':18,fill:C.green,'font-weight':700});}
+  rbul(g,['SRAS slopes up because prices and wages adjust slowly, so firms meet extra spending partly by producing more.','Equilibrium at Y*: spending equals what is made, at the going prices.','Spending falls to AD′: output falls to Y′ and people are laid off, because prices did not fall enough to clear what was made.','A central bank or treasury pushes AD back to Y*, and that policy response is the saltwater position.'],850,262,20,48,Math.min(k,4));
   sweep();});
 
 // one picture with both camps
-scene('One picture with both camps in it','The Frank and Bernanke diagram: inflation on the vertical axis, output on the horizontal',6,(g,k)=>{
+scene('One picture with both camps in it','Frank and Bernanke\'s diagram, inflation on the vertical',5,(g,k)=>{
   const a=adas(g,{x:120,y:230,w:600,h:420,ylab:'π'});const xs=a.X+330,pi0=a.Y+200,m=0.8;
   el('line',{x1:xs,y1:a.Y+20,x2:xs,y2:a.Y+a.H,stroke:C.green,'stroke-width':5},g);T(g,xs+10,a.Y+34,'Y*  (freshwater: the long run)',{'font-size':18,fill:C.green,'font-weight':700});a.xtick(xs,'Y*',C.green);
   const AD=x=>pi0+m*(x-xs),AD2=x=>pi0+m*(x-xs+110);
   el('line',{x1:a.X+6,y1:pi0,x2:a.X+a.W-16,y2:pi0,stroke:C.golddeep,'stroke-width':5},g);T(g,a.X+a.W-14,pi0+6,'π₀',{'font-size':20,fill:C.golddeep,'font-weight':700});T(g,a.X+12,pi0+24,'saltwater:',{'font-size':17,fill:C.golddeep});T(g,a.X+12,pi0+44,'inflation sticks',{'font-size':17,fill:C.golddeep});
   a.curve(AD,C.ink,'AD');a.dot(xs,pi0,C.ink);
   if(k>=1){a.curve(AD2,C.brick,'AD′');const x1=xs-110;a.dot(x1,pi0,C.brick);a.drop(x1,pi0,C.brick);a.xtick(x1,'Y′',C.brick);T(g,a.X+10,a.Y+a.H+62,'spending falls: output drops to Y′ at the old inflation; the gap is the recession',{'font-size':18,fill:C.brick});}
-  if(k>=2){const pi1=pi0+88;el('line',{x1:a.X+6,y1:pi1,x2:a.X+a.W-16,y2:pi1,stroke:C.golddeep,'stroke-width':5,'stroke-dasharray':'10 7'},g);T(g,a.X+a.W-14,pi1+6,'π₁',{'font-size':20,fill:C.golddeep,'font-weight':700});a.dot(xs,pi1,C.golddeep);T(g,a.X+10,a.Y+a.H+92,'slow road: the gap pulls inflation down until output is back at Y*',{'font-size':18,fill:C.golddeep});}
-  if(k>=3){const x1=xs-110;el('line',{x1:x1+16,y1:pi0-10,x2:xs-16,y2:pi0-10,stroke:C.green,'stroke-width':4},g);el('polygon',{points:`${xs-4},${pi0-10} ${xs-20},${pi0-20} ${xs-20},${pi0}`,fill:C.green},g);T(g,a.X+10,a.Y+a.H+122,'fast road: the Fed cuts the rate, AD moves back, which is the Taylor rule at work',{'font-size':18,fill:C.green});}
-  rbul(g,['Inflation on the vertical axis and output on the horizontal: Frank and Bernanke\'s diagram, which is how I taught principles.','> Some texts put the price level on that axis instead, as the two graphs before this one did; you may have seen it that way with Dr. Ssozi or Dr. Kelly.','> It is the same picture either way: the vertical line is the long run, the sloped line is demand, and the gap is the recession.','The vertical line at Y* is the freshwater long run, and the horizontal line is the saltwater short run.','AD slopes down because the Fed raises the real interest rate when inflation rises, which is the Taylor rule drawn as a curve.','A gap between output and Y* is what moves inflation, and either the gap closes itself slowly or the Fed closes it fast.'],850,262,20,48,Math.min(k+2,6));
-  if(k>=5)T(g,850,812,'Say owns the vertical line. Malthus owns the gap.',{'font-size':24,'font-weight':700,fill:C.green});
+  if(k>=2){const pi1=pi0+88;el('line',{x1:a.X+6,y1:pi1,x2:a.X+a.W-16,y2:pi1,stroke:C.golddeep,'stroke-width':5,'stroke-dasharray':'10 7'},g);T(g,a.X+a.W-14,pi1+6,'π₁',{'font-size':20,fill:C.golddeep,'font-weight':700});a.dot(xs,pi1,C.golddeep);T(g,a.X+10,a.Y+a.H+92,'without policy: the gap pulls inflation down until output returns to Y*',{'font-size':18,fill:C.golddeep});}
+  if(k>=3){const x1=xs-110;el('line',{x1:x1+16,y1:pi0-10,x2:xs-16,y2:pi0-10,stroke:C.green,'stroke-width':4},g);el('polygon',{points:`${xs-4},${pi0-10} ${xs-20},${pi0-20} ${xs-20},${pi0}`,fill:C.green},g);T(g,a.X+10,a.Y+a.H+122,'with policy: the Fed cuts the rate and AD moves back, which is the Taylor rule',{'font-size':18,fill:C.green});}
+  rbul(g,['Inflation on the vertical axis and output on the horizontal: Frank and Bernanke\'s diagram, which is how I taught principles.','> Some texts put the price level on that axis; it is the same picture.','> The vertical line is the long run, the sloped line is demand, and the gap is the recession.','The vertical line at Y* is the freshwater long run, and the horizontal line is the saltwater short run.','AD slopes down because the Fed raises the real interest rate when inflation rises, which is the Taylor rule drawn as a curve.','A gap between output and Y* moves inflation, and the gap closes either slowly on its own or quickly by Fed action.'],850,262,20,48,Math.min(k+2,6));
   sweep();});
 
-txt('Does the Fed lean one way?','A saltwater model under freshwater discipline',[
- 'The Fed\'s job assumes the saltwater premise, that policy moves real output in the short run; otherwise it would have nothing to do but watch prices.',
+txt('Does the Fed lean one way?','The Taylor rule combines both camps',[
+ 'The Fed\'s mandate assumes the saltwater premise that policy moves real output in the short run.',
  'The Taylor rule, 1993, sets the interest rate on two gaps: inflation above target, and output below potential.',
- '> i = r* + π + ½(π − π*) + ½(output gap): the output term is the saltwater premise, the inflation term is the commitment freshwater demanded.',
- '> John Taylor is a rules man from Stanford, so the rule reads as a treaty between the camps rather than a victory for either.',
- 'What freshwater won inside the building is rules over discretion, credibility, and independence, from Kydland and Prescott\'s 1977 argument that discretion cannot keep its promises.',
+ '> i = r* + π + ½(π − π*) + ½(output gap): the output-gap term reflects the saltwater premise and the inflation term reflects the freshwater demand for commitment.',
+ '> John Taylor is a Stanford rules advocate, and the rule combines elements from both camps.',
+ 'Freshwater\'s influence at the Fed is rules over discretion, credibility, and independence, following Kydland and Prescott (1977) on time inconsistency.',
  'Economists call the result the new neoclassical synthesis, and Bernanke, who chaired the Fed, wrote the textbook version with Frank.']);
 
 // the core issue
-txt('The core issue: money versus production','Everything else in the argument hangs on one link in a chain',[
- 'Say\'s chain: production creates income, income is spent, so whatever is produced gets bought.',
- 'The chain holds only if money is a go-between, a veil over barter, so that selling and buying are one act.',
- 'It breaks if people can sell and then hold the money, or if prices will not fall to clear what is left, and those are the two things the schools fight over.',
- '> Freshwater: money is neutral and prices move, so the chain holds and production sets what the economy can buy.',
- '> Saltwater: money is something people want to hold and prices are sticky, so demand can fall short of what was produced.',
- 'So the question is whether production sets demand, or whether the wish to hold money can leave goods unsold, and that is the question Malthus put to Say.']);
+txt('The dispute is whether money is only a medium','Can an economy produce more than it is able to buy?',[
+ 'Say\'s argument is that production creates income, income is spent, so whatever is produced gets bought.',
+ 'The argument holds only if money is purely a medium of exchange, so that selling and buying are the same act.',
+ 'It fails if people sell and then hold the money, or if prices do not fall enough to clear unsold goods.',
+ '> Freshwater: money is neutral and prices move, so the argument holds and production sets what the economy can buy.',
+ '> Saltwater: money is something people want to hold and prices are sticky, so demand can fall short of what was produced.']);
 
-txt('The chain, in the textbook\'s equations','An identity that is always true, and a condition that can fail',[
- 'Y = C + I + G + NX is an accounting identity, always true, because I includes the goods nobody bought, counted as inventory.',
- 'The short-run model replaces it with a condition: Y = PAE = C + Iᵖ + G + NX, where Iᵖ is planned investment and C = C̄ + mpc × (Y − T).',
- '> Solve it and Y = (C̄ − mpc·T + Iᵖ + G + NX) ÷ (1 − mpc), and the 1 ÷ (1 − mpc) is the multiplier you half remember.',
- '> The gap between I and Iᵖ is unsold goods, which is the general glut written as inventory.',
- 'Say\'s Law in this language: planned spending always equals potential output, PAE = Y*, because saving becomes investment on its own.',
- 'So Say is the claim that the economy lives at Y*, the vertical line, and Malthus is the claim that it can live at PAE, below it.']);
+scene('Say\'s Law in the principles-text equations','The accounting identity and the equilibrium condition',6,(g,k)=>{
+  const eq=(y,lab,s)=>{T(g,110,y,lab,{'font-size':20,fill:C.warm});T(g,300,y,s,{'font-size':34,'font-weight':700,fill:C.green});};
+  eq(250,'identity','Y = C + I + G + NX');
+  if(k>=1)eq(322,'condition','Y = PAE = C + Iᵖ + G + NX,    C = C̄ + mpc × (Y − T)');
+  bullets(g,['The identity is always true, because I counts unsold goods as inventory.','The condition can fail, because Iᵖ counts only the investment firms planned.','> Solve it and Y = (C̄ − mpc·T + Iᵖ + G + NX) ÷ (1 − mpc), and 1 ÷ (1 − mpc) is the multiplier from principles.','> The gap between I and Iᵖ is unsold goods, which is the general glut written as inventory.','Say\'s Law in this language is PAE = Y*, because saving becomes investment on its own.','Say says the economy is always at Y*, and Malthus says it can settle at PAE below Y*.'],420,24,k+1);
+  sweep();});
 
 // Say on the map
-scene('Where Say sits among the writers so far','Year of the main work, and which side of the spine',4,(g,k)=>{
+scene('Where Say sits among the writers so far','Year of the main work, and harmony or conflict',4,(g,k)=>{
   const X0=140,X1=1460,y0=1770,y1=1840;const xOf=yr=>X0+(yr-y0)/(y1-y0)*(X1-X0);
   el('line',{x1:X0,y1:520,x2:X1,y2:520,stroke:C.ink,'stroke-width':2},g);for(let yr=1770;yr<=1840;yr+=10){el('line',{x1:xOf(yr),y1:520,x2:xOf(yr),y2:530,stroke:C.ink},g);T(g,xOf(yr),556,String(yr),{'text-anchor':'middle','font-size':18,fill:C.warm});}
   T(g,X0,300,'harmony',{'font-size':20,fill:C.green});T(g,X0,740,'conflict concealed',{'font-size':20,fill:C.brick});
   const W=[['Smith','Wealth of Nations',1776,430,C.ink],['Bentham','Introduction',1780,300,C.green],['Malthus','Essay',1798,420,C.ink],['Say','Traité',1803,300,C.green],['Ricardo','Principles',1817,700,C.brick],['Senior','Outline',1836,330,C.green]];
   W.slice(0,k>=1?6:5).forEach(([n,w,yr,y,c])=>{if(n==='Say'&&k<1)return;el('circle',{cx:xOf(yr),cy:y,r:n==='Say'?16:11,fill:c},g);T(g,xOf(yr),y-24,n,{'text-anchor':'middle','font-size':n==='Say'?28:22,'font-weight':700,fill:c});T(g,xOf(yr),y+44,w+', '+yr,{'text-anchor':'middle','font-size':17,fill:C.warm});});
-  if(k>=2)note(g,'Say published in 1803, five years after Malthus\'s Essay and fourteen before Ricardo\'s Principles. He read Smith and kept only the harmony, which is why he is the first writer we have met with nothing to conceal.',805);
+  if(k>=2)note(g,'Say published in 1803, five years after Malthus\'s Essay and fourteen before Ricardo\'s Principles. He read Smith and kept the harmony without Smith\'s reservations.',805);
   sweep();});
 
 // biography
@@ -315,12 +356,12 @@ txt('Say: what he was doing','Factory owner, then professor',[
  'Out of politics, he built and ran a cotton-spinning mill at Auchy in northern France from 1805 to 1813, with some four hundred workers.',
  'That is why his economics has an entrepreneur in it, the person who combines land, labor, and capital, a figure Smith and Ricardo do without.',
  'He visited England in 1814, met Ricardo, Bentham, and James Mill, and kept up the correspondence that became the Letters to Malthus.',
- 'France gave him its first chairs in the subject: industrial economy at the Conservatoire des Arts et Métiers in 1819, political economy at the Collège de France in 1831.']);
+ 'France gave him its first two chairs in economics, at the Conservatoire in 1819 and the Collège de France in 1831.']);
 
 txt('Say: the major works','The Treatise was the textbook of its century',[
  'Traité d\'économie politique, 1803, revised through five editions to 1826; the 1821 English translation became the standard American college text, and Jefferson recommended it.',
  'Catéchisme d\'économie politique, 1815, the same doctrine in question and answer for a general reader.',
- 'Lettres à M. Malthus, 1820, where the law of markets is argued out against the one man who denied it.',
+ 'Lettres à M. Malthus, 1820, where he defends the law of markets against Malthus\'s objections.',
  'Cours complet d\'économie politique pratique, 1828–1829, his lectures in six volumes.']);
 
 // 9 Say
@@ -328,49 +369,52 @@ scene('Say: “This is an error”','A Treatise on Political Economy; HL pp. 134
   cols2(g,k,{hl:'Ricardo',hr:'Say',xl:100,xm:330,xr:900,mcl:40,mcr:48,fs:22,rows:[
    ['what makes value','labor embodied, tools as past labor','utility, and price is its index (p. 135)'],
    ['who produces','labor, transforming nature','labor, capital, and land, “coequally” (p. 135)'],
-   ['profit is','a deduction from what labor made','pay for frugality, that is for not consuming what one could have consumed, which Say says gives a title to the property (p. 136)'],
+   ['profit is','a deduction from what labor made','pay for frugality, not consuming what one could have, which gives a title to the property (p. 136)'],
    ['distribution','subsistence and productivity set it','each agency paid for the utility it adds (p. 136)']]});
   if(k>=4)note(g,'“To the labour of man alone he ascribes the power of producing values. This is an error.” (HL p. 134). Once owning capital is a sacrifice like working, “rich and poor ... are not opposed to each other, and ... all rivalships are mere folly.” (p. 137)',720);
   sweep();});
 
 txt('Frugality is a title to property','Why owning counts as a sacrifice, HL p. 136',[
  'Frugality, in Say, is forbearing to consume what you could have consumed, so that it survives as capital.',
- 'In our words it is the opportunity cost of capital: the consumption given up to keep it, and profit is the price of having given it up.',
- 'Say uses it as a title, not just a cost: modern opportunity cost is silent on who deserves what, and frugality is a moral claim dressed as a cost.',
+ 'In modern terms this is the opportunity cost of capital, and profit is the price of bearing it.',
+ 'Say treats frugality as a moral claim to the product, whereas modern opportunity cost says nothing about who deserves what.',
  '> “Frugality is next of kin to the actual creation of products, which confers the most unquestionable of all titles to the property in them.”',
- '> Only “he who has practised this self-denial” can claim the result.',
+ '> Only “he who has practised this self-denial” can claim the result.']);
+
+txt('HL ask whether anyone could have eaten the factory','The test of the sacrifice, HL p. 150',[
  'HL\'s test (p. 150): if nobody could have eaten the factory, the forgone consumption is zero and the sacrifice has been defined into existence.',
- '> Senior fills the hole by insisting that abstinence hurts (p. 147).',
- '> Marx pushes on exactly this spot (ch. 9).']);
+ '> Senior answers this by insisting that abstinence is painful (p. 147).',
+ '> Marx attacks this same claim (ch. 9).']);
 
 txt('Each agency paid for the utility it adds','Say\'s theory of distribution, HL pp. 135–136',[
  'Production is “human industry, with the aid of capital and of natural agents,” three agencies “coequally” making utility.',
- 'Each is paid according to “the importance of its co-operation in the business of production,” so wages and profits are prices of services, not shares.',
+ 'Each is paid according to “the importance of its co-operation in the business of production,” so wages and profits are the prices of productive services.',
  'This reverses Smith and Ricardo, for whom wages came from subsistence, profit was the residual, and prices followed from both.',
- 'It is the ancestor of marginal productivity theory, Clark 1899 (HL ch. 11): the w = MPL and r = MPK of every micro course, and its claim that each is paid what it contributed.']);
+ 'This is the ancestor of Clark\'s 1899 marginal productivity theory (HL ch. 11), the w = MPL and r = MPK of every micro course.']);
 
-txt('Ricardo\'s question, Say\'s answer','Why distribution was the whole fight',[
+txt('Ricardo\'s question, Say\'s answer','Why distribution was the central question',[
  'Ricardo, Preface, 1817: “To determine the laws which regulate this distribution, is the principal problem in Political Economy.”',
- 'For Ricardo the product is a fixed number of hours and distribution is who gets which share, so the question has teeth.',
+ 'For Ricardo the product is a fixed number of hours and distribution decides who gets which share, so the question matters.',
  'For Say distribution is not a separate problem: each agency\'s income is the price of its service, settled in the same act as production.',
- 'So Say answers Ricardo\'s principal problem by dissolving it, and “all rivalships are mere folly” (p. 137) is the conclusion, not an aside.']);
+ 'So Say answers Ricardo\'s principal problem by dissolving it, and “all rivalships are mere folly” (p. 137) is his conclusion.']);
 
-txt('Where it came from, with the overstatement marked','The glut controversy, 1815–1825',[
+txt('The glut controversy, 1815–1825','Where Say\'s Law came from, and what has changed since',[
  'After the Napoleonic wars Britain had unsold goods and idle workers, and economists split over why.',
- 'Malthus said demand could fall short of supply; Say, Ricardo, and James Mill said it could not, and that was the line.',
- 'Keynes drew the modern line back to them, and he was picking a side when he did: “If only Malthus, instead of Ricardo, had been the parent stem from which nineteenth-century economics proceeded, what a much wiser and richer place the world would be to-day!” (1933)',
- '> The overstatement: the moderns have money, expectations, and sticky prices, none of which Say or Malthus had.',
- '> What carries over is the question, whether a shortfall of demand is possible, and the two answers.']);
+ 'Malthus said demand could fall short of supply, and Say, Ricardo, and James Mill said it could not.',
+ 'Keynes took Malthus\'s side in 1933.',
+ '> “If only Malthus, instead of Ricardo, had been the parent stem from which nineteenth-century economics proceeded, what a much wiser and richer place the world would be to-day!” (1933)',
+ '> The moderns have money, expectations, and sticky prices, none of which Say or Malthus had.',
+ 'What carries over is the question, whether a shortfall of demand is possible, and the two answers.']);
 
 // 10a Say's law: the words
 txt('Say\'s Law: “supply creates its own demand”','Three phrasings of one claim',[
- '“Supply creates its own demand” is Keynes\'s six-word summary from 1936, not a sentence Say wrote, and the label “Say\'s Law” itself dates from the 1920s.',
+ 'Keynes wrote the five-word summary “supply creates its own demand” in 1936, and the name “Say\'s Law” dates from the 1920s, so neither is Say\'s.',
  'Say, 1803: a product is “no sooner created than it, from that instant, affords a market for other products to the full extent of its own value.”',
  'Say to Malthus, 1820: “a supply creates a demand of the same magnitude,” and “produce opens a vent for produce” (HL p. 137).',
- 'Read “own” carefully: the demand a product creates is for other products, to the amount of its value.']);
+ 'The demand a product creates is for other products, to the amount of its own value.']);
 
 // 10a2 what people hear vs what he meant
-scene('What people hear, and what Say meant','Out of context it sounds like microeconomics; the claim is macroeconomics',6,(g,k)=>{
+scene('Say\'s Law is a claim about all markets at once','The micro reading and the macro claim, side by side',6,(g,k)=>{
   const rows=[['a claim about one good, in one market','a claim about all goods at once, the sum across every market'],
    ['make it and buyers will appear for it','making it gives its maker income to the amount of its value, which is demand for other things'],
    ['a producer can always sell what he made','a producer can fail to sell, but only because something else was not made in enough quantity'],
@@ -386,7 +430,7 @@ scene('What people hear, and what Say meant','Out of context it sounds like micr
     la.forEach((ln,q)=>T(g,XL,y+q*lh,ln,{'font-size':fs,fill:C.brick}));lb.forEach((ln,q)=>T(g,XR,y+q*lh,ln,{'font-size':fs,fill:C.green}));
     y+=n*lh+22;});
   el('line',{x1:XR-40,y1:252,x2:XR-40,y2:Math.max(260,y-30),stroke:C.pale,'stroke-width':2},g);
-  if(k>=5)note(g,'The test is simple. A glut of cloth is not a counterexample; Say predicts those. A glut of everything would be. The next scenes build the sum and then try to break it.',Math.max(y+10,720));
+  if(k>=5)note(g,'A glut of cloth is consistent with Say\'s claim; only a glut of everything at once would contradict it.',Math.max(y+10,720));
   sweep();});
 
 // 10 Say's law: the claim
@@ -397,17 +441,17 @@ txt('Say\'s Law: the claim','HL pp. 137–138',[
  'HL: these conclusions “are still accepted by many economists, and policy makers, today.”']);
 
 // 10b the argument
-scene('Say\'s Law: the argument, from the letters to Malthus','Money is only the medium, so every sale is a purchase waiting to happen',5,(g,k)=>{
+scene('Say\'s argument in the Letters to Malthus','Money is only a medium, so every sale funds a purchase',5,(g,k)=>{
   const box=(x,lab,sub,fill)=>{el('rect',{x,y:215,width:380,height:110,rx:12,fill},g);T(g,x+190,262,lab,{'text-anchor':'middle','font-size':28,'font-weight':700,fill:C.cream});T(g,x+190,300,sub,{'text-anchor':'middle','font-size':20,fill:C.cream,opacity:0.85});};
   if(k>=0)box(110,'produce','cloth worth 100',C.earth);
   if(k>=1){T(g,520,282,'→',{'font-size':48,fill:C.warm});box(610,'sell','100 of income',C.green);}
   if(k>=2){T(g,1020,282,'→',{'font-size':48,fill:C.warm});box(1110,'buy','100 of corn, hats, bread',C.golddeep);}
   if(k>=2){el('path',{d:'M1300 335 C1300 420, 300 420, 300 335',fill:'none',stroke:C.warm,'stroke-width':3,'stroke-dasharray':'8 6'},g);T(g,800,430,'and the corn, hats, and bread were produced in order to buy the cloth',{'text-anchor':'middle','font-size':21,fill:C.warm});}
-  bullets(g,['Money has no importance of its own and is only a means of exchange.','No one produces except to exchange it for someone else\'s production.','So “a supply creates a demand of the same magnitude,” and “produce opens a vent for produce.”','True of each producer, so true of the sum: aggregate supply equals aggregate demand.'],500,26,Math.min(k+1,4));
+  bullets(g,['Money has no importance of its own and is only a means of exchange.','No one produces except to exchange it for someone else\'s production.','So “a supply creates a demand of the same magnitude,” and “produce opens a vent for produce.”','Since this holds for each producer, Say concludes it holds for the sum, so aggregate supply equals aggregate demand.'],500,26,Math.min(k+1,4));
   sweep();});
 
 // 10c the model
-scene('A model: two goods, one income','Everything produced is paid to someone, and everything paid is spent',5,(g,k)=>{
+scene('A model: two goods, one income','All output is paid out as income, and all income is spent',5,(g,k)=>{
   const rows=[['value of output','100','100','200'],['paid out as wages, profit, rent','100','100','200'],['spent','100','100','200'],['glut: output − spending','0','0','0']];
   tbl(g,{x:160,y:230,heads:['','cloth','corn','total'],rows:rows.slice(0,Math.min(k+1,4)),colW:[520,240,240,260],fs:27,rowH:66,bold:(i,j)=>j===3,color:(i,j)=>i===3?C.green:null});
   if(k>=4)bullets(g,['Every dollar of output becomes someone\'s income, so income is 200 by construction.','Every dollar of income is spent, so demand is 200 before anyone decides what to buy.'],640,27,2);
@@ -432,30 +476,37 @@ scene('The objection: a chest','Twenty of income goes into a chest instead of th
   const rows=[['value of output','100','100','200'],['paid out as income','100','100','200'],['put in a chest','','','20'],['spent','90','90','180'],['glut: output − spending','+10','+10','+20']];
   tbl(g,{x:160,y:215,heads:['','cloth','corn','total'],rows:rows.slice(0,Math.min(k+1,5)),colW:[520,240,240,260],fs:26,rowH:60,hl:k>=4?[4]:[],bold:(i,j)=>j===3,color:(i,j)=>i===4?C.brick:(i===2?C.brick:null)});
   if(k>=4)bullets(g,['Both goods are in glut at once, and migration cannot fix it because there is nowhere to go.','Prices fall, then profits, then investment, which is Bentham\'s chest (p. 133) and Malthus\'s effectual demand (ch. 4).'],610,25,Math.min(k-3,2));
-  if(k>=5)note(g,'The sum of the gluts equals what went into the chest. That is the whole dispute in one line: Say\'s identity holds only when the chest is empty.',800);
+  if(k>=5)note(g,'The sum of the gluts equals what went into the chest, so Say\'s identity holds only when nothing is hoarded.',800);
   sweep();});
 
 // 10g what each side needs
-txt('What each side needs to be true','Say, Malthus, and the door Senior will close',[
- 'Say needs money to be a veil, held only for a moment on the way to the next purchase.',
+txt('What each side needs to be true','What Say, Malthus, and Senior each assume',[
+ 'Say needs money to be held only briefly between a sale and the next purchase.',
  'Malthus needs someone who can earn without spending, a landlord who hoards or a capitalist who will not invest.',
- 'Senior will close the door harder: a general glut would require “general satiety,” which nobody feels (p. 145).',
- 'Marx and Keynes reopen it, each by naming who holds the money and why.']);
+ 'Senior goes further than Say, arguing that a general glut would require “general satiety,” which nobody feels, so crises cannot exist (p. 145).',
+ 'Marx and Keynes bring the general glut back, each by naming who holds the money and why.']);
 
 // 10g2 what Say is getting at
-txt('What Say is getting at: a slump is never a shortage of demand','The claim is about recessions, and it has a policy attached',[
+txt('Say\'s Law says a slump is never a shortage of demand','The claim is about recessions, and it has a policy attached',[
  'A general glut, unsold goods everywhere at once, cannot happen, so a slump is never a failure of demand.',
  'What can happen is misallocation, too much cloth and too little corn, which prices and migrating capital correct on their own.',
- '> Money is neutral and fluctuations have real causes, which is the frame real business cycle theory later keeps and builds a model inside.',
+ '> Money is neutral and fluctuations have real causes, which is the premise real business cycle theory later formalizes.',
  '> Keynes named “Say\'s Law” as the thing the General Theory set out to overturn.',
- 'The policy follows: encourage production, not consumption, and no spending by landlords or governments can cure a slump.',
- 'Ricardo held this against Malthus to the end; his one concession, in the 1821 edition, was that machinery can displace workers, not that demand can fail.']);
+ 'Say\'s policy is to encourage production, and he denies that landlord or government spending can cure a slump.',
+ 'Ricardo held this against Malthus to the end, conceding in 1821 only that machinery can displace workers.']);
 
 // 10h you drive
 scene('You drive: Say\'s Law on paper','Output: cloth 150, corn 50. Tastes: 60 percent of spending goes to cloth.',3,(g,k)=>{
   bullets(g,['Case 1, all 200 of income is spent: find the glut in each good and their sum.','Case 2, 20 goes into a chest: find the glut in each good and their sum.','Say in one sentence what the sum of the gluts equals in each case, and why Say is right in one and wrong in the other.'],230,28,Math.min(k+1,3));
-  if(k>=2)note(g,'Answers. Case 1: spending 120 and 80, gluts +30 and −30, sum 0. Case 2: spending 108 and 72, gluts +42 and −22, sum +20, which is the chest. Partial gluts cancel; a general glut is exactly the money that left circulation.',640);
+  if(k>=2){tbl(g,{x:120,y:490,heads:['','cloth spent','corn spent','cloth glut','corn glut','sum of gluts'],rows:[['case 1, all 200 spent','120','80','+30','−30','0'],['case 2, 20 in a chest','108','72','+42','−22','+20']],colW:[400,180,180,180,180,220],fs:24,rowH:52,bold:(i,j)=>j===5,color:(i,j)=>j===5?C.green:C.ink});
+    note(g,'In case 2 the sum of the gluts equals the 20 that went into the chest.',700);}
   sweep();});
+
+// plot reminder: after Say
+scene('Where we are after Say','The question of the course has not changed',4,(g,k)=>{plotmap(g,k,['say'],[
+ 'Say took labor out of value, made every agency a producer of utility, and claimed that what is produced is bought.',
+ 'The question since Smith is still whether the market harmonizes interests or hides a conflict over who gets the product.',
+ 'Senior is next, and he gives Say\'s answer a method and a defense of profit.']);sweep();});
 
 // 11 Senior turns
 txt('Senior turns, 1830','HL pp. 138–139',[
@@ -468,30 +519,38 @@ txt('Senior writes the Poor Law, 1834','HL pp. 140–141',[
  'He drafted the 1834 Poor Law: relief below the lowest wage, and stigmatized.',
  'Hobsbawm on the result: “an engine of degradation and oppression more than a means of material relief.” (p. 141)']);
 
-// 12 method
+// 12 method (merged with the former "claim to be a science" scene)
 txt('Senior\'s method: not Happiness, but Wealth','HL pp. 141–143',[
- 'The first clear positive/normative split: strip the ethics, keep “a very few general propositions,” deduce.',
+ 'Senior makes the first clear positive/normative split, setting ethics aside and deducing from “a very few general propositions.”',
+ '> That is the positive-normative split in chapter 1 of every principles text, Robbins\'s 1932 definition, and Friedman\'s 1953 “positive economics.”',
+ '> Say had already called the subject a science of observed facts, and J. S. Mill published his essay on method in the same year, 1836.',
  '“The subject treated by the Political Economist ... is not Happiness, but Wealth ... his conclusions ... do not authorize him in adding a single syllable of advice.” (p. 142)',
  'HL\'s objection: which few propositions matter depends on the problem you care about, and that choice is a value.',
- 'The giveaway is that the economist states principles “which it is fatal to neglect,” and the man who wrote the Poor Law knew for whom.']);
+ 'Yet Senior says the economist states principles “which it is fatal to neglect,” and the author of the Poor Law had a particular audience in mind.']);
 
-txt('“Not Happiness, but Wealth,” and yet wealth is utility','He wants utility as a motive but not as a measure',[
+txt('Senior keeps utility but will not add it across people','Utility explains every choice and is never summed',[
  'Utility, for Bentham and for Senior, is a property of a thing: its power to produce pleasure (HL pp. 130, 144).',
  'Wealth is the set of things that have that property and are also scarce and transferable, which is to say commodities.',
  'Happiness is a state of a person, and to study it you would have to add utilities across people and judge the distribution.',
- 'Senior keeps the word for the thing and refuses the sum over persons (p. 145), so pleasure drives every choice in the science and measures nothing.',
- '> The economist can price a loaf and say nothing about who is hungry, and the man who wrote the Poor Law wanted it that way.',
- '> Modern welfare economics makes the same move, utility in every choice and no comparing persons, which is why it feels familiar rather than strange.',
- '> That refusal is the ordinal move from part 1, and it is why Bentham\'s redistribution argument never gets a hearing.',
- '> HL: the values come back in through the choice of which few propositions matter.']);
+ 'Senior keeps utility as the motive behind every choice but refuses to sum it across persons (p. 145).']);
 
-txt('Why he will not add the utils','HL pp. 144–145. “Util” is our word, from the 1890s; Senior\'s measuring stick is exchange value, and utility is one of three conditions for a thing to have it',[
- 'Bentham\'s case for moving money down needs satiation, so that a pound means little to the rich, and comparability, so that the rich man\'s loss and the poor man\'s gain can be set side by side.',
+txt('What Bentham\'s case needs','Satiation and comparability, HL p. 144',[
+ 'Bentham\'s case for moving money down needs satiation, so a pound means little to the rich.',
+ 'It also needs comparability, so the rich man\'s loss and the poor man\'s gain can be weighed against each other.']);
+
+txt('What Senior denies','HL pp. 144–145; “util” is a word from the 1890s',[
  'Senior denies satiation: “no person feels his whole wants to be adequately supplied; every person has some unsatisfied desires which he believes that additional wealth would gratify.”',
- 'He denies comparability: “the nature and urgency of each individual\'s wants are as various as the differences in individual character,” so no one can say whose pound counts more.',
- 'He never says utility is not a quantity inside a person, so this is not yet ordinalism; it is a refusal to compare across persons, and HL say the later theorists “needed” exactly that refusal.',
- '> His method backs it: a comparison of two people\'s pleasure is an ethical statement, and ethics is not science, so it is out.',
- '> The effect is the same as cutting the sum from Bentham\'s ruler: redistribution cannot be argued for inside the science.']);
+ 'He denies comparability: “the nature and urgency of each individual\'s wants are as various as the differences in individual character,” so no one can say whose pound counts more.']);
+
+txt('This is not yet ordinalism','HL p. 145',[
+ 'He never denies that utility is a quantity inside a person, so this is not yet ordinalism.',
+ 'What he refuses is the comparison across persons, which HL say the later theorists “needed.”',
+ '> His method supports this, since comparing two people\'s pleasure is an ethical statement and ethics lies outside the science.',
+ '> The effect is the same as removing Bentham\'s sum across persons, so redistribution cannot be argued for inside the science.']);
+
+txt('Modern welfare economics makes the same move','The ordinal move from part 1',[
+ 'Modern welfare economics makes the same move, utility in every choice and no comparisons across persons.',
+ 'This is the ordinal move from part 1, and it rules out Bentham\'s redistribution argument.']);
 
 // 13 four propositions
 scene('The four propositions','HL pp. 143–144',5,(g,k)=>{
@@ -500,39 +559,32 @@ scene('The four propositions','HL pp. 143–144',5,(g,k)=>{
    ['3','labor and capital “indefinitely increased” by reinvesting products','accumulation, and abstinence'],
    ['4','more labor on a given district of land yields “a less proportionate return”','rent, redefined']];
   tbl(g,{x:90,y:230,heads:['','Senior\'s premise','What he builds on it'],rows:rows.slice(0,Math.min(k,4)),colW:[70,900,450],fs:23,rowH:90});
-  if(k>=4)note(g,'HL p. 143: each premise carries a moral. We take them in turn.',720);
+  if(k>=4)note(g,'HL (p. 143) say each premise carries a moral.',720);
 });
 
 // 13b the propositions today
 scene('Senior\'s four propositions, in today\'s textbooks','Each one has a chapter you have already taken',6,(g,k)=>{
   const y=cols2(g,k,{hl:'in micro today',hr:'in macro today',xl:100,xm:440,xr:1000,mcl:40,mcr:40,fs:21,rows:[
-   ['1  wealth, least sacrifice','utility maximization and “more is better,” cost minimization; the first chapters of any micro text','the optimizing household and firm inside every modern model, the freshwater ones from this morning included'],
-   ['2  population and fear of want','labor supply and work incentives; the argument that relief blunts the incentive to work','population growth n in the Solow model; the Malthusian chapter of every growth text'],
-   ['3  products reinvested','investment and the saving decision; consumption now against consumption later (Fisher)','capital accumulation, ΔK = sY − δK; endogenous growth when returns to capital do not fall'],
-   ['4  diminishing returns on land','the law of diminishing marginal returns: MPL falls as L rises with K fixed','diminishing returns to capital, the reason Solow growth stops without technology']]});
-  if(k>=4)note(g,'Read 1 as an optimizing agent and 2, 3, 4 as its constraints, and you have the skeleton of the Solow model and of the freshwater models from this morning. Senior wrote the axioms in 1836; the models arrived a century later.',Math.max(y+20,700));
+   ['1  wealth, least sacrifice','utility maximization and “more is better”','the optimizing household and firm inside every modern model'],
+   ['2  population and fear of want','labor supply and work incentives','population growth n in the Solow model'],
+   ['3  products reinvested','investment and the saving decision','capital accumulation, ΔK = sY − δK'],
+   ['4  diminishing returns on land','the law of diminishing marginal returns','diminishing returns to capital']]});
+  if(k>=4)note(g,'Read 1 as an optimizing agent and 2, 3, and 4 as its constraints, and you have the structure of the Solow model and of the freshwater models from earlier today. Senior wrote these in 1836, a century before the models.',Math.max(y+20,700));
   sweep();});
-
-txt('Senior and the claim to be a science','Who pushed for an explicit scientific basis, and how far it goes',[
- 'Senior is the first English economist to say the subject is “not Happiness, but Wealth,” a few propositions and deduction, with no advice attached (HL p. 141).',
- 'That is the positive-normative split in chapter 1 of every principles text, Robbins\'s 1932 definition of economics, and Friedman\'s 1953 “positive economics.”',
- 'He was not alone: Say had already called the subject a science of observed facts, and J. S. Mill wrote the companion essay on method the same year, 1836.',
- 'HL\'s reply stands: choosing which few propositions matter is already a value, and the man who wrote the Poor Law knew which problem he was choosing.']);
 
 // 14 Senior on value
 txt('Senior on value: against Bentham','HL pp. 144–145',[
  'Wealth is “the power, direct or indirect, of producing pleasure,” so maximizing wealth is maximizing utility.',
  'Against Bentham: “no person feels his whole wants to be adequately supplied,” and wants differ by character.',
- 'So there is no satiation, no comparing persons, and no case for redistribution.']);
+ 'So Senior denies satiation and interpersonal comparison, and with them Bentham\'s case for redistribution.']);
 
 txt('Senior on value: as if nature supplied everything','HL pp. 145–146',[
  'Against Ricardo: if nature supplied all goods without labor, “in precisely the same quantities,” they would exchange in “[no] other than their present proportions.”',
- 'Ricardo had answered in advance (ch. 5, p. 98) that scarce, non-reproducible goods are the exception, and Senior says they are “the bulk of wealth.”',
- 'A general glut would require “general satiety,” which proposition 1 forbids, so crises cannot exist, where Say at least admitted distress.']);
+ 'Ricardo had answered in advance (ch. 5, p. 98) that scarce, non-reproducible goods are the exception, and Senior says they are “the bulk of wealth.”']);
 
 // 15 abstinence
 txt('Abstinence: profit is pay for pain','HL pp. 146–148',[
- 'The socialist pamphleteers of the 1820s had said: labor is a real human cost, owning capital is only a legal relation, so wages are earned and profits are not.',
+ 'The socialist pamphleteers of the 1820s argued that labor is a real cost and ownership only a legal relation, so only wages are earned.',
  'Senior\'s answer needs a cost of owning: “To this conduct we have already given the name of Abstinence.”',
  '“To abstain from the enjoyment which is in our power, or to seek distant rather than immediate results, are among the most painful exertions of the human will.”',
  'So profit stands on the same footing as wages, and the nation\'s prosperity rests on the abstinence of its capitalists.']);
@@ -540,24 +592,30 @@ txt('Abstinence: profit is pay for pain','HL pp. 146–148',[
 txt('Abstinence: HL\'s reply','HL pp. 150–151',[
  'Most capital is inherited, and its origins were almost never abstinence (ch. 9).',
  '“Abstaining from the unproductive use of capital” only means using a factory for profit rather than for enjoyment, so the pain is defined into profit.',
- 'Senior himself says capitalists “go on producing and amassing and leave the task of expending to their heirs,” so where is the pain?']);
+ 'Senior himself says capitalists “go on producing and amassing and leave the task of expending to their heirs,” which leaves no pain to pay for.']);
 
 // 16 every income is rent
-scene('Every income is partly rent, so there are no classes','HL pp. 148–149',6,(g,k)=>{
+scene('Every income is partly rent, so there are no classes','HL pp. 148–149',7,(g,k)=>{
   const X=110,Y=240,w=420,h=150;
   const box=(j,lab,sub,fill)=>{el('rect',{x:X+j*(w+40),y:Y,width:w,height:h,rx:10,fill:fill},g);T(g,X+j*(w+40)+24,Y+62,lab,{'font-size':34,'font-weight':700,fill:C.cream});T(g,X+j*(w+40)+24,Y+108,sub,{'font-size':22,fill:C.cream});};
   box(0,'RENT','“offered by nature or accident”',C.earth);
   if(k>=1)box(1,'WAGES','“the reward of labour”',C.green);
   if(k>=2)box(2,'PROFIT','“that of abstinence”',C.golddeep);
   if(k>=3){el('rect',{x:X,y:Y+h+30,width:3*w+80,height:60,rx:10,fill:C.mist},g);T(g,X+24,Y+h+70,'“At a distance these divisions appear clearly marked, but when we look into the details, we find them so intermingled....” (p. 149)',{'font-size':23,fill:C.brick});}
-  bullets(g,['Rent is redefined as “an advantage derived from the use of a natural agent not universally accessible.” Any advantage: talent, inherited capital, a better machine.','Then a worker\'s wage and a capitalist\'s profit each contain rent, and directing capital is itself labor, so profit shades into wages.','Class differences are “largely illusory.” Doctrines of class conflict are “the political economy of the poor” (p. 150). And the landlord? His interest and the public\'s “coincide” (p. 148). Ricardo p. 96 said the opposite.'],520,24,Math.max(0,k-2));
+  bullets(g,['Rent is redefined as “an advantage derived from the use of a natural agent not universally accessible,” which covers talent, inherited capital, or a better machine.','Then a worker\'s wage and a capitalist\'s profit each contain rent, and directing capital is itself labor, so profit shades into wages.','Class differences are “largely illusory,” and doctrines of class conflict are “the political economy of the poor” (p. 150).','The landlord\'s interest and the public\'s “coincide” (p. 148), which reverses Ricardo (p. 96).'],520,24,Math.max(0,k-2));
 });
+
+// plot reminder: after Senior
+scene('Where we are after Senior','The exchange line is complete',4,(g,k)=>{plotmap(g,k,['say','ben'],[
+ 'Senior added four propositions, abstinence as the reason profit is earned, and rent in every income, so classes blur.',
+ 'Bentham, Say, and Senior together make value utility, owning a sacrifice, and profit a payment.',
+ 'Bastiat takes that line to its end, and Mill hesitates; they are next.']);sweep();});
 
 // 17 Song B
 scene('Song B again: three ledgers for one AI song','Game Level 6, open now at who-gets-paid.pages.dev',5,(g,k)=>{
   const rows=[['Who made it?','a million songwriters, and engineers','labor, capital, and nature, coequally','whoever abstained to build the model'],
    ['What is it worth?','its hours: now nearly zero a song','its utility; the price is the index','its utility; labor\'s absence is nothing'],
-   ['Who should be paid?','those whose labor is in it','each agency, for the utility it added','the abstainer, and the advantage\'s owner'],
+   ['Who should be paid?','those whose labor is in it','each agency, for the utility it added','the abstainer and the owner'],
    ['Is prompting labor?','minutes of it; the value is elsewhere','industry that made utility, so yes','labor, plus a rent for talent']];
   tbl(g,{x:70,y:220,heads:['','Ricardo','Say','Senior'],rows:rows.slice(0,Math.min(k,4)),colW:[240,420,420,420],fs:22,rowH:100});
   if(k>=4)note(g,'Your answers from the Ricardo day, “it stole from the artists” included, each sit in one of these columns. Level 6 asks you to pick a column and defend it.',720);
@@ -571,15 +629,15 @@ scene('Scorecard: harmony or conflict','The question every week answers',6,(g,k)
    ['general gluts','impossible','possible: hoarding','impossible: Say\'s law','impossible: no satiety'],
    ['the market','conceals a conflict','harmony, with repair','harmony','harmony']];
   tbl(g,{x:90,y:220,heads:['','Ricardo','Bentham','Say','Senior'],rows:rows.slice(0,Math.min(k,5)),colW:[220,300,300,300,300],fs:23,rowH:76});
-  if(k>=5)note(g,'HL p. 150 concede one point: by 1850 the rent/profit line had blurred. What critics keep is the line between income from working and income from owning. Mill hesitates over it and Marx starts there.',720);
+  if(k>=5)note(g,'HL (p. 150) concede that by 1850 the rent/profit line had blurred, but critics keep the line between income from working and income from owning. Mill hesitates over that line and Marx begins from it.',720);
 });
 
 // 19 exam
-txt('What to take out the door','Three sentences, one per writer  ·  who-gets-paid.pages.dev',[
+txt('Three sentences, one per writer','who-gets-paid.pages.dev',[
  'Bentham: value is utility, a quantity of pleasure you can add across people, and the market can hoard and can be improved.',
- 'Say: labor, capital, and land coequally make utility and are each paid their contribution, so profit is earned the way wages are, and supply creates its own demand.',
- 'Senior: nobody is ever satisfied, so no comparing persons and no general glut; profit is pay for abstinence; every income is partly rent, so classes blur.',
- 'Next, Bastiat and Mill (HL ch. 8): harmony as comedy, and the one classical who hesitated.']);
+ 'Say: land, labor, and capital each make utility and are paid for it, so profit is earned like wages, and supply creates its own demand.',
+ 'Senior: no one is ever satisfied, so there is no comparing persons and no general glut, and profit is pay for abstinence.',
+ 'Next, Bastiat and Mill (HL ch. 8): Bastiat\'s harmony pushed to its limit, and Mill\'s hesitation.']);
 
 // ---------------- engine ----------------
 let i=0,k=0;
