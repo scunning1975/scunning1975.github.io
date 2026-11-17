@@ -294,6 +294,21 @@ scene('Bastiat reduces utilitarian economics to a three-line syllogism','HL p. 1
   if(k>=4)note(g,'Smith gave exchange a few dozen of a thousand pages, and Ricardo defined the subject as distribution among three classes (HL p. 178). With Bastiat the invisible hand “had become the whole of political economy. The sanitizing job was complete.”',760);
   sweep();});
 
+scene('Premise 2 became Chicago\'s research program','HL p. 186: Bastiat is the precursor of the Austrian and Chicago schools',6,(g,k)=>{
+  tbl(g,{x:110,y:225,heads:['who','year','the claim','the territory'],colW:[300,110,560,410],fs:21,rowH:58,rows:[
+   ['Gary Becker','1976','“The economic approach” fits all human behavior','crime, family, discrimination'],
+   ['Richard Posner','1973','Common law rules can be read as efficient','the law'],
+   ['Gary Becker','1992','Nobel lecture: “The Economic Way of Looking at Life”','everything'],
+   ['Edward Lazear','2000','“Economic Imperialism”: economics can invade other fields','sociology, politics, law']].slice(0,Math.min(k+1,4)),fresh:null});
+  if(k>=4)bullets(g,['Every one of these says what premise 2 said: all human interactions can be analyzed as exchanges among rational, maximizing people.','Lazear names the toolkit as rational maximizers, equilibrium, and efficiency, and calls it the reason economics could “invade intellectual territory.”'],560,24,Math.min(k-3,2));
+  if(k>=5)note(g,'Posner died on November 10, 2026, at 87, after 36 years on the Seventh Circuit and more than 60 books. The Chicago lineage HL name on p. 186 runs from Bastiat through this table.',790);
+  sweep();});
+
+scene('Chicago kept premise 2 and dropped the harmony','What survived of Bastiat and what did not',5,(g,k)=>{
+  bullets(g,['Chicago kept the claim that every interaction is a trade, and it kept Bastiat\'s habit of asking what is not seen.','It dropped Providence and replaced harmony with efficiency, so the test of a rule became whether it maximizes total surplus.','Coase (1960) filled Bastiat\'s first gap: when bargaining is costly, who holds the right at the start decides the outcome.','Stigler (1971) filled the second: the bribe for legislation that Bastiat ignored became a theory of regulation.'],null,null,Math.min(k+1,4));
+  if(k>=4)note(g,'Becker\'s 1968 crime paper is premise 2 with numbers. Punishment is a price, and the offender responds to it the way a buyer responds to any other price.',818);
+  sweep();});
+
 scene('Premise 1 is true of the trade and silent on the start','Gains from exchange are real, but the endowments were set before the trade',5,(g,k)=>{
   const X=120,Y=230;
   if(k>=0){T(g,X,Y+20,'A buyer values a coat at 10; a seller made it for 4.',{'font-size':26,fill:C.ink});}
