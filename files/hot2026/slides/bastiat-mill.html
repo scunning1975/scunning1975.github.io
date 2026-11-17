@@ -294,14 +294,26 @@ scene('Bastiat reduces utilitarian economics to a three-line syllogism','HL p. 1
   if(k>=4)note(g,'Smith gave exchange a few dozen of a thousand pages, and Ricardo defined the subject as distribution among three classes (HL p. 178). With Bastiat the invisible hand “had become the whole of political economy. The sanitizing job was complete.”',760);
   sweep();});
 
-scene('Premise 2 became Chicago\'s research program','HL p. 186: Bastiat is the precursor of the Austrian and Chicago schools',6,(g,k)=>{
-  tbl(g,{x:110,y:225,heads:['who','year','the claim','the territory'],colW:[300,110,560,410],fs:21,rowH:58,rows:[
-   ['Gary Becker','1976','“The economic approach” fits all human behavior','crime, family, discrimination'],
+scene('Premise 2 became Chicago\'s research program','HL p. 186: Bastiat is the precursor of the Austrian and Chicago schools',7,(g,k)=>{
+  tbl(g,{x:110,y:222,heads:['who','year','the claim','the territory'],colW:[300,110,560,410],fs:21,rowH:50,rows:[
+   ['George Stigler','1971','Regulation is bought by the industry it regulates','politics'],
    ['Richard Posner','1973','Common law rules can be read as efficient','the law'],
+   ['Gary Becker','1976','“The economic approach” fits all human behavior','crime, family, discrimination'],
    ['Gary Becker','1992','Nobel lecture: “The Economic Way of Looking at Life”','everything'],
-   ['Edward Lazear','2000','“Economic Imperialism”: economics can invade other fields','sociology, politics, law']].slice(0,Math.min(k+1,4)),fresh:null});
-  if(k>=4)bullets(g,['Every one of these says what premise 2 said: all human interactions can be analyzed as exchanges among rational, maximizing people.','Lazear names the toolkit as rational maximizers, equilibrium, and efficiency, and calls it the reason economics could “invade intellectual territory.”'],560,24,Math.min(k-3,2));
-  if(k>=5)note(g,'Posner died on November 10, 2026, at 87, after 36 years on the Seventh Circuit and more than 60 books. The Chicago lineage HL name on p. 186 runs from Bastiat through this table.',790);
+   ['Edward Lazear','2000','“Economic Imperialism”: economics can invade other fields','sociology, religion, law']].slice(0,Math.min(k+1,5)),fresh:null});
+  if(k>=5)bullets(g,['Every one of these says what premise 2 said: all human interactions can be analyzed as exchanges among rational, maximizing people.','Lazear names the toolkit as rational maximizers, equilibrium, and efficiency, and calls it the reason economics could “invade intellectual territory.”'],590,24,Math.min(k-4,2));
+  if(k>=6)note(g,'Posner died on November 10, 2026, at 87, after 36 years on the Seventh Circuit and more than 60 books. The Chicago lineage HL name on p. 186 runs from Bastiat through this table.',805);
+  sweep();});
+
+scene('Lazear\'s invasion reached religion, and Baylor','The economics of religion is premise 2 applied to churches',9,(g,k)=>{
+  tbl(g,{x:110,y:222,heads:['who','year','the claim'],colW:[400,110,900],fs:21,rowH:50,rows:[
+   ['Laurence Iannaccone','1992','Strict churches are strong: costly demands screen out free riders'],
+   ['Stark and Iannaccone','1994','Europe secularized on the supply side: state churches are lazy monopolies'],
+   ['Laurence Iannaccone','1998','“Introduction to the Economics of Religion,” the field\'s first survey'],
+   ['Stark and Finke','2000','Acts of Faith: religion is a market with sellers, buyers, and regulators'],
+   ['North and Gwin','2004','A state religion lowers attendance; constitutional protection raises it']].slice(0,Math.min(k+1,5)),fresh:null});
+  if(k>=5)bullets(g,['Becker and Stigler both sat on Iannaccone\'s 1984 Chicago thesis committee.','Rodney Stark, a sociologist, adopted the model and was at Baylor from 2004 to 2022.','Charles North, in our department, has a JD and a PhD and tested it on 59 countries.'],590,24,Math.min(k-4,3));
+  if(k>=8)note(g,'Stigler\'s regulation argument and Becker\'s maximizing believer meet in that 1994 paper: a state church is a monopoly, and a monopoly underproduces. Stark co-directed Baylor\'s Institute for Studies of Religion from 2005.',822);
   sweep();});
 
 scene('Chicago kept premise 2 and dropped the harmony','What survived of Bastiat and what did not',5,(g,k)=>{
