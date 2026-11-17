@@ -440,22 +440,37 @@ txt('Say\'s Law: the claim','HL pp. 137–138',[
  'Malthus, the later Bentham, Marx, and Keynes rejected it.',
  'HL: these conclusions “are still accepted by many economists, and policy makers, today.”']);
 
-// 10b the argument
-scene('Say\'s argument in the Letters to Malthus','Money is only a medium, so every sale funds a purchase',5,(g,k)=>{
-  const box=(x,lab,sub,fill)=>{el('rect',{x,y:215,width:380,height:110,rx:12,fill},g);T(g,x+190,262,lab,{'text-anchor':'middle','font-size':28,'font-weight':700,fill:C.cream});T(g,x+190,300,sub,{'text-anchor':'middle','font-size':20,fill:C.cream,opacity:0.85});};
-  if(k>=0)box(110,'produce','cloth worth 100',C.earth);
-  if(k>=1){T(g,520,282,'→',{'font-size':48,fill:C.warm});box(610,'sell','100 of income',C.green);}
-  if(k>=2){T(g,1020,282,'→',{'font-size':48,fill:C.warm});box(1110,'buy','100 of corn, hats, bread',C.golddeep);}
-  if(k>=2){el('path',{d:'M1300 335 C1300 420, 300 420, 300 335',fill:'none',stroke:C.warm,'stroke-width':3,'stroke-dasharray':'8 6'},g);T(g,800,430,'and the corn, hats, and bread were produced in order to buy the cloth',{'text-anchor':'middle','font-size':21,fill:C.warm});}
-  bullets(g,['Money has no importance of its own and is only a means of exchange.','No one produces except to exchange it for someone else\'s production.','So “a supply creates a demand of the same magnitude,” and “produce opens a vent for produce.”','Since this holds for each producer, Say concludes it holds for the sum, so aggregate supply equals aggregate demand.'],500,26,Math.min(k+1,4));
+// 10b Quesnay's loop, followed around
+scene('Quesnay drew the loop in 1758; Say closed it','HL pp. 35–37: the Tableau économique is a model of money and goods going round',7,(g,k)=>{
+  const arc=(x1,y1,cx1,cy1,cx2,cy2,x2,y2,col,dash)=>{el('path',{d:`M${x1} ${y1} C${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`,fill:'none',stroke:col,'stroke-width':4,'stroke-dasharray':dash||null},g);
+    const dx=x2-cx2,dy=y2-cy2,L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L;const ex=x2-ux*14,ey=y2-uy*14;el('polygon',{points:`${x2},${y2} ${ex-uy*9},${ey+ux*9} ${ex+uy*9},${ey-ux*9}`,fill:col},g);};
+  const box=(x,lab,sub,fill)=>{el('rect',{x,y:430,width:300,height:120,rx:12,fill},g);T(g,x+150,480,lab,{'text-anchor':'middle','font-size':30,'font-weight':700,fill:C.cream});T(g,x+150,520,sub,{'text-anchor':'middle','font-size':19,fill:C.cream,opacity:0.85});};
+  const token=(x,y,t)=>{el('circle',{cx:x,cy:y,r:30,fill:C.gold,stroke:C.cream,'stroke-width':3},g);T(g,x,y+8,t,{'text-anchor':'middle','font-size':22,'font-weight':700,fill:C.ink});};
+  box(160,'FIRMS','make cloth and corn',C.green);box(1140,'HOUSEHOLDS','own labor, capital, land',C.earth);
+  if(k>=1){arc(1240,550,1240,680,360,680,360,550,C.earth,'10 7');T(g,800,622,'labor, capital, land',{'text-anchor':'middle','font-size':21,fill:C.earth});}
+  if(k>=2){arc(360,430,360,300,1240,300,1240,430,C.earth,'10 7');T(g,800,368,'cloth 100 and corn 100',{'text-anchor':'middle','font-size':21,fill:C.earth});}
+  if(k>=3){arc(260,550,260,770,1340,770,1340,550,C.green);T(g,800,768,'wages, profit, rent = 200',{'text-anchor':'middle','font-size':23,'font-weight':700,fill:C.green});}
+  if(k>=4){arc(1340,430,1340,215,260,215,260,430,C.green);T(g,800,232,'spending = 200',{'text-anchor':'middle','font-size':23,'font-weight':700,fill:C.green});}
+  if(k>=5)T(g,800,497,'output 200 = income 200 = spending 200',{'text-anchor':'middle','font-size':24,'font-weight':700,fill:C.green});
+  if(k<=2||k===5)token(215,395,'200');else if(k===3)token(800,707,'200');else if(k===4)token(800,272,'200');
+  if(k>=6){token(215,395,'180');el('line',{x1:1440,y1:490,x2:1478,y2:490,stroke:C.brick,'stroke-width':4,'stroke-dasharray':'8 6'},g);el('polygon',{points:'1492,490 1478,482 1478,498',fill:C.brick},g);el('rect',{x:1494,y:462,width:62,height:56,rx:6,fill:C.brick},g);T(g,1525,497,'20',{'text-anchor':'middle','font-size':24,'font-weight':700,fill:C.cream});T(g,1525,545,'kept',{'text-anchor':'middle','font-size':18,fill:C.brick});}
+  const cap=['Quesnay\'s Tableau of 1758 is the first model of money and goods going round in a circle (HL p. 35). Here it is with his farmers and landlords replaced by firms and households.',
+   'Households send their labor, capital, and land to the firms.',
+   'The firms make cloth worth 100 and corn worth 100. Follow the 200.',
+   'Every one of the 200 is paid to someone as wages, profit, or rent, so income is 200 by construction.',
+   'Households spend the 200 on the cloth and the corn, so demand is 200 before anyone chooses what to buy.',
+   'The 200 came back whole: output 200, income 200, spending 200, glut 0. Supplying 200 of goods created 200 of demand, and that is the sentence “supply creates its own demand.”',
+   'Quesnay already saw the weak point: if money stops moving, production is disrupted (HL p. 36). Say says the 20 must come back, Malthus says nothing forces it, and Keynes says only if someone plans to invest 20.'];
+  note(g,cap[Math.min(k,6)],800);
   sweep();});
 
-// 10c the model
-scene('A model: two goods, one income','All output is paid out as income, and all income is spent',5,(g,k)=>{
-  const rows=[['value of output','100','100','200'],['paid out as wages, profit, rent','100','100','200'],['spent','100','100','200'],['glut: output − spending','0','0','0']];
-  tbl(g,{x:160,y:230,heads:['','cloth','corn','total'],rows:rows.slice(0,Math.min(k+1,4)),colW:[520,240,240,260],fs:27,rowH:66,bold:(i,j)=>j===3,color:(i,j)=>i===3?C.green:null});
-  if(k>=4)bullets(g,['Every dollar of output becomes someone\'s income, so income is 200 by construction.','Every dollar of income is spent, so demand is 200 before anyone decides what to buy.'],640,27,2);
-  sweep();});
+txt('What Say added to Quesnay\'s loop','Traité, 1803, Book I, chapter 15, “Des débouchés”; Letters to Malthus, 1820',[
+ 'Quesnay\'s loop had farmers, landlords, and artisans in it, and only farming made a surplus (HL p. 36).',
+ 'Say puts every producer in the loop and takes money out of the driver\'s seat: “produce opens a vent for produce.”',
+ 'Then he draws the inference: if the loop closes, there can be no general glut, only too much of one good and too little of another.',
+ 'Say never drew the diagram, so this is my reading of the Letters to Malthus: he is describing the circle and insisting it has no leak.',
+ '> Mankiw\'s Principles opens with this same diagram, two loops and no leak.',
+ '> The leak arrives later, in his saving and investment chapter, as the financial system.']);
 
 // 10d tastes shift
 scene('The model when tastes shift','Spending moves from cloth to corn; output has not caught up yet',6,(g,k)=>{
