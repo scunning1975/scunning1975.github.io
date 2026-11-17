@@ -162,6 +162,37 @@ function table5(g,k,o){const show=[true,true,k>=1,k>=2,k>=3,k>=4];
   if(k>=4&&o.note)note(g,o.note,735);}
 
 
+// ---------------- flowchart helper ----------------
+function flow(g,o){const N={};o.nodes.forEach((n,i)=>{N[n.id]=n;if(o.showN!=null&&i>=o.showN)return;el('rect',{x:n.x,y:n.y,width:n.w,height:n.h,rx:10,fill:n.fill||C.mist,stroke:n.stroke||'none','stroke-width':2},g);
+    const lines=String(n.t).split('\n');const top=n.sub?n.y+30:n.y+n.h/2+8-(lines.length-1)*13;lines.forEach((ln,q)=>T(g,n.x+n.w/2,top+q*26,ln,{'text-anchor':'middle','font-size':n.fs||21,'font-weight':700,fill:n.fg||C.ink}));
+    if(n.sub){n.sub.split('\n').forEach((ln,q)=>T(g,n.x+n.w/2,n.y+56+q*20,ln,{'text-anchor':'middle','font-size':16,fill:n.fg?n.fg:C.warm}));}});
+  o.edges.forEach((e,i)=>{if(o.showE!=null&&i>=o.showE)return;const a=N[e[0]],b=N[e[1]];if(!a||!b)return;const ax=a.x+a.w/2,ay=a.y+a.h/2,bx=b.x+b.w/2,by=b.y+b.h/2;
+    const clip=(n,cx,cy,dx,dy)=>{const tx=dx!==0?(n.w/2)/Math.abs(dx):1e9,ty=dy!==0?(n.h/2)/Math.abs(dy):1e9;const t=Math.min(tx,ty);return [cx+dx*t,cy+dy*t];};
+    const dx=bx-ax,dy=by-ay;const [x1,y1]=clip(a,ax,ay,dx,dy);const [x2,y2]=clip(b,bx,by,-dx,-dy);
+    const L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L;const ex=x2-ux*10,ey=y2-uy*10;const col=e[3]||C.warm;
+    el('line',{x1,y1,x2:ex,y2:ey,stroke:col,'stroke-width':3,'stroke-dasharray':e[4]||null},g);
+    el('polygon',{points:`${x2},${y2} ${ex-uy*7},${ey+ux*7} ${ex+uy*7},${ey-ux*7}`,fill:col},g);
+    if(e[2])T(g,(x1+x2)/2+(e[5]||0),(y1+y2)/2+(e[6]||-8),e[2],{'text-anchor':'middle','font-size':16,fill:col});});}
+
+
+
+// plot reminder: the two-lines map with the current writer highlighted
+function plotmap(g,k,focus,lines,sub){
+  const nodes=[
+   {id:'smith',x:620,y:200,w:360,h:64,t:'Smith, 1776',sub:'invisible hand; a state for the rich',fill:C.pale},
+   {id:'ric',x:180,y:320,w:330,h:58,t:'Ricardo, 1817',sub:'value is labor; profit a deduction',fill:'#F3D9D9'},
+   {id:'ben',x:1090,y:320,w:330,h:58,t:'Bentham',sub:'value is utility; the chest',fill:'#DCEBDD'},
+   {id:'hod',x:180,y:420,w:330,h:58,t:'Hodgskin, Thompson',sub:'labor is the only real cost',fill:'#F3D9D9'},
+   {id:'say',x:1090,y:420,w:330,h:58,t:'Say · Senior',sub:'coequal agencies; abstinence',fill:'#DCEBDD'},
+   {id:'marx',x:180,y:520,w:330,h:58,t:'Marx, 1867',sub:'exploitation, crisis',fill:'#F3D9D9'},
+   {id:'bas',x:1090,y:520,w:330,h:58,t:'Bastiat, 1850',sub:'exchange is everything',fill:'#DCEBDD'},
+   {id:'mill',x:620,y:600,w:360,h:64,t:'Mill, 1848',sub:'both lines, and reform',fill:C.pale}];
+  nodes.forEach(n=>{if(focus.includes(n.id)){n.fill=C.gold;n.fg=C.ink;n.stroke=C.golddeep;}});
+  const edges=[['smith','ric'],['smith','ben'],['ric','hod'],['ben','say'],['hod','marx'],['say','bas'],['ric','mill','',C.brick,'6 5'],['say','mill','',C.green,'6 5']];
+  flow(g,{nodes,edges});
+  T(g,345,300,'production: conflict',{'text-anchor':'middle','font-size':18,fill:C.brick,'font-weight':700});T(g,1255,300,'exchange: harmony',{'text-anchor':'middle','font-size':18,fill:C.green,'font-weight':700});
+  bullets(g,lines,700,24,Math.min(k,lines.length));}
+
 // ---------------- scenes ----------------
 const S=[];
 const txt=(title,sub,lines,extra)=>S.push({title,sub,stages:lines.length,draw:(g,k)=>{bullets(g,lines,null,null,k+1);if(extra)extra(g);}});
@@ -172,7 +203,7 @@ S.push({title:'',sub:'',draw:g=>{
   el('rect',{x:0,y:0,width:1600,height:900,fill:C.green},g);
   el('rect',{x:120,y:268,width:110,height:8,fill:C.gold},g);
   T(g,120,380,'Ricardo (conclusion)',{'font-size':92,'font-weight':700,fill:C.cream});
-  T(g,120,452,'The review, the new piece, the crack, then the other answer',{'font-size':40,fill:C.gold});
+  T(g,120,452,'Ricardo\'s review, the price equation, and where it fails',{'font-size':40,fill:C.gold});
   T(g,120,575,'Scott Cunningham  ·  History of Economic Thought  ·  Baylor University',{'font-size':36,fill:C.cream});
   T(g,120,625,'Thursday, November 5, 2026  ·  ECO 4343/5343  ·  Hunt & Lautzenheiser chs. 5–6',{'font-size':30,fill:C.cream,opacity:0.62});
   T(g,120,705,'The longer piece is at',{'font-size':28,fill:C.cream,opacity:0.85});
@@ -181,51 +212,52 @@ S.push({title:'',sub:'',draw:g=>{
 }});
 
 // 2 review
-txt('What we did: value is labor','Levels 1 and 2 of the game',[
+txt('Ricardo made labor the measure of value','Levels 1 and 2 of the game',[
  'Goods exchange in proportion to the labor embodied in them, as with the hunters.',
  'A tool is past labor, so the loom\'s share belongs in the price of the stockings.',
  'Utility is necessary for value and does not regulate it (HL p. 98).']);
 
-txt('What we did: profit is what is left','Level 5 and the corn model',[
+txt('Ricardo\'s profit is what is left after wages','Level 5 and the corn model',[
  'Measure the day\'s product in hours, and profit is what is left after the hours in the wage basket.',
  '> The basket is the bundle of necessaries a worker\'s day has to buy, which is the wage in goods rather than in money.',
  '> Counted in the hours it takes to make, the basket is the wage measured the same way as the product.',
  'A dearer (more expensive) basket lowers the rate of profit with no change in the product.',
- 'Profit and rent are therefore deductions from what labor made.']);
+ 'So Ricardo counts profit and rent as deductions from the product of labor.']);
 
 // 2b why the deduction mattered
-txt('Why “deductions from what labor made” mattered to Ricardo','“To determine the laws which regulate this distribution, is the principal problem in Political Economy” (Preface, 1817)',[
+txt('Ricardo made distribution the principal problem','Preface to the Principles, 1817',[
+ '“To determine the laws which regulate this distribution, is the principal problem in Political Economy.”',
  'The day\'s product is a fixed number of hours, so wages, profit, and rent are shares of one thing.',
  'A dearer (more expensive) basket raises the wage share and lowers profit with nothing else changing.',
  'The Corn Laws kept corn dear, so they moved income from capitalists to landlords through the wage.']);
 
-txt('Why it mattered: the conflict is arithmetic','HL p. 96',[
+txt('In Ricardo the class conflict is a subtraction','HL p. 96',[
  'That is why the landlord\'s interest is “always opposed to the interest of every other class.”',
- 'The conflict is not a judgment added at the end but the arithmetic of a residual.',
- 'The alternative, which arrives today, is that profit is capital\'s own contribution, so nothing is deducted from anyone.']);
+ 'Once profit is a residual, a higher wage share lowers profit by arithmetic alone.',
+ 'Say and Senior will instead treat profit as capital\'s own contribution, so nothing is deducted from labor.']);
 
-txt('The surplus and who gets it are two questions','Counting in hours keeps them apart',[
+txt('The surplus and who gets it are two questions','Measured in hours, size and split are separate',[
  'Measured in hours, the surplus is the product minus the basket, and technique and the margin fix its size.',
  'Who gets the surplus is a separate question, and the Corn Laws answered it in the landlords\' favor through the wage.',
  'Dearer corn is also a real cost, since worse land means more hours for the same basket, so the surplus itself shrinks.',
- 'A price rise that is passed into wages is a transfer, and the real cost is the hours used up, which is the same distinction as the cost of inflation.']);
+ 'A price rise passed into wages is a transfer, and the real cost is the extra hours used up.']);
 
 // 2c two subtractions
-scene('Two subtractions: Ricardo\'s profit and today\'s','Profit = TR − TC = pq − FC − VC looks like a residual too, and the difference is in p and in the cost list',6,(g,k)=>{
+scene('Ricardo\'s profit and today\'s are different subtractions','Profit = pq − FC − VC also looks like a residual',6,(g,k)=>{
   const rows=[['the price p','hours of labor embodied','set by supply and demand'],['what is subtracted','the wage basket, in hours','wages, materials, and the going return on capital'],['profit','the residual, r × wages advanced','what is left after capital is paid'],['when wages rise','the capitalist loses, one for one','nobody in the formula, since p can move']];
   tbl(g,{x:90,y:215,heads:['','Ricardo','today'],rows:rows.slice(0,Math.min(k+1,4)),colW:[300,520,600],fs:23,rowH:64,bold:(i,j)=>j===0});
-  if(k>=4)bullets(g,['In Ricardo\'s model p is a number of hours, while for us p is the exchange price set in markets by supply and demand, which he does not model.','Today\'s cost line already pays capital its going return, which is Say and Senior\'s move written into the accounting.'],560,26,k>=5?2:1);
-  if(k>=5)note(g,'Ricardo\'s r is that going return, and under competition what is left after it is zero. The dispute today is whether r is a deduction from labor\'s product or a payment for capital\'s own contribution.',760);
+  if(k>=4)bullets(g,['Ricardo\'s p is a count of hours, while our p is a market price that Ricardo never models.','Today\'s cost line already pays capital its going return, which is the position Say and Senior will argue for.'],560,26,k>=5?2:1);
+  if(k>=5)note(g,'Ricardo\'s r is that going return, and under competition what is left after it is zero. The question from here on is whether r is a deduction from labor\'s product or a payment for capital\'s own contribution.',760);
   sweep();});
 
 // 3 new: the price equation
-scene('New: where the price equation comes from','HL pp. 103–104, 107',5,(g,k)=>{
-  bullets(g,['Natural price is what it cost to make plus the going profit on the money tied up.','Competition makes the rate of profit the same in every trade (HL p. 93).','Labor paid this year earns r once, and labor paid last year earns r twice.','Set r = 0 and the price is the labor, exactly.'],200,30,Math.min(k,4));
+scene('Natural price is cost plus profit on money tied up','HL pp. 103–104, 107',5,(g,k)=>{
+  bullets(g,['Natural price is what it cost to make plus the going profit on the money tied up.','Competition makes the rate of profit the same in every trade (HL p. 93).','Labor paid this year earns r once, and labor paid last year earns r twice.','At r = 0 the price equals the hours of labor.'],200,30,Math.min(k,4));
   if(k>=4){el('rect',{x:120,y:680,width:1360,height:96,rx:10,fill:C.mist},g);T(g,800,742,'Price = w(1 + r) × [hours now + hours last year × (1 + r)]',{'text-anchor':'middle','font-size':40,'font-weight':700,fill:C.green});}
   sweep();});
 
 // 4a new: using the equation
-scene('New: using the equation, one element at a time','w = $1 throughout; A is 10 hours now, B is 5 hours now and 5 last year',7,(g,k)=>{
+scene('Pricing goods A and B with the equation','w = $1 throughout; A is 10 hours now, B is 5 hours now and 5 last year',7,(g,k)=>{
   el('rect',{x:90,y:190,width:1420,height:60,rx:10,fill:C.mist},g);
   T(g,800,231,'Price = w(1 + r) × [hours now + hours last year × (1 + r)]',{'text-anchor':'middle','font-size':30,'font-weight':700,fill:C.green});
   const heads=['good, r','w','1 + r','hours now','hours last year','last year × (1 + r)','[ now + that ]','w(1 + r) × [ ]'];
@@ -236,33 +268,39 @@ scene('New: using the equation, one element at a time','w = $1 throughout; A is 
   const show=heads.map((h,j)=>j<=4||j-4<=k);
   tbl(g,{x:90,y:300,heads,rows:all.slice(0,nrows),colW:[170,100,120,150,170,220,210,280],fs:25,rowH:56,show,fresh:k>=1&&k<=3?4+k:undefined,bold:(i,j)=>j===7,color:(i,j)=>j===7?C.green:(j===5&&i%2===1?C.brick:null)});
   if(k>=1&&k<=3)T(g,90,730,['','last year\'s hours earn r once before this year starts','add this year\'s hours to that','then the whole bracket earns r once more, and w turns hours into dollars'][k],{'font-size':24,fill:C.warm});
-  if(k>=6)note(g,'The labor theory says B ÷ A should be labor in B ÷ labor in A = 10 ÷ 10 = 1. At r = 0 it is: 10.00 ÷ 10.00. At 10 percent it is 11.55 ÷ 11.00 = 1.05, and at 25 percent 14.06 ÷ 12.50 = 1.125. The only element that changed is r, and it entered twice for B and once for A.',700);
+  if(k>=6)note(g,'The labor theory predicts B ÷ A = 10 ÷ 10 = 1, and at r = 0 the table gives exactly that. At 10 percent the ratio is 1.05 and at 25 percent it is 1.125, because r enters twice for B and once for A.',700);
   sweep();});
 
 // 4 new: timing
-scene('New: the same two goods at other rates of r','Game Level 3: A is 10 hours now; B is 5 now and 5 last year; w = $1',7,(g,k)=>{
+scene('Raising r moves the price ratio off the labor ratio','Game Level 3: A is 10 hours now; B is 5 now and 5 last year; w = $1',7,(g,k)=>{
   const rows=[['0','10.00','10.00','1.00','1.00'],['10%','11.00','11.55','1.00','1.05'],['25%','12.50','14.06','1.00','1.125'],['50%','15.00','18.75','1.00','1.25']];
   tbl(g,{x:120,y:215,heads:['r','price A','price B','labor in B ÷ labor in A','price of B ÷ price of A\n(what one B buys, in A)'],rows:rows.slice(0,Math.min(k+1,4)),colW:[160,270,270,330,340],fs:28,rowH:64,hl:k>=3?[0]:[],bold:(i,j)=>j===4,color:(i,j)=>j===4&&i>0?C.brick:null});
-  if(k>=4)bullets(g,['At r = 0 the two price columns match the labor column, which is the labor theory exactly.','The labor column never moves, and the price ratio leaves it as soon as r is above zero.','HL p. 105: “the price ratio has changed while the quantities of labor embodied in the two commodities have remained unchanged.”'],570,28,Math.min(k-3,3));
+  if(k>=4)bullets(g,['At r = 0 both price columns equal the labor column, as the labor theory predicts.','The labor column is constant, and the price ratio rises above 1 as soon as r is positive.','HL p. 105: “the price ratio has changed while the quantities of labor embodied in the two commodities have remained unchanged.”'],570,28,Math.min(k-3,3));
   sweep();});
 
 // 5 new: the tables
-txt('New: what Ricardo\'s own tables show','Tables 5.1 and 5.2, HL pp. 109–114',[
+txt('Ricardo\'s own tables show wages moving prices','Tables 5.1 and 5.2, HL pp. 109–114',[
  'A wage change moves relative prices with no change in the labor.',
  'When the wage doubled and r fell to 10 percent, the capital-heavy good got cheaper, from 2.08 to 1.16 times the other.',
  'Ricardo wanted a measure of value that would not move when wages moved.',
  'He never found one and took gold provisionally, “knowing that in reality it was not” (p. 114).']);
 
 // 6 the crack
-txt('The crack in the labor theory of value','Everything that is not labor in a price is r',[
+txt('Prices equal labor only when r is zero','Profit on advances is the only non-labor part of price',[
  'Prices equal labor only when r = 0.',
  '> r is the rate of profit: the capitalist\'s profit divided by the wages he advanced, 30 ÷ 70 in the corn model.',
  '> Competition makes r the same in every trade, so every advance earns it for as long as the money is tied up.',
  'Ricardo called the deviations small and kept the theory.',
- 'Where r comes from is now the open question.',
- 'The three writers today take r and make it the whole story.']);
+ 'Ricardo never explains where r comes from.',
+ 'Bentham, Say, and Senior build their theories of value around r.']);
 
 // 7 cover: value without labor
+// plot reminder 1
+scene('Where we are after Ricardo','The course question since Smith',4,(g,k)=>{plotmap(g,k,['ric'],[
+ 'Ricardo made labor the measure of value and profit the residual, so the market conceals a conflict over the product.',
+ 'His price equation showed that r, the rate of profit, is the only part of a price that is not labor.',
+ 'Bentham, Say, and Senior each give a different account of what r is.']);sweep();});
+
 S.push({title:'',sub:'',draw:g=>{
   el('rect',{x:0,y:0,width:1600,height:900,fill:C.green},g);
   el('rect',{x:120,y:268,width:110,height:8,fill:C.gold},g);
@@ -271,57 +309,60 @@ S.push({title:'',sub:'',draw:g=>{
   T(g,120,575,'Scott Cunningham  ·  History of Economic Thought  ·  Baylor University',{'font-size':36,fill:C.cream});
   T(g,120,625,'Thursday, November 5, 2026  ·  ECO 4343/5343  ·  Hunt & Lautzenheiser ch. 6',{'font-size':30,fill:C.cream,opacity:0.62});
   T(g,120,705,'Ricardo: value is labor, and profit and rent are deductions from it',{'font-size':28,fill:C.cream,opacity:0.85});
-  T(g,120,745,'Now: three writers who make the deduction disappear',{'font-size':28,fill:C.cream,opacity:0.85});
-  T(g,120,785,'The crack was r, and each of them has a different story about what r is',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,745,'Bentham, Say, and Senior deny profit is a deduction',{'font-size':28,fill:C.cream,opacity:0.85});
+  T(g,120,785,'Each gives a different account of what r is',{'font-size':28,fill:C.cream,opacity:0.85});
   T(g,120,845,'who-gets-paid.pages.dev',{'font-size':32,'font-weight':700,fill:C.gold});
 }});
 
 
 // 3 three moves
-txt('Today: three moves that make the conflict disappear','HL p. 127: the chapter is the hinge of the course',[
- 'Move 1: value is utility, not labor, so there is no surplus that labor made.',
- 'Move 2: owning is a sacrifice like working, so profit is earned the way wages are.',
- 'Move 3: every income contains some rent, so the three classes blur into one set of owners of advantages.',
+txt('Three arguments against Ricardo\'s class conflict','The labor theory of value is abandoned here (HL p. 127)',[
+ 'Value comes from utility, so there is no surplus that labor made.',
+ 'Owning capital is a sacrifice like working, so profit is earned as wages are.',
+ 'Every income contains some rent, so landlord, capitalist, and worker are all owners of an advantage.',
  'HL p. 127: the three writers “each contributed to the abandonment of the labor theory of value—and hence its class conflict conclusions.”']);
 
 // 4 five habits
-scene('Five habits of a market society, read as human nature','HL pp. 125–129',6,(g,k)=>{
+scene('Five features of capitalism taken as human nature','HL pp. 125–129',6,(g,k)=>{
   const rows=[['Specialized producers who meet only in markets','Atomistic individualism: the isolated self against impersonal forces (Hobbes)'],
    ['Producers who cannot live without the market','The market is universally beneficial; capitalism is natural and eternal'],
    ['Motives weighed as gains and losses','Egoistic utilitarianism: all motives are pleasure sought and pain avoided'],
    ['Industry financed out of profits','Profits must be justified as a sacrifice, since someone bore the cost of accumulation'],
-   ['Competition forces cost control','Calculating rationalism: the person as accountant of pleasures and pains']];
+   ['Competition forces cost control','Calculating rationalism: people weigh pleasures against pains before acting']];
   tbl(g,{x:90,y:220,heads:['What capitalism did','What the utility writers took as universal'],rows:rows.slice(0,Math.min(k,5)),colW:[600,820],fs:24,rowH:72});
   if(k>=5)note(g,'Each feature is “the particular result of the capitalist mode of production” seen as “general human conditions, existing in all societies, in all places and times.” (HL p. 125)',760);
 });
 
 // 5 Bentham masters
-scene('Bentham: two sovereign masters','An Introduction to the Principles of Morals and Legislation, 1780',4,(g,k)=>{
+scene('Bentham: two sovereign masters','An Introduction to the Principles of Morals and Legislation, 1780',3,(g,k)=>{
   if(k>=0)note(g,'“Nature has placed mankind under the governance of two sovereign masters, pain and pleasure. It is for them alone to point out what we ought to do, as well as to determine what we shall do.” (HL p. 130)',250);
-  if(k>=1)bullets(g,['Utility is whatever tends to produce pleasure or prevent pain, and pain is only negative pleasure.','He wanted a science of happiness “with the same numerical exactitude as the science of physics” (p. 130): utils you can add, like inches.'],360,30,k);
-  if(k>=3){T(g,90,610,'The seven circumstances that fix the value of a pleasure (p. 130)',{'font-size':26,'font-weight':500,fill:C.green});
-    ['intensity','duration','certainty','propinquity','fecundity','purity','extent'].forEach((w,j)=>{el('rect',{x:90+j*205,y:640,width:190,height:60,rx:6,fill:C.mist},g);T(g,185+j*205,679,w,{'text-anchor':'middle','font-size':24,fill:C.green});});}
+  if(k>=1)bullets(g,['Utility is whatever tends to produce pleasure or prevent pain, and pain is only negative pleasure.','He wanted a science of happiness “with the same numerical exactitude as the science of physics” (p. 130), which requires utils that add like inches.'],360,30,k);
+  sweep();});
+
+scene('Seven circumstances fix the value of a pleasure','HL p. 130',3,(g,k)=>{
+  ['intensity','duration','certainty','propinquity','fecundity','purity','extent'].forEach((w,j)=>{if(k>=1||j<4){el('rect',{x:90+j*205,y:260,width:190,height:60,rx:6,fill:C.mist},g);T(g,185+j*205,299,w,{'text-anchor':'middle','font-size':24,fill:C.green});}});
+  bullets(g,['Each pleasure gets a score on every one of these, and the scores add.','Extent is the number of people who feel it, so the sum runs across persons as well as within one.'],420,28,Math.min(k,2));
   sweep();});
 
 // 5b happiness, utility, preference
-txt('Happiness, utility, preference','Three words that get used as one',[
- 'For Bentham, happiness is the thing itself, a quantity of pleasure minus pain.',
+txt('Bentham\'s utility and ours are different numbers','Three words that get used as one',[
+ 'For Bentham, happiness is a quantity of pleasure minus pain.',
  'Utility is the property of an object that produces that happiness (p. 130).',
  'For us, utility is a number that stands in for a ranking of bundles of goods.',
- 'An ordinal number says 2 is above 1 and nothing else.']);
+ 'An ordinal number only says that 2 ranks above 1.']);
 
-txt('Sacrifice, and what it does to Senior','Where the hedonic reading carries weight',[
+txt('Senior\'s abstinence needs Bentham\'s psychology','Why the hedonic reading matters for profit',[
  'A sacrifice can leave you less happy and still be what you chose.',
- 'Bentham must call it a pleasure in disguise, as Hobbes called pity (p. 126).',
+ 'Bentham has to count the sacrifice as a hidden pleasure, as Hobbes did with pity (p. 126).',
  'Preference theory only records the choice.',
- 'For Senior, abstinence has to hurt before profit is earned (p. 147), and a mere preference for later over now earns nothing.']);
+ 'Senior\'s abstinence has to hurt before it earns profit (p. 147), so a preference for later over now is not enough.']);
 
-txt('Cardinal, a word Bentham never used','The test for which kind of number you have',[
- 'The word was coined a century later for what Bentham had and economists were giving up.',
+txt('The word cardinal came a century after Bentham','A relabeling test tells cardinal from ordinal',[
+ 'Economists coined the word a century later, as they were giving up the kind of number Bentham used.',
  'The test is to change the numbers without changing the order and ask whether anything you can say has changed.']);
 
 // 5c two rulers
-scene('Two rulers','Bentham\'s utils add. Ordinal utils do not.',5,(g,k)=>{
+scene('Bentham\'s utility scale has a zero and a unit','Ordinal utility has neither, so it cannot be summed',5,(g,k)=>{
   const X0=120,U=80;
   // top: Bentham
   if(k>=0){T(g,X0,215,'Bentham: a ruler of utils, with a zero and a unit',{'font-size':26,'font-weight':500,fill:C.green});
@@ -330,8 +371,8 @@ scene('Two rulers','Bentham\'s utils add. Ordinal utils do not.',5,(g,k)=>{
   }
   if(k>=1){el('rect',{x:X0,y:262,width:3*U,height:56,fill:C.earth},g);T(g,X0+1.5*U,298,'Ann: 3',{'text-anchor':'middle','font-size':22,fill:C.cream});
     el('rect',{x:X0+3*U,y:262,width:5*U,height:56,fill:C.green},g);T(g,X0+5.5*U,298,'Bob: 5',{'text-anchor':'middle','font-size':22,fill:C.cream});
-    T(g,X0+8.3*U,298,'= 8 utils of happiness, in two breasts',{'font-size':22,fill:C.ink});}
-  if(k>=2)note(g,'Double the ruler and Ann has 6, Bob 10, the pair 16: twice the happiness. Move a unit from Bob to Ann and the sum can rise. That is the 50,000-times argument (p. 133).',400);
+    T(g,X0+8.3*U,298,'= 8 utils of happiness across two people',{'font-size':22,fill:C.ink});}
+  if(k>=2)note(g,'Doubling every number gives Ann 6, Bob 10, and the pair 16, so the happiness itself has doubled. Moving a unit from Bob to Ann can raise the sum, which is the argument on p. 133.',400);
   // bottom: ordinal
   if(k>=3){T(g,X0,485,'Ordinal: three bundles in a row, and the numbers are only labels',{'font-size':26,'font-weight':500,fill:C.green});
     const xs=[X0+2*U,X0+5*U,X0+13*U],lab=['bundle A','bundle B','bundle C'],n1=['1','2','3'],n2=['1','4','9'];
@@ -339,54 +380,65 @@ scene('Two rulers','Bentham\'s utils add. Ordinal utils do not.',5,(g,k)=>{
     xs.forEach((x,j)=>{el('circle',{cx:x,cy:600,r:9,fill:C.earth},g);T(g,x,636,lab[j],{'text-anchor':'middle','font-size':20,fill:C.warm});
       T(g,x,575,n1[j],{'text-anchor':'middle','font-size':26,fill:C.ink});
       if(k>=4)T(g,x,545,n2[j],{'text-anchor':'middle','font-size':26,fill:C.brick});});
-    T(g,X0+6.6*U,575,'C > B > A, and nothing else.',{'font-size':21,fill:C.ink});
+    T(g,X0+6.6*U,575,'C > B > A is all the numbers say.',{'font-size':21,fill:C.ink});
     el('text',{x:X0+15.3*U,y:585,'font-size':44,fill:C.brick},g,'+');el('line',{x1:X0+15.0*U,y1:590,x2:X0+15.9*U,y2:548,stroke:C.brick,'stroke-width':4},g);}
-  if(k>=4)note(g,'Relabel 1, 2, 3 as 1, 4, 9. Same order, so nothing an ordinal theory can say has changed. On Bentham\'s ruler the gap from B to C just grew from 1 to 5: the pleasure changed. Senior takes the sum away (p. 145); Jevons, Pareto, and Hicks finish the job.',720);
+  if(k>=4)note(g,'Relabeling 1, 2, 3 as 1, 4, 9 keeps the order, so nothing an ordinal theory says has changed. On Bentham\'s scale the gap from B to C has grown from 1 to 5, a change in pleasure that Senior rules out (p. 145) and that Pareto and Hicks later drop from the theory.',720);
   sweep();});
 
 // 5d voting
-scene('Voting is ordinal, until it adds','Five voters rank three candidates. Nobody changes a ranking.',4,(g,k)=>{
+scene('Condorcet and instant runoff never add','Five voters, three candidates, no one changes a ranking',3,(g,k)=>{
+  const rows=[['3 voters','A > B > C'],['2 voters','B > C > A'],['winner','A beats B 3–2, A beats C 3–2']];
+  tbl(g,{x:200,y:230,heads:['','ranking'],rows:rows.slice(0,Math.min(k+1,3)),colW:[260,700],fs:26,rowH:72,bold:(i,j)=>i===2});
+  if(k>=2)note(g,'Condorcet compares pairs without adding, and A wins every head-to-head. Instant runoff eliminates C first and then A beats B, again without adding.',560);
+  sweep();});
+
+scene('Point-count voting rules assume a cardinal scale','The same five voters, with points attached to ranks',4,(g,k)=>{
   const rows=[['3 voters','A > B > C','A 9, B 6, C 3','A 15, B 6, C 3'],['2 voters','B > C > A','B 6, C 4, A 2','B 10, C 4, A 2'],['total','','A 11, B 12, C 7','A 17, B 16, C 7'],['winner','A beats B 3–2, A beats C 3–2','B','A']];
   const heads=['','ranking','Borda / Heisman: 3, 2, 1','points 5, 2, 1'];
   tbl(g,{x:90,y:215,heads,rows:rows.slice(0,Math.min(k+1,4)),colW:[180,420,420,400],fs:24,rowH:70,bold:(i,j)=>i===3,color:(i,j)=>i===3&&j>=2?C.brick:null});
-  if(k>=1)note(g,'Condorcet asks only pairwise questions and never adds: A wins every head-to-head. Instant runoff eliminates and never adds: C goes out first, then A beats B.',560);
-  if(k>=2)note(g,'Borda turns ranks into points and adds them. The Heisman uses 3, 2, 1. That is a ruler with equal gaps, assumed rather than observed.',630);
-  if(k>=3)note(g,'Change the gaps and the winner changes with no voter changing a mind. Every rule that adds across people is Bentham\'s ruler in disguise; every rule that refuses to add can fail to pick anyone (Condorcet\'s cycle; Arrow 1951 proves it is not fixable). Senior\'s “no comparison” has a price, and this is it.',690);
+  if(k>=3)note(g,'Borda turns ranks into points and adds them, as the Heisman does with 3, 2, 1, and the equal gaps are assumed since no voter reported them. Change the gaps and the winner changes although no voter changed a ranking, so any rule that adds across people assumes Bentham\'s cardinal scale.',600);
   sweep();});
 
-// 6 labor is pain
-txt('Bentham: labor is pain, and value is use','HL p. 131',[
+txt('For Bentham labor is pain','HL p. 131',[
  '“In every human breast, self-regarding interest is predominant over all other interests put together.”',
  '“Love of labour is a contradiction in terms,” so work is only aversion endured for the pleasure it buys.',
+]);
+
+txt('For Bentham value comes from use','HL p. 131',[
  '“All value is founded on utility.... Where there is no use, there cannot be any value.”',
- 'For Ricardo a better tool lowers value while it raises riches, and for Bentham more utility raises value and the owner\'s wealth together.']);
+ 'Ricardo says a better tool lowers value while raising riches, whereas Bentham lets more utility raise value and wealth together (p. 131).']);
 
 // 7 almost the margin
-scene('Bentham almost finds the margin: water and diamonds','HL pp. 131–132',4,(g,k)=>{
+scene('Bentham nearly states diminishing marginal utility','HL pp. 131–132',4,(g,k)=>{
   const X=110,B=600,bw=130,gap=40,vals=[10,8,6,4,2,0];
   vals.forEach((v,j)=>{if(k<1)return;abar(g,'u'+j,X+j*(bw+gap),B-v*32,bw,Math.max(v*32,3),j===5?C.pale:C.earth,{label:v?v:'0',fs:22});T(g,X+j*(bw+gap)+bw/2,B+30,'unit '+(j+1),{'text-anchor':'middle','font-size':18,fill:C.warm});});
   if(k>=1)T(g,X,250,'value of one more unit of water, to one household',{'font-size':24,fill:C.warm});
   if(k>=2){el('line',{x1:X+5*(bw+gap)-20,y1:230,x2:X+5*(bw+gap)-20,y2:620,stroke:C.brick,'stroke-width':2,'stroke-dasharray':'6 5'},g);T(g,X+5*(bw+gap)-10,250,'“the whole quantity required”',{'font-size':22,fill:C.brick});}
-  if(k>=0)note(g,'Smith, he says, never made use value and exchange value clear: water is sold in London, and diamonds are enjoyed. “If the whole quantity required is available, the surplus has no kind of value. It would be the same in the case of wine, grain, and everything else.” (HL pp. 131–132)',690);
-  if(k>=3)T(g,X,800,'HL p. 131: he “came very close to explicitly developing the principle of marginal utility.” Jevons and Menger finish the sentence in chapter 10.',{'font-size':22,fill:C.green});
+  if(k>=0)note(g,'Bentham says Smith never made use value and exchange value clear, since water is sold in London and diamonds are enjoyed. “If the whole quantity required is available, the surplus has no kind of value. It would be the same in the case of wine, grain, and everything else.” (HL pp. 131–132)',690);
+  if(k>=3)T(g,X,800,'HL p. 131: he “came very close to explicitly developing the principle of marginal utility,” which Jevons and Menger state in chapter 10.',{'font-size':22,fill:C.green});
   sweep();});
 
 // 8 reformer
-txt('Bentham the reformer: saving may not become investment','HL pp. 132–133',[
- 'By 1801 he had turned: “I have not ... any horror, sentimental or anarchical, of the hand of government.”',
- 'Argument 1: saving may not become investment.',
- 'Money “put into a chest and kept there” cuts spending, prices, profits, and jobs, which is Malthus\'s glut and later Keynes.']);
+txt('Bentham doubts that saving becomes investment','HL pp. 132–133',[
+ 'By 1801 he no longer opposed intervention, writing “I have not ... any horror, sentimental or anarchical, of the hand of government.”',
+ 'Money “put into a chest and kept there” cuts spending, prices, profits, and jobs, the same point Malthus made about gluts.']);
 
-txt('Bentham the reformer: a pound is worth less to a rich man','HL pp. 133–134',[
- 'Argument 2: the richest man\'s pleasure is not 50,000 times the laborer\'s but at most “twice, a liberal one.”',
+txt('A pound adds less happiness for a rich man','HL pp. 133–134',[
+ 'A man 50,000 times richer than a laborer has at most “twice, a liberal one” the pleasure.',
  'So moving money down raises total happiness.',
- 'HL p. 134: the same psychology that makes everyone an egoist makes the legislator one too, so ask whom he gains more by serving.']);
+ 'If everyone is an egoist then so is the legislator, who serves whoever rewards him most (HL p. 134).']);
+
+// plot reminder 2
+scene('Where we are after Bentham','The exchange line, one writer in',4,(g,k)=>{plotmap(g,k,['ben'],[
+ 'Bentham made value a quantity of pleasure, measurable and summable across people.',
+ 'He kept two arguments for intervention, the chest and the diminishing value of a pound to the rich.',
+ 'Say and Senior keep his premise and drop both arguments.']);sweep();});
 
 // closing: next time
 txt('Next time: Say and Senior','Value without labor, part 2',[
- 'Say removes labor from value altogether: utility makes value, and land, capital, and labor are coequal producers of it.',
- 'Say\'s Law says what is produced is bought, and we will spend most of a day on what that claims and what it rules out.',
- 'Senior gives the whole thing a method, four propositions, and a reason profit is earned: abstinence.',
+ 'Say makes utility the source of value, with land, capital, and labor as coequal producers of it.',
+ 'Say\'s Law says that what is produced is bought, and we will spend most of a day on it.',
+ 'Senior supplies a method, four propositions, and abstinence as the reason profit is earned.',
  'The game is at who-gets-paid.pages.dev, and Level 6 is open.']);
 
 // ---------------- engine ----------------

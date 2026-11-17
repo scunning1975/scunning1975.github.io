@@ -257,11 +257,29 @@ txt('Frédéric Bastiat, 1801–1850: who he was','A provincial landowner who be
  'Economic Sophisms, 1845–48, made him famous: the candlemakers petitioning against the sun, and the broken window of “what is seen and what is not seen.”',
  'Elected to the Assembly in 1848, he wrote Economic Harmonies against the socialists and died of tuberculosis in Rome in December 1850.']);
 
-txt('The Bastiat you may already know','Two sophisms not in HL',[
- 'The candlemakers petition the Chamber to shut out the sun, a competitor who sells light for nothing.',
- 'In the broken window, the glazier\'s trade is what is seen and the shoes the shopkeeper would have bought are what is not seen.',
- 'Both are opportunity-cost arguments, since the policy that helps one trade is paid for by everyone else.',
- 'In the Harmonies he never asks this same question about property, and never asks who pays for it.']);
+scene('The broken window','Bastiat, 1850, in “What Is Seen and What Is Not Seen”',7,(g,k)=>{
+  const X=120,Y=230;
+  // the shop and its window
+  el('rect',{x:X,y:Y+60,width:520,height:360,fill:C.mist,stroke:C.pale,'stroke-width':3},g);T(g,X+260,Y+40,'the shopkeeper\'s shop',{'text-anchor':'middle','font-size':20,fill:C.warm});
+  el('rect',{x:X+60,y:Y+120,width:400,height:200,fill:k>=1?'#EAF2F7':'#CFE3EE',stroke:C.ink,'stroke-width':3},g);
+  if(k>=1){ // crack
+    [[260,220,180,150],[260,220,340,170],[260,220,230,300],[260,220,330,290],[260,220,120,250],[260,220,400,240]].forEach(([a,b,c,d])=>el('line',{x1:X+a,y1:Y+b,x2:X+c,y2:Y+d,stroke:C.ink,'stroke-width':2},g));
+    el('circle',{cx:X+260,cy:Y+220,r:7,fill:C.ink},g);T(g,X+260,Y+460,'a boy breaks the window',{'text-anchor':'middle','font-size':20,fill:C.brick});}
+  if(k>=2){ // crowd
+    [700,760,820,880,940].forEach((cx,i)=>{el('circle',{cx,cy:Y+300,r:18,fill:C.earth},g);el('rect',{x:cx-16,y:Y+322,width:32,height:60,rx:8,fill:C.earth},g);});
+    el('rect',{x:650,y:Y+140,width:510,height:110,rx:12,fill:C.cream,stroke:C.pale},g);T(g,905,Y+184,'“The glazier gets six francs.',{'text-anchor':'middle','font-size':21,fill:C.ink});T(g,905,Y+216,'What would become of glaziers',{'text-anchor':'middle','font-size':19,fill:C.ink});T(g,905,Y+240,'if nobody broke windows?”',{'text-anchor':'middle','font-size':19,fill:C.ink});}
+  if(k>=3){el('rect',{x:1180,y:Y+100,width:300,height:70,rx:10,fill:'#DCEBDD'},g);T(g,1330,Y+130,'what is seen',{'text-anchor':'middle','font-size':20,'font-weight':700,fill:C.green});T(g,1330,Y+156,'the glazier is paid 6 francs',{'text-anchor':'middle','font-size':17,fill:C.green});}
+  if(k>=4){el('rect',{x:1180,y:Y+200,width:300,height:70,rx:10,fill:'none',stroke:C.brick,'stroke-width':2,'stroke-dasharray':'8 6'},g);T(g,1330,Y+230,'what is not seen',{'text-anchor':'middle','font-size':20,'font-weight':700,fill:C.brick});T(g,1330,Y+256,'the shoes he would have bought',{'text-anchor':'middle','font-size':17,fill:C.brick});}
+  if(k>=5){tbl(g,{x:1120,y:Y+320,heads:['','window','shoes','francs'],rows:[['no break','1','1','0'],['break','1','0','0']],colW:[120,100,100,100],fs:20,rowH:44,bold:(i,j)=>i===1&&j===2,color:(i,j)=>i===1&&j===2?C.brick:null});}
+  if(k>=6)note(g,'The town ends with the same window and one pair of shoes fewer, so breaking the window made nobody richer. The six francs went to the glazier instead of the shoemaker, and the crowd counted only the half it could see.',740);
+  sweep();});
+
+txt('Why the parable spread','Bastiat wrote it in the last months of his life, and a journalist made it famous a century later',[
+ 'Bastiat published the essay in July 1850, five months before he died, against the claim that spending, war, and public works create wealth by creating work.',
+ 'The idea that destruction creates employment was popular because the glazier\'s income is visible and the shoemaker\'s loss is not.',
+ 'Henry Hazlitt, a New York Times and Newsweek columnist, built Economics in One Lesson (1946) around it, and the book became the standard popular text of free-market economics.',
+ '> Hazlitt\'s one lesson is Bastiat\'s: trace a policy\'s effects on everyone, not only on the group it helps.',
+ '> The same mistake returns whenever a hurricane or a war is said to be good for the economy.']);
 
 txt('Bastiat calls economics a science and then appeals to Providence','HL p. 177',[
  '“Socialism, like astrology and alchemy, proceeds by way of imagination; political economy, like astronomy and chemistry, proceeds by way of observation.”',
