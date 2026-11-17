@@ -209,7 +209,7 @@ S.push({title:'',sub:'',draw:g=>{
 }});
 
 // 1 two streams
-scene('Two lines run out of Smith, and Bastiat and Mill stand at the end of them in 1850','The two lines of descent from Smith',6,(g,k)=>{
+scene('Two lines out of Smith, and where Bastiat and Mill stand','The two lines of descent from Smith',6,(g,k)=>{
   const nodes=[
    {id:'smith',x:620,y:200,w:360,h:72,t:'Smith, 1776',sub:'invisible hand, and a government for the rich',fill:C.pale},
    {id:'ric',x:180,y:330,w:330,h:64,t:'Ricardo, 1817',sub:'value is labor; profit a deduction',fill:'#F3D9D9'},
@@ -226,7 +226,7 @@ scene('Two lines run out of Smith, and Bastiat and Mill stand at the end of them
   sweep();});
 
 // 2 1848 and 1850
-txt('Mill (1848) and Bastiat (1850) both wrote against the French socialists','HL pp. 174–176',[
+txt('Both men wrote against the French socialists','HL pp. 174–176',[
  'Socialist ideas spread fastest in France in the 1830s and 1840s: Saint-Simon\'s planners, Fourier\'s cooperatives, and Proudhon\'s “Property is theft.”',
  'Fourier saw that competition ends in monopoly, “feudalism in an inverse order, founded on mercantile leagues” (p. 176).',
  'Mill\'s Principles, 1848, is “the last great effort to retain both the utility and labor perspectives within the same body of economic doctrines” (p. 175).',
@@ -258,7 +258,7 @@ scene('Bastiat reduces utilitarian economics to a three-line syllogism','HL p. 1
   if(k>=4)note(g,'HL p. 178: Smith gave exchange a few dozen of a thousand pages; Ricardo defined the subject as distribution among three classes. With Bastiat the invisible hand “had become the whole of political economy. The sanitizing job was complete.”',760);
   sweep();});
 
-scene('Premise 1 is true about the trade and silent about the starting point','Gains from exchange are real, but the endowments were set before the trade',5,(g,k)=>{
+scene('Premise 1 is true of the trade and silent on the start','Gains from exchange are real, but the endowments were set before the trade',5,(g,k)=>{
   const X=120,Y=230;
   if(k>=0){T(g,X,Y+20,'A buyer values a coat at 10; a seller made it for 4.',{'font-size':26,fill:C.ink});}
   if(k>=1){el('line',{x1:X,y1:Y+90,x2:X+1200,y2:Y+90,stroke:C.ink,'stroke-width':2},g);[0,4,7,10].forEach(v=>{const x=X+v*120;el('line',{x1:x,y1:Y+80,x2:x,y2:Y+100,stroke:C.ink,'stroke-width':2},g);T(g,x,Y+130,String(v),{'text-anchor':'middle','font-size':22,fill:C.warm});});
@@ -266,7 +266,7 @@ scene('Premise 1 is true about the trade and silent about the starting point','G
   bullets(g,['At any price between 4 and 10 both gain, and the total gain is 6 whatever the price, so premise 1 holds for the trade itself.','The exchange itself does not fix the price, so bargaining decides who gets how much of the 6.','Whether the buyer has 10 to spend, and whether the seller owns the cloth, were settled before the exchange began.','So the syllogism shows that trading from a given starting point helps both traders, but it says nothing about how the starting point was set.'],430,25,Math.min(k,4));
   sweep();});
 
-scene('Bastiat\'s syllogism is the first welfare theorem without its assumptions','Bastiat states the first welfare theorem without its assumptions and never states the second',7,(g,k)=>{
+scene('The first welfare theorem, without its assumptions','Bastiat states the first welfare theorem without its assumptions and never states the second',7,(g,k)=>{
   const nodes=[
    {id:'p1',x:90,y:200,w:400,h:70,t:'“every exchange is two gains”',sub:'Bastiat, 1850',fill:'#DCEBDD'},
    {id:'fwt',x:90,y:330,w:400,h:84,t:'First Welfare Theorem',sub:'a competitive equilibrium is Pareto\nefficient (Arrow, Debreu, 1951–54)',fill:C.mist},
@@ -281,7 +281,7 @@ scene('Bastiat\'s syllogism is the first welfare theorem without its assumptions
   if(k>=6)note(g,'Public economics studies the cases where premise 2 fails. The bribe-for-legislation exchange on p. 184 has a third party, the public, who pays. Mill\'s inheritance cap uses the second theorem, changing the endowments and then letting exchange proceed, and Bastiat rules that out.',640);
   sweep();});
 
-txt('Bastiat prices only onerous utility, yet interest is paid with no effort behind it','HL pp. 179–181',[
+txt('Onerous utility is priced, but interest takes no effort','HL pp. 179–181',[
  'Gratuitous utility comes from Providence at no cost, water; onerous utility “insists on being purchased through effort,” diamonds, and only the second is priced.',
  'A service is “effort on the part of one man, whereas the want and the satisfaction are another\'s,” and effort is pain, so every price pays for pain.',
  'Then money “rendered an important service” by easing exchange, so its owner collects interest even though no effort was expended (p. 180).',
@@ -295,7 +295,7 @@ txt('Property before law','HL pp. 181–182',[
  'To men of property: all you hold “has been compensation for mental and physical effort, for sweat and toil expended, for dangers faced ... for services rendered and received.”',
  'HL answer with Hodgskin\'s question (p. 181), which is that if tools are extensions of a man\'s faculties, why are nearly all of them owned by men who do not use them?']);
 
-scene('Bastiat\'s distribution law needs r to fall faster than K grows, and he never checks','HL p. 185: “As capital increases, the capitalists\' absolute share increases while their relative share decreases”',5,(g,k)=>{
+scene('His distribution law needs r to fall faster than K grows','HL p. 185: “As capital increases, the capitalists\' absolute share increases while their relative share decreases”',5,(g,k)=>{
   const rows=[['capital K','100','300'],['rate of profit r','10%','8%'],['profit rK','10','24'],['output Y','200','300'],['capital\'s share rK ÷ Y','5%','8%']];
   tbl(g,{x:200,y:215,heads:['','year 1','year 2'],rows:rows.slice(0,Math.min(k+1,5)),colW:[480,300,300],fs:27,rowH:62,hl:k>=4?[4]:[],bold:(i,j)=>i===4,color:(i,j)=>i===4&&j>0?C.brick:null});
   if(k>=4)bullets(g,['His whole proof is that “the more plentiful capital is, the lower its interest rate,” and the rate did fall.','The share rose anyway, because capital tripled while the rate fell by a fifth, so his claim requires r to fall faster than K grows, which he never shows.','Piketty\'s r > g is this law tested over two centuries, and the share has gone both ways.'],600,25,3);
@@ -332,7 +332,7 @@ txt('Mill rejects both of Bentham\'s axioms','HL p. 187',[
  'And “some kinds of pleasure are more desirable and more valuable than others”: “better to be a Socrates dissatisfied than a fool satisfied.”',
  'HL: that one sentence “utterly destroys the basis” of every normative argument from exchange, Bastiat\'s included, because now someone other than the chooser can judge the choice.']);
 
-txt('Mill starts from Ricardo\'s labor theory and ends with Smith\'s adding-up price','HL pp. 188–190',[
+txt('Mill opens with Ricardo and ends with Smith\'s price','HL pp. 188–190',[
  'He opens with Ricardo: cost “is resolvable into labour,” and value “depends principally (we shall presently see whether it depends solely) on the quantity of labour.”',
  'Then wine and cloth, equal labor and different timing, and “all commodities made by machinery are assimilated to the wine,” which is the Level 3 problem from the game, and unlike Ricardo he does not treat it as a small modification.',
  'So he reverts to Smith\'s adding-up price: natural price = the price of land + the price of labor + the price of capital.',
@@ -359,7 +359,7 @@ scene('Mill describes periodic crises and still defends Say\'s Law','HL pp. 192�
   if(k>=5)bullets(g,['He has a cycle driven by the falling rate of profit, with capital export and crises as the counterforces, and he still calls Malthus\'s glut “so much inconsistency in its very conception.”','He makes two replies, first that a general glut is really “an undersupply of money,” which is close to what Malthus said, and second that the derangements are “temporary,” which is where Keynes later objected that “in the long run we are all dead.”'],600,24,2);
   sweep();});
 
-scene('Mill\'s reciprocal demand fixes the terms of trade Ricardo left open','HL p. 190',4,(g,k)=>{
+scene('Mill fixes the terms of trade that Ricardo left open','HL p. 190',4,(g,k)=>{
   const X=120,Y=230,W=560,H=400;el('line',{x1:X,y1:Y+H,x2:X+W,y2:Y+H,stroke:C.ink,'stroke-width':2},g);el('line',{x1:X,y1:Y+H,x2:X,y2:Y,stroke:C.ink,'stroke-width':2},g);T(g,X+W+10,Y+H+8,'cloth',{'font-size':20});T(g,X-8,Y-8,'wine',{'font-size':20,'text-anchor':'end'});
   if(k>=1){el('line',{x1:X,y1:Y+H,x2:X+W-40,y2:Y+H-200,stroke:C.pale,'stroke-width':3},g);el('line',{x1:X,y1:Y+H,x2:X+260,y2:Y+20,stroke:C.pale,'stroke-width':3},g);T(g,X+W-30,Y+H-205,'England\'s cost ratio',{'font-size':16,fill:C.warm});T(g,X+270,Y+30,'Portugal\'s cost ratio',{'font-size':16,fill:C.warm});}
   if(k>=2){el('path',{d:`M${X} ${Y+H} C ${X+200} ${Y+H-60}, ${X+360} ${Y+H-180}, ${X+480} ${Y+H-330}`,fill:'none',stroke:C.brick,'stroke-width':4},g);el('path',{d:`M${X} ${Y+H} C ${X+60} ${Y+H-200}, ${X+180} ${Y+H-330}, ${X+330} ${Y+H-385}`,fill:'none',stroke:C.green,'stroke-width':4},g);T(g,X+490,Y+H-335,'England offers',{'font-size':16,fill:C.brick});T(g,X+300,Y+H-395,'Portugal offers',{'font-size':16,fill:C.green});}
@@ -383,7 +383,7 @@ scene('Mill departs from laissez faire five times in two pages','HL pp. 195–19
   if(k>=4)note(g,'“Laissez faire ... should be the general practice,” and he departs from it five times on two pages. HL point out (p. 197) that if there is always surplus capital available to fund the poor, then profit cannot be a payment for abstinence.',760);
   sweep();});
 
-scene('HL: a consistent utilitarian cannot argue for reform, and Mill was not a consistent utilitarian','HL pp. 198–200',5,(g,k)=>{
+scene('A consistent utilitarian cannot argue for reform','HL pp. 198–200, and Mill was not a consistent one',5,(g,k)=>{
   const rows=[['allocation A','5','5','10'],['allocation B','8','4','12']];
   tbl(g,{x:200,y:215,heads:['','person 1','person 2','sum'],rows:rows.slice(0,Math.min(k+1,2)),colW:[320,260,260,260],fs:27,rowH:62,bold:(i,j)=>j===3});
   if(k>=2)bullets(g,['Pareto cannot rank A and B, since person 2 loses; the sum can, only if their utils are comparable, which Senior forbade and Bentham allowed.','Add a misanthrope who enjoys person 2\'s loss, and “pushpin is as good as poetry” gives no ground to prefer the philanthropist, so the only standard left is unanimity.','Governments are made of people too, so a politician acting from self-interest sells legislation to the rich, which is itself an exchange with two gains, and reform becomes improbable on utilitarian psychology.','Mill escapes only because he rejected both axioms; reform became improbable rather than impossible, and his hope was that the rich might be “content with being rich.”'],400,24,Math.min(k-1,4));
@@ -407,7 +407,7 @@ scene('Four accounts of how property began','Someone owns the land and the loom.
   if(k>=5)note(g,'The right column sorts the writers by the harmony-or-conflict question. If property was earned or is efficient, what the owner collects is a payment. If it was seized, what the owner collects is a deduction. Smith is on both sides, which is why he can hold the invisible hand and a government for the rich at the same time.',790);
   sweep();});
 
-scene('For Smith property comes first and government follows to protect it','HL pp. 44–45, which you saw in week three',4,(g,k)=>{
+scene('For Smith, property comes first and the state protects it','HL pp. 44–45, which you saw in week three',4,(g,k)=>{
   const rows=[['hunting','nothing to keep','“neither sovereign nor commonwealth”'],['pasturage','herds','civil government is born'],['agriculture','land','“every landlord was a sort of petty prince”'],['commerce','land and stock','government sides with “the rich against the poor”']];
   tbl(g,{x:120,y:215,heads:['stage','what is owned','who rules'],rows:rows.slice(0,Math.min(k+1,4)),colW:[260,380,720],fs:24,rowH:62});
   if(k>=3)note(g,'“The acquisition of valuable and extensive property, therefore, necessarily requires the establishment of civil government. Where there is no property ... civil government is not so necessary.” Smith\'s argument is historical rather than theological. Property comes first in time, and the state is created to protect it. Bastiat will say property is prior by nature, and Mill will ask how the first owner came by it.',600);
@@ -420,7 +420,7 @@ txt('Bastiat defends unlimited bequest and Mill would cap it','HL p. 183 beside 
  'Mill: bequest is “one of the privileges of property which are fit subjects for regulation,” and there should be “a limitation of the amount which any person should be permitted to acquire by gift, bequest, or inheritance.”',
  'A cap is a tax of one hundred percent above a threshold, and it is the second welfare theorem in practice, since it changes the endowments and then lets the market operate.']);
 
-scene('Demsetz argues property rights emerge when the rent exceeds the cost of enforcing them','A plot with output 12L − L²; the wage elsewhere is 4',6,(g,k)=>{
+scene('A right appears when its rent beats its enforcement cost','Demsetz, 1967. A plot with output 12L − L²; the wage elsewhere is 4',6,(g,k)=>{
   const rows=[['open access: enter until the average product equals the wage','12 − L = 4, so L = 8','output 32, wages 32, rent 0'],['a private right: hire until the marginal product equals the wage','12 − 2L = 4, so L = 4','output 32, wages 16, rent 16'],['the gain from excluding others','','16, and four workers freed to produce elsewhere'],['fencing and enforcement cost 20','16 < 20','the commons stays'],['the fur trade doubles the price','rent 32 > 20','territories appear: the Montagnais, 1700s']];
   tbl(g,{x:90,y:215,heads:['','condition','result'],rows:rows.slice(0,Math.min(k+1,5)),colW:[720,300,400],fs:21,rowH:60,hl:k>=4?[4]:[],bold:(i,j)=>j===2&&i>=2});
   if(k>=5)note(g,'This is the no-rent margin from Ricardo\'s Farm looked at from the owner\'s side. The right exists because the rent it creates exceeds the cost of enforcing it. This is the efficiency account of property, and it is where modern law and economics begins (Coase 1960, Alchian and Demsetz 1972).',620);
@@ -442,7 +442,7 @@ scene('Each origin story implies a theory of what ownership earns','How the orig
   if(k>=5)note(g,'Every writer in the course agrees that owners collect something. They disagree about whether that collection is a payment or a deduction, and the answer turns on how the ownership came about. Your account of the origin of property determines which side of the harmony-or-conflict question you take.',800);
   sweep();});
 
-txt('The 1970s debate over the firm repeats the Senior-versus-Hodgskin split','Alchian and Demsetz 1972 against Marglin 1974, outside HL',[
+txt('The 1970s debate over the firm repeats the same split','Alchian and Demsetz 1972 against Marglin 1974, outside HL',[
  'Alchian and Demsetz: in team production nobody can see who shirked, so someone must monitor, and the monitor works only if he keeps what is left: the owner is the residual claimant because that is efficient.',
  'Marglin, “What Do Bosses Do?”: the factory system did not raise output; it put the capitalist between the worker and the market so that the surplus passed through his hands.',
  'That is Say and Senior against Hodgskin and Marx with twentieth-century evidence, and Level 6 of the game asks the same question about who the model\'s dollar should go to and for what.',
