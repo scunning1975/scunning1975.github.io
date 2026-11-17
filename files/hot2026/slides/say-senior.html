@@ -525,6 +525,46 @@ txt('Say\'s Law says a slump is never a shortage of demand','The claim is about 
  'Ricardo held this against Malthus to the end, conceding in 1821 only that machinery can displace workers.']);
 
 // 10h you drive
+// 10h the map of slumps
+scene('Three classical theories of a slump, part 1','What causes it, and what fixes it',4,(g,k)=>{
+  cols2(g,k,{hl:'what causes a slump',hr:'what fixes it',xl:100,xm:330,xr:1000,mcl:52,mcr:40,fs:22,rows:[
+   ['Smith, 1776','No theory. What is saved is spent “by a different set of people,” so the loop closes (Wealth of Nations, II.3).','Nothing to fix.'],
+   ['Ricardo, 1817','Only a transition: “a sudden change in the channels of trade,” like peace in 1815, strands capital until it moves (Principles, ch. 19).','Wait. Prices and migrating capital do the work, and only machinery (1821) is an exception.'],
+   ['Malthus, 1820','A general glut: profits run too high, capitalists save more than they can invest, and demand falls short (HL pp. 83–86).','Move income to a class that spends it, the landlords.']]});
+  if(k>=3)note(g,'HL side with Malthus on gluts and against him on population (p. 86). The argument between Ricardo and Malthus is the one the next slide carries into the 1830s.',760);
+  sweep();});
+
+scene('Three classical theories of a slump, part 2','What causes it, and what fixes it',4,(g,k)=>{
+  cols2(g,k,{hl:'what causes a slump',hr:'what fixes it',xl:100,xm:330,xr:1000,mcl:52,mcr:40,fs:22,rows:[
+   ['Say, 1803 and 1820','A general glut cannot happen, only too much of one good and too little of another (HL pp. 137–138).','Encourage production. Spending cures nothing.'],
+   ['Bentham, late','Money “put into a chest and kept there” cuts spending, prices, production, and investment (HL p. 133).','Government spending, which “becomes a source of increasing wealth.”'],
+   ['Senior, 1836','A general glut would require “general satiety,” which contradicts unlimited wants (HL pp. 145–146).','Nothing. HL say he did not recognize that periodic crises existed.']]});
+  if(k>=3)note(g,'The utility writers split the same way the labor writers did: Say and Senior with Ricardo, the late Bentham with Malthus.',760);
+  sweep();});
+
+scene('The twentieth century kept both answers','Four theories of a slump since 1936',5,(g,k)=>{
+  cols2(g,k,{hl:'what causes a slump',hr:'what fixes it',xl:100,xm:330,xr:1000,mcl:52,mcr:40,fs:22,rows:[
+   ['Keynes, 1936','Demand falls short: saving is not automatically invested, and investment swings with “animal spirits.”','Government spending and cheaper credit fill the gap.'],
+   ['Friedman, 1963','Slumps are monetary: the Fed let the money stock fall by a third in 1929 to 1933 (Friedman and Schwartz).','A steady money rule, and no fine tuning.'],
+   ['Real business cycle, 1982','Slumps are real: technology shocks move output, and money is neutral (Kydland and Prescott).','Nothing. The slump is the efficient response to the shock.'],
+   ['New Keynesian, 1990s','Prices are sticky, so a fall in demand moves output in the short run (Mankiw, Woodford).','A central bank following a Taylor rule.']]});
+  if(k>=4)note(g,'Freshwater is Say with equations and saltwater is Malthus with equations, and the Fed has run a New Keynesian model since the 1990s.',790);
+  sweep();});
+
+scene('Where Say and Malthus sit on the map of slumps','Classicals above the line, the twentieth century below it',6,(g,k)=>{
+  const X0=160,X1=1440,Y=540;const px=f=>X0+f*(X1-X0);
+  el('line',{x1:X0,y1:Y,x2:X1,y2:Y,stroke:C.ink,'stroke-width':3},g);
+  el('polygon',{points:`${X0-14},${Y} ${X0},${Y-8} ${X0},${Y+8}`,fill:C.ink},g);el('polygon',{points:`${X1+14},${Y} ${X1},${Y-8} ${X1},${Y+8}`,fill:C.ink},g);
+  T(g,X0,400,'a slump is real and fixes itself',{'font-size':21,fill:C.warm});T(g,X1,400,'a slump is a shortage of demand',{'text-anchor':'end','font-size':21,fill:C.warm});
+  const dot=(f,name,yr,above,col,ring)=>{const x=px(f);if(ring){el('circle',{cx:x,cy:Y,r:22,fill:'none',stroke:C.gold,'stroke-width':5},g);}el('circle',{cx:x,cy:Y,r:11,fill:col},g);
+    const ny=above?Y-50:Y+60,yy=above?Y-78:Y+86;T(g,x,ny,name,{'text-anchor':'middle','font-size':22,'font-weight':700,fill:col});T(g,x,yy,yr,{'text-anchor':'middle','font-size':17,fill:C.warm});};
+  if(k>=1){dot(0.0,'Senior','1836',1,C.green,k>=5&&false);dot(0.09,'Say','1803',1,C.green,k>=5);}
+  if(k>=2){dot(0.19,'Ricardo','1817',1,C.green);dot(0.30,'Smith','no theory',1,C.warm);}
+  if(k>=3){dot(0.74,'Bentham','late',1,C.brick);dot(0.93,'Malthus','1820',1,C.brick,k>=5);}
+  if(k>=4){dot(0.05,'Real business cycle','1982',0,C.green);dot(0.40,'Friedman','1963',0,C.warm);dot(0.66,'New Keynesian','1990s',0,C.brick);dot(0.95,'Keynes','1936',0,C.brick);}
+  if(k>=5)note(g,'Say sits at the left end with real business cycle theory and Malthus at the right end with Keynes. The 1820 argument is still the argument, and the modern camps are its two sides with equations.',780);
+  sweep();});
+
 scene('You drive: Say\'s Law on paper','Output: cloth 150, corn 50. Tastes: 60 percent of spending goes to cloth.',3,(g,k)=>{
   bullets(g,['Case 1, all 200 of income is spent: find the glut in each good and their sum.','Case 2, 20 goes into a chest: find the glut in each good and their sum.','Say in one sentence what the sum of the gluts equals in each case, and why Say is right in one and wrong in the other.'],230,28,Math.min(k+1,3));
   if(k>=2){tbl(g,{x:120,y:490,heads:['','cloth spent','corn spent','cloth glut','corn glut','sum of gluts'],rows:[['case 1, all 200 spent','120','80','+30','−30','0'],['case 2, 20 in a chest','108','72','+42','−22','+20']],colW:[400,180,180,180,180,220],fs:24,rowH:52,bold:(i,j)=>j===5,color:(i,j)=>j===5?C.green:C.ink});
